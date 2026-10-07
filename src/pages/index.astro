@@ -1,20 +1,9 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="A Duelists of the Roses companion." />
-    <title>Rose Codex</title>
-  </head>
-  <body>
-    <main>
-      <h1>Rose Codex</h1>
-      <p>A Duelists of the Roses companion.</p>
-    </main>
-  </body>
-</html>
-
-<style>
-  :global(body) { margin: 3rem; font-family: system-ui, sans-serif; line-height: 1.5; }
-  h1 { margin-bottom: 0.5rem; }
-</style>
+---
+import Shell from '../layouts/Shell.astro';
+---
+<Shell title="Rose Codex">
+  <h1>Your DotR card library</h1>
+  <p class="muted">Recognize cards while you play The Duelists of the Roses.</p>
+  <a class="browse-link" href="/cards/">Browse all 854 cards</a>
+</Shell>
+<style>.browse-link { display: inline-block; padding: .7rem 1rem; background: var(--control); border: 1px solid var(--line); border-radius: 5px; text-decoration: none; } .browse-link:hover { border-color: var(--accent); }</style>

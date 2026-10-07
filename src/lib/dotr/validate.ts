@@ -1,5 +1,6 @@
 import { ATTRIBUTES, FUSION_TAGS, MONSTER_TYPES, type CanonicalData, type FusionRule } from './model';
 import { expandFusionRules, pairKey } from './fusion';
+import { validateImages } from './images';
 
 function assert(condition: unknown,message: string): asserts condition {
   if (!condition) throw new Error(`Invalid canonical data: ${message}`);
@@ -147,14 +148,5 @@ export function validateDataset(value: unknown): asserts value is CanonicalData 
     ids.forEach(id=>reference(id,'starter deck card'));
   });
 
-  const images = array(data['images'],'images');
-  assert(images.length === 854,'expected image manifest for all 854 IDs');
-  images.forEach((value,id)=>{
-    const image = object(value,['cardId','file','source','status'],'image');
-    assert(image['cardId'] === id,'image IDs must be sorted, unique and contiguous');
-    assert(image['file'] === `${String(id).padStart(3,'0')}.webp`,'asset filenames must use DotR IDs');
-    member(image['status'],['verified','probable','missing','manual-review'],'image status');
-    assert(image['source'] === null || typeof image['source'] === 'string' && /^https:\/\//.test(image['source']),'image source must be HTTPS or null');
-    if (image['status'] === 'verified' || image['status'] === 'probable') assert(image['source'] !== null,'available images require source provenance');
-  });
+  validateImages(data['images']);
 }

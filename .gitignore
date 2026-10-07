@@ -2,6 +2,7 @@ node_modules/
 dist/
 .astro/
 .wrangler/
+.impeccable/
 data/raw/*
 !data/raw/README.md
 .env

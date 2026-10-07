@@ -1,8 +1,9 @@
 # Rose Codex
 
 A fast, static, browser-based companion for **Yu-Gi-Oh! The Duelists of the
-Roses (PS2)**. Current status: **M0 — foundation and data research**. The homepage
-only proves static build and hosting. None of the planned product tools has a UI.
+Roses (PS2)**. Current status: **M1 — visual card library and DotR image pipeline**.
+Open `/cards/` to browse/search the numbered library; select a card for its full
+game screen and metadata. Fusion, naming, deck and reincarnation UIs remain future work.
 
 Long-term direction: Card Browser, Visual Fusion Simulator, Fusion Reference,
 Naming / Starter Deck Simulator, Deck Tools, and Reincarnation Tools.
@@ -20,8 +21,8 @@ bun run check
 bun run build
 ```
 
-Astro 7.3.6 produces static assets in `dist/`. Svelte 5 is installed for future
-interactive islands; M0 has none. TypeScript 6.0.3 satisfies the integrations'
+Astro 7.3.6 produces static assets in `dist/`. The card browser uses one Svelte 5
+interactive island. TypeScript 6.0.3 satisfies the integrations'
 current peer ranges (TypeScript 7 is not supported by these pinned checkers).
 Everything runs through Bun, including the installed Wrangler entry point.
 
@@ -34,7 +35,10 @@ padding. Names are display/search values, never canonical relational keys.
 The committed dataset contains 854 numbered library records, 26,540 ordinary
 fusion outcomes represented by 153 lossless ID-set predicates, 13 special
 power-up transformations, 16 starter choice groups and 17 forty-card starter
-lists. All 854 image entries are `missing`; no collection has been acquired.
+lists. Image discovery maps all 854 IDs; a reviewed NA variant resolves 065,
+while 676's portrait variant is withheld for review. There are 853 local WebPs
+(35.20 MiB); 11 identities were visually verified and 842 remain probable.
+see [image coverage/pipeline](docs/card-images.md) and its acquisition report.
 
 Coverage is not blanket factual verification: most metadata and starter lists
 remain single-source. Two metadata samples were cross-checked. Fusion outcomes
@@ -57,12 +61,15 @@ bun run data:check
 
 `data:fetch` explicitly acquires two public source files at a pinned Git commit,
 checks their SHA-256 digests, and caches them in ignored `data/raw/`. It does not
-execute third-party code. `data:build` reads JSON literals, normalizes factual
+execute third-party code. `data:build` reads JSON literals and image manifests, normalizes factual
 fields, validates the whole dataset, then writes deterministic JSON. Do not
 mass-edit generated files; change first-party import decisions/manifests instead.
 `data:check` regenerates in memory and compares exact bytes, failing on stale or
 missing files. It needs the verified raw captures, while ordinary dev and tests
-use committed canonical data and need no source-network access. Production build
+use committed canonical data and need no source-network access. Image acquisition
+is separate and never runs in normal CI/build; see the explicit commands in the
+image documentation. Public game screenshot redistribution rights remain unresolved.
+Production build
 also checks reproduction: its first run needs acquisition, and later builds can
 use verified cached captures offline.
 

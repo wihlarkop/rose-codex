@@ -1,44 +1,135 @@
-# Card image research
+# DotR image dataset
 
-Inspected on 2026-10-08. No image collection was downloaded or committed. One Blue-Eyes White Dragon sample was downloaded to the OS temporary directory for visual inspection; it is not an application asset.
+M1 uses local optimized **English DotR library screenshots**, discovered through
+[Yugipedia's explicitly numbered gallery](https://yugipedia.com/wiki/Gallery_of_Yu-Gi-Oh!_The_Duelists_of_the_Roses_cards).
+No generic TCG/ YGOPRODeck fallback is used. Card identity is always the integer
+DotR ID; production paths are `/cards/000.webp` through `/cards/853.webp`.
 
-## Sources inspected
+## Discovery and coverage
 
-| Source | Contribution and limitations |
-| --- | --- |
-| [Yugipedia English DotR gallery](https://yugipedia.com/wiki/Gallery_of_Yu-Gi-Oh!_The_Duelists_of_the_Roses_cards) | Wiki gallery with explicit DotR numbers, names, and image links, including #000 Blue-Eyes White Dragon, #021 Baby Dragon, and #853 Dark Magic Ritual. This provides an ID association rather than an implicit gallery-order guess. It remains a community source. |
-| [Blue-Eyes original image](https://ms.yugipedia.com/7/71/BlueEyesWhiteDragon-DOR-EN-VG.png) | A visually inspected 579 x 462 PNG showing the game's library screen: NUMBER 000, monster classification, attribute, ATK/DEF, summoning level, rank, and deck cost. This is a DotR screen render, not a modern TCG scan. Text is visibly softened; dimensions alone do not establish high quality. |
-| [Yugipedia Blue-Eyes file page](https://yugipedia.com/wiki/File:BlueEyesWhiteDragon-DOR-EN-VG.png) | Attempted to inspect rights/source metadata; live access was blocked by a Cloudflare challenge. Its specific copyright/reuse status remains unresolved. The Baby Dragon file-detail page was also unavailable through the browsing tool. |
-| [Yu-Gi-Oh! Wiki/Fandom DotR gallery](https://yugioh.fandom.com/wiki/Gallery_of_Yu-Gi-Oh!_The_Duelists_of_the_Roses_cards) | Another community gallery with explicit DotR numbering. Similar organization is not proof that it is an independent image collection or independent verification of Yugipedia. No images or wiki prose were copied. |
-| [YGOPRODeck official API documentation](https://ygoprodeck.com/api-guide/) | Documents card-image and alternate-artwork URLs. Its card IDs are its own card database identifiers, not DotR numbers. Consider only a generic-artwork fallback after an explicit crosswalk and manual artwork review. |
+The full discovery audit precedes bulk acquisition. See
+[image-discovery-report.md](image-discovery-report.md) and the per-ID
+`data/manifests/image-discovery.json`. Gallery revision 5222290 has 854 unique
+numbered entries (000..853), 854 unique DOR-EN-VG filenames and no numbering gaps.
+Original URLs and dimensions come from MediaWiki imageinfo, never filename
+guessing or gallery position. Two name differences are capitalization only
+(155 and 612); 414's Greek alpha matches the UTF-8 canonical name.
 
-The gallery's `DOR-EN-VG` image naming supports selecting the intended game/language variant. Sample inspection corroborates this for card 000 only; it is not an audit of 854 image contents. The gallery does not by itself prove every link is live, every ID has unique artwork, or every asset has equivalent quality. Do not claim zero missing cards or no duplicates without a manifest audit. [Gallery evidence](https://yugipedia.com/wiki/Gallery_of_Yu-Gi-Oh!_The_Duelists_of_the_Roses_cards).
+The gallery API resolves 853 original files. Its **065 Necrolancer the Timelord**
+EN file is absent. The [explicitly numbered card page](https://yugipedia.com/wiki/Necrolancer_the_Timelord_(DOR))
+provides a different DOR-NA-VG screenshot whose visible NUMBER 065 and title were
+reviewed. `image-overrides.json` records that source-page association, original
+URL and dimensions; it does not alter the gallery audit. **676 Carat Idol**
+resolves to a portrait card face with no visible
+DotR number/library screen; it remains manual-review and is not shipped.
+Every other acquired file must decode and match discovered dimensions.
+The final acquisition counts, missing/review IDs and measured asset sizes are in
+`data/manifests/image-acquisition-report.json` and the M1 delivery report.
+Do not equate gallery coverage with downloaded, visually verified or licensed
+coverage.
 
-The generic fallback is materially different: YGOPRODeck exposes full-card, small-card, and cropped-art URLs plus alternative artworks. Its documented schema has no DotR ID field. The provider instructs consumers to store data locally and rehost images instead of continual hotlinking. Those delivery instructions do not establish ownership of Konami artwork or a blanket artwork redistribution license. [Provider documentation](https://ygoprodeck.com/api-guide/).
+Final coverage: **854 mapped source candidates, 854 originals downloaded,
+853 local WebPs**, 11 hash-bound visually verified identities, 842 probable,
+one manual-review ID (676), no missing-source IDs after the reviewed override.
+The optimized assets total **36,909,794 bytes (35.20 MiB)**, averaging 43,271 bytes;
+the largest is 56,530 bytes. This is small enough for ordinary Git; no LFS/R2.
 
-## Mapping convention
+## Rights and repository decision
 
-Use local `public/cards/000.webp` through `public/cards/853.webp` when an acquisition phase is approved. The number is the canonical card ID, left-padded to three digits. File slugs and names never establish identity.
+Public accessibility and technical downloadability do **not** establish
+redistribution permission. The inspected asset metadata exposes no explicit
+game-screenshot license/usage terms. Yugipedia's wiki CC BY-SA footer does not
+supply a blanket license for Konami artwork/screenshots. No redistribution grant
+or fair-use conclusion is claimed.
 
-The manifest should be a static JSON array or ID-keyed object; use the established project manifest type. A conceptual entry is:
+M1's practical repository strategy keeps original captures ignored and commits
+only reduced WebP game screenshots plus source/mapping/hash records. This does
+not resolve rights uncertainty. Game imagery remains third-party material; do
+not describe it as first-party or CC-licensed. An uploader/rights-holder inquiry
+and asset-specific rights review remain open before claiming reuse permission.
+The source collection is community-maintained and may contain mistakes.
 
-```json
-{
-  "cardId": 21,
-  "file": "021.webp",
-  "source": null,
-  "status": "missing"
-}
+## Pipeline and reruns
+
+Use Bun 1.4.2; Sharp 0.35.5 is an exact development dependency, including its
+locked native converter. Neither Astro nor Bun supplies a general raster decoder/
+WebP conversion API. No external global converter or alternate JS runtime is
+required.
+
+```sh
+bun run images:discover
+bun run images:acquire --ids=0,21,683,829,853
+bun run images:acquire --all
+bun run data:build
+bun run images:validate
+bun run data:validate
+bun run data:check
 ```
 
-The implemented canonical manifest reserves `file: "021.webp"` even when missing; the status determines availability. An acquired, reviewed entry uses its exact original `source` URL and `status: "verified"`. Here **verified means identity/content mapping was reviewed**, not permission to redistribute. Keep rights notes separately in provenance. Use `manual-review` for uncertain identity/artwork and `missing` when there is no local asset. `probable` is an available schema state; no M0 entry uses it. All 854 M0 entries are missing. The next acquisition phase must establish reviewed manifest inputs before extending the generator, which currently produces these missing records deterministically.
+Discovery reads public API wikitext, parses filename/explicit number/display name
+within each gallery row and rejects ambiguous rows, duplicate/out-of-range IDs
+or non-English-DotR suffixes. Batches of at most 50 file titles resolve original
+URLs, dimensions and exposed rights metadata. The live capture is ignored;
+its revision/digest and normalized associations are committed. An optional
+numeric revision argument asserts the current revision; the historical oldid
+route returned HTTP 403 in this environment, so the script never silently
+substitutes a newer revision. Acquisition is pinned to committed mappings and
+source digests, independent of future gallery changes.
 
-Import explicit gallery ID labels with their adjacent image links. Reject duplicate IDs and out-of-range labels. Compare the source's displayed name to canonical metadata as a review aid; never join production data on names. Inspect screenshots' visible NUMBER where available. Validate local filename, actual format, dimensions, and file existence before marking an entry verified.
+Acquisition is sequential, delays at least 400ms between requests, uses an
+identified User-Agent, 30-second timeouts and bounded retry/backoff for transient
+failures. Access denial remains a failure. Successful originals are decoded and
+checked against discovered format/dimensions before atomic writes into ignored
+`data/raw/images/`. State and generated manifest checkpoints make reruns
+resumable; validated cached bytes avoid repeat downloads. Changed recorded source
+bytes or output digests fail explicitly. A per-image failure is reported without
+discarding successful outputs. Do not run two acquisition processes concurrently.
 
-Name matching is a development aid with an explicit crosswalk: punctuation (`Harpie's`, `#1`), abbreviations (`Red-Eyes B. Dragon`), wiki spellings (`Contruct of Mask`), alternate names, and future duplicate-name cases must not generate silent guesses. Cropped artwork from a TCG source must retain a source-kind distinction from an in-game DotR render.
+Full screens are converted with quality **93**, effort **6**, smart chroma
+subsampling and the picture preset, sRGB/default metadata stripping, inside a
+640x640 bound without enlargement. The accepted library sources are already
+roughly 575x463, so no resizing/cropping/upscaling is needed. One full WebP serves
+both the artwork-focused CSS grid crop and complete detail screen. The shared
+artwork rectangle was checked across monster, Magic, Power Up, Trap, Ritual and
+special library samples. #065's smaller 273x302 NA library screen uses a separately
+reviewed crop with side space to preserve its taller artwork. #676's unidentified
+portrait presentation is withheld. Source softness
+cannot be recovered by increasing dimensions.
 
-## Rights and next acquisition step
+Conversion uses fixed settings/native versions; local repeated output hashes
+are checked on resume. Cross-platform *reconversion* byte identity is not
+claimed. Ordinary CI validates committed WebP bytes without fetching originals
+or reconverting them.
 
-Yugipedia's page footer says wiki content is Creative Commons Attribution Share Alike unless otherwise noted. That is not sufficient evidence that game screenshots/artwork are CC-licensed. No first-party Konami grant to redistribute this artwork was established during M0. Record asset-specific rights/source metadata before bulk acquisition; consult the uploader/source policy rather than treating a public image URL as permission. [Gallery footer](https://yugipedia.com/wiki/Gallery_of_Yu-Gi-Oh!_The_Duelists_of_the_Roses_cards).
+## Manifest and review
 
-The next image task should verify a small set across monster, Magic, Trap, Ritual, and game-specific cards, establish source permissions and quality, then produce a reviewed ID manifest. A deterministic conversion/download command can follow that decision. The shipped site should load local files only; it should not call wiki/CDN/API endpoints at runtime. M0 recommends Yugipedia's explicit DotR-ID gallery as the strongest investigated mapping candidate, with rights and completeness unresolved and YGOPRODeck reserved for clearly labeled generic artwork fallback.
+Canonical `ImageRecord` fields are `cardId`, `file`, `source`, `sourceKind`,
+`status`, `width`, `height`, `sha256`. Only `dotr-game-render` is supported
+in M1. Missing or manual-review records retain their reserved filename and any
+candidate source, but dimensions/digest are null and the app shows a placeholder.
+
+- `probable`: local decoded image mapped by explicit gallery ID and matching
+  label; individual screenshot content is not manually certified.
+- `verified`: name and visible game NUMBER were visually checked; the review in
+  `image-reviews.json` binds that decision to original SHA-256 bytes.
+- `missing`: no accepted local asset.
+- `manual-review`: candidate identity/presentation uncertain; not displayed.
+
+Verified never means legally redistributable. Review an original/full screenshot,
+not just a cropped grid tile. Record ID, exact source digest and the observed
+name/NUMBER in `data/manifests/image-reviews.json`; rerun acquisition for those
+IDs, then data:build/validation. Source digests are retained in
+`image-assets.json`; the app consumes only generated canonical data.
+
+For a gallery omission/variant, inspect the actual DotR card page and its explicit
+number/image association, resolve that file through public imageinfo, then add a
+small documented override and hash-bound visual review. Do not infer a filename
+from a card slug. Overrides are validated against the canonical ID/name and
+source host; unreviewed overrides cannot become available assets.
+
+Validation requires ordered unique IDs, deterministic filenames, HTTPS
+provenance/source kind, meaningful dimensions and digests. It rejects missing
+available files, extra/orphan files, wrong format/dimensions, changed bytes and
+undecodable images. Canonical reproduction checks acquired mapping inputs and
+hash-bound verified reviews. Missing records require no asset. Normal CI/build
+never crawl the gallery or re-download images.

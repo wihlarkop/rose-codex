@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "discovered": 854,
+  "mapped": 854,
+  "sourceFiles": 854,
+  "downloadedThisRun": 1,
+  "convertedThisRun": 1,
+  "reusedThisRun": 10,
+  "downloadedTotal": 854,
+  "convertedTotal": 853,
+  "verified": 11,
+  "probable": 842,
+  "missingIds": [],
+  "manualReviewIds": [
+    676
+  ],
+  "totalBytes": 36909794,
+  "averageBytes": 43271,
+  "largest": [
+    {
+      "cardId": 60,
+      "bytes": 56530
+    },
+    {
+      "cardId": 273,
+      "bytes": 56370
+    },
+    {
+      "cardId": 183,
+      "bytes": 55394
+    },
+    {
+      "cardId": 78,
+      "bytes": 55202
+    },
+    {
+      "cardId": 69,
+      "bytes": 55070
+    },
+    {
+      "cardId": 58,
+      "bytes": 54682
+    },
+    {
+      "cardId": 50,
+      "bytes": 54666
+    },
+    {
+      "cardId": 539,
+      "bytes": 54280
+    },
+    {
+      "cardId": 670,
+      "bytes": 54206
+    },
+    {
+      "cardId": 80,
+      "bytes": 54016
+    }
+  ],
+  "failures": []
+}

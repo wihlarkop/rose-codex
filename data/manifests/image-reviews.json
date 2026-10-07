@@ -1,0 +1,57 @@
+[
+    {
+        "cardId": 65,
+        "sourceSha256": "2cfb9dd513a49e43e8fc42d879b93123007ab4018e55f605a045126b8a8b18eb",
+        "note": "Alternate NA library screenshot visually inspected: title Necrolancer the Timelord and NUMBER 065 agree with the explicit card-page number. Smaller portrait artwork frame checked separately."
+    },
+    {
+        "cardId":  0,
+        "sourceSha256":  "47c3f9b76e2a37df80426cca104a8da09f96bddfc8e8fa91d322afaf58aa2bfa",
+        "note":  "Full screenshot visually inspected: card name and NUMBER match DotR ID; library artwork frame and WebP quality checked."
+    },
+    {
+        "cardId":  21,
+        "sourceSha256":  "7dd5093a0f1cb97ae7489cf970db21248b16b7dc7b4b2fbffb45304731a10c04",
+        "note":  "Full screenshot visually inspected: card name and NUMBER match DotR ID; library artwork frame and WebP quality checked."
+    },
+    {
+        "cardId":  171,
+        "sourceSha256":  "2f3df7197ad8e3d024c6f254b5457360ffdf2841ff2f440bcaa86aa09831b2ae",
+        "note":  "Full screenshot visually inspected: card name and NUMBER match DotR ID; library artwork frame and WebP quality checked."
+    },
+    {
+        "cardId":  350,
+        "sourceSha256":  "973913b26332a5c591882e458b71957ab07c70b955fa0ebd665bdde646bc43f9",
+        "note":  "Full screenshot visually inspected: card name and NUMBER match DotR ID; library artwork frame and WebP quality checked."
+    },
+    {
+        "cardId":  414,
+        "sourceSha256":  "f90a326b83d1b380ca90f7d7a4393e0f8108e800f2d044a6015b19ccdf393ae8",
+        "note":  "Full screenshot visually inspected: card name and NUMBER match DotR ID; library artwork frame and WebP quality checked."
+    },
+    {
+        "cardId":  671,
+        "sourceSha256":  "d74e7b87c9f060d453044eabe89dd51415dd851e43f417ece661c57311102510",
+        "note":  "Full screenshot visually inspected: card name and NUMBER match DotR ID; library artwork frame and WebP quality checked."
+    },
+    {
+        "cardId":  683,
+        "sourceSha256":  "932a5af633a5d1dbb9862a577167ba358ef377431c7a5e2f4676057538a1ab78",
+        "note":  "Full screenshot visually inspected: card name and NUMBER match DotR ID; library artwork frame and WebP quality checked."
+    },
+    {
+        "cardId":  758,
+        "sourceSha256":  "1d05c7f9c737b71189cee2c627154e60c39fdde89291943d310eb9b2b4940d61",
+        "note":  "Full screenshot visually inspected: card name and NUMBER match DotR ID; library artwork frame and WebP quality checked."
+    },
+    {
+        "cardId":  829,
+        "sourceSha256":  "b0e554315e3f93fd6bf5f76e1249beb3b1568ffecd567ceeec9d19620e6df6c4",
+        "note":  "Full screenshot visually inspected: card name and NUMBER match DotR ID; library artwork frame and WebP quality checked."
+    },
+    {
+        "cardId":  853,
+        "sourceSha256":  "1b23ddd756ee2ce9ddf027a2187c36af7788b5635bb026385f4ebbb7f214d28b",
+        "note":  "Full screenshot visually inspected: card name and NUMBER match DotR ID; library artwork frame and WebP quality checked."
+    }
+]

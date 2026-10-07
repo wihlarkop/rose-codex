@@ -1,0 +1,24 @@
+---
+import '../styles/global.css';
+interface Props { title: string; description?: string }
+const { title, description = 'Recognize and find cards from Yu-Gi-Oh! The Duelists of the Roses.' } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} /><title>{title} · Rose Codex</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header"><div class="container header-inner">
+      <a class="brand" href="/">Rose <span>Codex</span></a>
+      <nav class="site-nav" aria-label="Main navigation"><a href="/cards/" aria-current={Astro.url.pathname.startsWith('/cards') ? 'page' : undefined}>Cards</a></nav>
+    </div></header>
+    <main id="main" class="container site-main"><slot /></main>
+    <footer class="site-footer"><div class="container">
+      <span>Yu-Gi-Oh! The Duelists of the Roses · Unofficial companion</span>
+      <a href="https://github.com/wihlarkop/rose-codex/blob/main/docs/card-images.md">Image sources &amp; coverage</a>
+    </div></footer>
+  </body>
+</html>

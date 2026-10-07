@@ -55,6 +55,41 @@ evidence, not blanket accuracy or permission to reuse their implementation.
 
 ## Capture, reuse and confidence policy
 
+### M1 image sources
+
+The [public gallery parse API](https://yugipedia.com/api.php?action=parse&page=Gallery_of_Yu-Gi-Oh%21_The_Duelists_of_the_Roses_cards&prop=wikitext%7Cimages&format=json)
+and MediaWiki `query/imageinfo` API were inspected directly. These are wiki
+research/file metadata, not first-party game or rights-holder sources. Gallery
+revision 5222290 supplies 854 explicit ID/name/file associations; imageinfo
+supplies 853 original URLs, source dimensions and exposed license/usage fields.
+The normalized per-ID capture, exact queries and limitations are recorded in
+image-discovery.json, image-discovery-report.md and card-images.md. Historical
+`parse/oldid` returned HTTP 403; current-page discovery succeeded and checks its
+revision. No access challenge was solved or bypassed.
+
+M1 downloads these public original URLs through separate development tooling,
+retains ignored originals, and commits optimized accepted DotR screenshots.
+Image 065's gallery file has no metadata. Its
+[DotR card page](https://yugipedia.com/wiki/Necrolancer_the_Timelord_(DOR))
+explicitly provides number 065 and a DOR-NA-VG image; public imageinfo resolves
+[the reviewed original](https://ms.yugipedia.com//2/23/NecrolancertheTimelord-DOR-NA-VG.png).
+The override records that association and the visual review binds name/NUMBER to
+its SHA-256. 676's portrait source is withheld for review.
+Individual source URLs/digests and optimized-byte digests are preserved in
+image-assets.json/canonical images.json. Visually checked identities are bound
+to original-byte hashes in image-reviews.json. Most image content remains
+explicitly probable, not individually verified. No modern-artwork fallback,
+game binary, decorative Konami assets or wiki prose is imported.
+
+Exposed image license/usage metadata did not establish a redistribution grant.
+Optimizing/rehosting does not create one; game imagery is not declared CC-licensed.
+See card-images.md for the repository decision and remaining rights review.
+Technical conversion references are official
+[Sharp installation](https://sharp.pixelplumbing.com/install/),
+[WebP/metadata options](https://sharp.pixelplumbing.com/api-output/) and
+[Bun Node-API support](https://bun.sh/docs/runtime/node-api). Sharp 0.35.5 is pinned
+as a direct dev dependency rather than relying on Astro's optional transitive one.
+
 `data/manifests/sources.json` records revision, URLs by path, licensing status and
 SHA-256 bytes for the two acquisition inputs. Raw source stays ignored. Generated
 JSON contains selected factual game fields and derived factual ID relationships;
@@ -63,8 +98,9 @@ Pure TypeScript algorithms and normalization/compression code are first-party.
 
 This distinction is a reuse decision, not a finding that every third-party
 collection has a permissive license. No blanket license is asserted for game
-data, artwork, or unlicensed reference code. Before copying source implementation
-or bulk assets, establish permission for that material. All omitted material is
+data, artwork, or unlicensed reference code. Implementation code is not copied;
+M1's public game-screenshot acquisition and unresolved-rights repository decision
+are explicitly documented above and in card-images.md. All omitted material is
 listed above; no unexplained scraped dataset enters the browser runtime.
 
 Source agreement may reflect shared research. Region differences, 671's missing

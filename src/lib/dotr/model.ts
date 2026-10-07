@@ -61,7 +61,11 @@ export interface ImageRecord {
   cardId: CardId;
   file: string;
   source: string | null;
+  sourceKind: 'dotr-game-render' | null;
   status: 'verified' | 'probable' | 'missing' | 'manual-review';
+  width: number | null;
+  height: number | null;
+  sha256: string | null;
 }
 
 export interface CanonicalData {

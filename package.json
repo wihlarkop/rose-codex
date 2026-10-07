@@ -15,6 +15,9 @@
     "data:build": "bun scripts/data/build.ts",
     "data:validate": "bun scripts/data/validate.ts",
     "data:check": "bun scripts/data/build.ts --check",
+    "images:discover": "bun scripts/images/discover.ts",
+    "images:acquire": "bun scripts/images/acquire.ts",
+    "images:validate": "bun scripts/images/validate.ts",
     "wrangler": "WRANGLER_SEND_METRICS=false bun ./node_modules/wrangler/bin/wrangler.js",
     "deploy": "bun run build && bun run wrangler deploy"
   },
@@ -26,6 +29,7 @@
   "devDependencies": {
     "@astrojs/check": "0.9.10",
     "@types/bun": "1.4.2",
+    "sharp": "0.35.5",
     "svelte-check": "4.7.6",
     "typescript": "6.0.3",
     "wrangler": "4.148.0"

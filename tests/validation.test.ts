@@ -37,7 +37,7 @@ describe('canonical validation', () => {
     ['invalid deck length',d=>d.starters.decks[0].cardIds.pop()],
     ['missing image record',d=>d.images.pop()],
     ['slug asset name',d=>d.images[21].file='baby-dragon.webp'],
-    ['verified image without source',d=>d.images[21].status='verified'],
+    ['verified image without source',d=>{d.images[21].status='verified';d.images[21].source=null;}],
   ];
   test.each(corruptions)('rejects %s', (_label, mutate) => {
     const data = structuredClone(baseline);
