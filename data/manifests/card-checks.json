@@ -1,0 +1,12 @@
+[
+  {
+    "source": "https://yugipedia.com/wiki/Blue-Eyes_White_Dragon_(DOR)",
+    "cardId": 0,
+    "fields": { "name": "Blue-Eyes White Dragon", "kind": "monster", "monsterType": "Dragon", "attribute": "LIGHT", "level": 8, "deckCost": 55, "atk": 3000, "def": 2500, "password": "UB0HA94H" }
+  },
+  {
+    "source": "https://yugipedia.com/wiki/Mirror_Wall_(DOR)",
+    "cardId": 829,
+    "fields": { "name": "Mirror Wall", "kind": "trap", "trapRange": "full", "deckCost": 80, "password": "53297534" }
+  }
+]

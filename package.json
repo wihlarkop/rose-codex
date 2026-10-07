@@ -1,0 +1,33 @@
+{
+  "name": "rose-codex",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "bun@1.4.2",
+  "engines": {
+    "bun": "1.4.2"
+  },
+  "scripts": {
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 bun --bun astro dev",
+    "build": "bun run data:fetch && bun run data:check && bun run data:validate && bun test && bun run check && ASTRO_TELEMETRY_DISABLED=1 bun --bun astro build",
+    "check": "ASTRO_TELEMETRY_DISABLED=1 bun --bun astro check && bun scripts/check-svelte.ts && bun --bun tsc --noEmit",
+    "data:fetch": "bun scripts/data/fetch.ts",
+    "data:build": "bun scripts/data/build.ts",
+    "data:validate": "bun scripts/data/validate.ts",
+    "data:check": "bun scripts/data/build.ts --check",
+    "wrangler": "WRANGLER_SEND_METRICS=false bun ./node_modules/wrangler/bin/wrangler.js",
+    "deploy": "bun run build && bun run wrangler deploy"
+  },
+  "dependencies": {
+    "@astrojs/svelte": "9.0.1",
+    "astro": "7.3.6",
+    "svelte": "5.57.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@types/bun": "1.4.2",
+    "svelte-check": "4.7.6",
+    "typescript": "6.0.3",
+    "wrangler": "4.148.0"
+  }
+}

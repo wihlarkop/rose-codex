@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "reference": {
+    "repository": "https://github.com/Eenkin/dotr-fusion-simulator",
+    "commit": "91613ec9851a7a75744c1f2c7e4b342514ba315f",
+    "license": "No license declared; research only. Factual fields extracted; implementation and effect prose omitted."
+  },
+  "files": [
+    { "path": "scripts/cardList.js", "file": "cardList.js", "sha256": "722ea688a6dd4913e165bc671edb4590e7ab5da8148c81f19af810a15c1480ba" },
+    { "path": "scripts/fusionList.js", "file": "fusionList.js", "sha256": "2f097a1054cf12db0a76836af704b259ebca1d5f9bd02d113f98d3a15133f531" }
+  ]
+}
