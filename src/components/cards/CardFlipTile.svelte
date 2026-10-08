@@ -1,14 +1,14 @@
 <script lang="ts">
   import type { BrowserCard } from '../../lib/dotr/browser';
   import CardArtwork from './CardArtwork.svelte';
-  let { card, flipped = $bindable(false), onflip }: { card: BrowserCard; flipped?: boolean; onflip?: ((cardId: number, next: boolean) => void) | undefined } = $props();
+  let { card, id, flipped = $bindable(false), onflip }: { card: BrowserCard; id?: string; flipped?: boolean; onflip?: ((cardId: number, next: boolean) => void) | undefined } = $props();
   const cardNumber = $derived(String(card.id).padStart(3, '0'));
   const kindLabel = $derived(card.kind === 'monster' ? 'Monster' : card.kind === 'magic' ? 'Magic' : card.kind === 'trap' ? 'Trap' : 'Ritual');
   const typeLabel = $derived(card.kind === 'monster' ? card.monsterType : card.kind === 'magic' ? (card.magicClass === 'power-up' ? 'Power-up' : card.magicClass === 'normal' ? 'Normal' : null) : card.kind === 'trap' ? (card.trapRange === 'full' ? 'Full range' : card.trapRange === 'limited' ? 'Limited range' : null) : null);
   function toggle() { flipped = !flipped; onflip?.(card.id, flipped); }
   function handleKeydown(event: KeyboardEvent) { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggle(); } }
 </script>
-<div id={'library-card-' + cardNumber} role="button" tabindex="0" aria-pressed={flipped}
+<div id={id ?? 'library-card-' + cardNumber} role="button" tabindex="0" aria-pressed={flipped}
   aria-label={flipped ? 'Show image for ' + card.name + ', card ' + cardNumber : 'Show metadata for ' + card.name + ', card ' + cardNumber}
   class="card-tile group rounded-[10px] border border-border bg-surface text-foreground transition-[transform,border-color,background-color,box-shadow] duration-150 hover:-translate-y-px hover:border-primary hover:bg-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
   onclick={toggle} onkeydown={handleKeydown}>
