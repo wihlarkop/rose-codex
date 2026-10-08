@@ -45,6 +45,18 @@ planning occurrences and adds one result in Summoning Area, with one-step Undo;
 automatic previews never modify the workspace. Board legality, failed-fusion
 discards, equip bonuses, rituals, and random results are not simulated. See [Fusion behavior](docs/fusion-workspace.md).
 
+## Fusion Encyclopedia
+
+A separate **Recipes** route reverses the canonical 26,540-pair ordinary
+fusion table: select a result by name/ID and inspect every recorded direct
+material pair. Results have authentic small DotR images, incremental display,
+optional material search and Collection readiness based on exact owned-copy
+counts, including duplicated material IDs. Readiness is unknown when saved
+Collection is absent or invalid; this feature never writes stored data.
+Deterministic special transformations are explicitly separate. Full multi-step
+reverse-chain search remains out of scope; Fusion Workspace already explores
+chains from actual Hand inputs. See [Fusion Encyclopedia](docs/fusion-encyclopedia.md).
+
 ## Deck Builder
 
 Multiple named decks support individual copies, duplication/deletion, count,
