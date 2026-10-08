@@ -1,5 +1,4 @@
 <script lang="ts">
-  import CardArtwork from '../../components/cards/CardArtwork.svelte';
   import type { BrowserCard } from '../../lib/dotr/browser';
   import type { FusionRecipe } from '../../lib/dotr/fusion-discovery';
   let {
@@ -7,11 +6,13 @@
     cardById,
     labels,
     special = false,
+    onapply,
   }: {
     recipe: FusionRecipe;
     cardById: Map<number, BrowserCard>;
     labels: Map<string, string>;
     special?: boolean;
+    onapply?: (recipe: FusionRecipe) => void;
   } = $props();
   const number = (id: number) => '#' + String(id).padStart(3, '0');
 </script>
@@ -34,8 +35,7 @@
   <ol class="m-0 grid list-none gap-2 p-0" aria-label="Ordered combination steps">
     {#each recipe.steps as step, index}
       {@const result = cardById.get(step.resultCardId)!}
-      <li class="flex min-w-0 items-center gap-3">
-        <div class="min-w-0 flex-1">
+      <li class="min-w-0">
           <p class="m-0 break-words">
             <span class="font-medium"
               >{number(step.materials[0])} {cardById.get(step.materials[0])?.name}</span
@@ -52,13 +52,17 @@
             <span class="text-muted-foreground"> ({labels.get(step.addedInstanceId)})</span>
           </p>
           <p class="mb-0 mt-0.5 font-semibold text-primary">→ {number(result.id)} {result.name}</p>
-        </div>
-        <div class="w-16 shrink-0 overflow-hidden rounded-sm">
-          <CardArtwork image={result.image} name={result.name} cardId={result.id} />
-        </div>
       </li>
     {/each}
   </ol>
+  {#if !special && onapply}
+    <button
+      type="button"
+      class="control-button mt-3"
+      aria-label={'Apply ' + cardById.get(recipe.resultCardId)?.name + ' fusion to Summoning Area'}
+      onclick={() => onapply(recipe)}>Summon result</button
+    >
+  {/if}
   {#if !special && recipe.mode !== 'hand'}
     <p class="mb-0 mt-2 text-muted-foreground">
       {recipe.mode === 'summon'
