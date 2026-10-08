@@ -57,6 +57,14 @@ game mechanics remain outside presentation components. Images are local,
 lazy-loaded and dimensioned. Provenance and confidence are recorded in the image
 coverage documentation.
 
+Collection is a separate compact inventory surface: owned copy count,
+the selected duel deck and Reserve counts appear together. A visual card
+list provides explicit **To reserve** and **To deck** actions, and newly won
+cards are entered into owned inventory rather than implicitly extending the
+40-card duel deck. Existing deck plans stay intact until changed by the user.
+Fusion provides a collapsible saved-deck picker for individual Hand/Field
+selection without mutating the original deck, sharing canonical art and data.
+
 Historical acceptance is preserved in [Card Browser report](docs/card-browser-report.md).
 Current implementation is described in [UI Foundation report](docs/ui-foundation-report.md).
 
