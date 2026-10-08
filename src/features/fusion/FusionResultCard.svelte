@@ -58,7 +58,9 @@
         {result.recipes.length === 1 ? 'recipe' : 'recipes'}
       </p>
       {#if recommended && !special}
-        <p class="mb-3 mt-0 rounded-md bg-elevated px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+        <p
+          class="mb-3 mt-0 rounded-md bg-elevated px-3 py-2 text-xs leading-relaxed text-muted-foreground"
+        >
           <strong class="text-foreground">Why this result?</strong>
           {onlyResult
             ? partial
