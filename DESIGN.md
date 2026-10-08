@@ -73,6 +73,13 @@ shows each ordered step. The same panel appears in Fusion Workspace. Hand
 transfer is a validated local URL link, not hidden shared state, and never
 mutates saved deck/Collection data.
 
+Fusion Encyclopedia is an independent compact **Recipes** page linked from
+Fusion. Users search for an output card, inspect canonical direct material
+pairs with authentic thumbnails, see clearly qualified Collection availability
+and optionally send a pair to Fusion. Long lists render in batches; special
+transformations remain visually and semantically separate from ordinary
+fusion. It never mutates deck or Collection storage.
+
 Historical acceptance is preserved in [Card Browser report](docs/card-browser-report.md).
 Current implementation is described in [UI Foundation report](docs/ui-foundation-report.md).
 
