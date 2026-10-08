@@ -11,6 +11,7 @@
     createFusionDiscovery,
     type FusionOccurrence,
     type FusionResult,
+    type FusionRecipe,
     type FusionZone,
   } from '../../lib/dotr/fusion-discovery';
   import type { BrowserCard } from '../../lib/dotr/browser';
@@ -29,6 +30,8 @@
   }
   const { discover, cardById } = createIslandData();
   let occurrences = $state<FusionOccurrence[]>([]);
+  let previousFusionInputs = $state<FusionOccurrence[] | null>(null);
+  let actionNotice = $state('');
   let sort = $state('atk');
   let filter = $state('');
   const discovery = $derived(discover(occurrences));
@@ -111,16 +114,63 @@
     }
     return [...groups.values()];
   });
+  function resetUndo() {
+    previousFusionInputs = null;
+    actionNotice = '';
+  }
   function add(cardId: number, zone: FusionZone) {
+    resetUndo();
     occurrences = [...occurrences, { instanceId: crypto.randomUUID(), cardId, zone }];
   }
   function remove(instanceId: string) {
+    resetUndo();
     occurrences = occurrences.filter((entry) => entry.instanceId !== instanceId);
   }
   function move(instanceId: string, zone: FusionZone) {
+    resetUndo();
     occurrences = occurrences.map((entry) =>
       entry.instanceId === instanceId ? { ...entry, zone } : entry,
     );
+  }
+  function clearInputs() {
+    resetUndo();
+    occurrences = [];
+    filter = '';
+  }
+  function applyFusion(recipe: FusionRecipe) {
+    // Only apply a recipe still present in the live ordinary discovery output.
+    const available = discovery.results.some(
+      (group) =>
+        group.resultCardId === recipe.resultCardId &&
+        group.recipes.some((candidate) => candidate === recipe),
+    );
+    const materials = new Set(recipe.instanceIds);
+    const current = new Set(occurrences.map((entry) => entry.instanceId));
+    if (
+      !available ||
+      materials.size !== recipe.instanceIds.length ||
+      !recipe.instanceIds.every((id) => current.has(id))
+    ) {
+      actionNotice = 'This recipe is no longer available. Check the updated fusion results.';
+      return;
+    }
+    previousFusionInputs = occurrences.map((entry) => ({ ...entry }));
+    occurrences = [
+      ...occurrences.filter((entry) => !materials.has(entry.instanceId)),
+      { instanceId: crypto.randomUUID(), cardId: recipe.resultCardId, zone: 'summoning' },
+    ];
+    const resultName = cardById.get(recipe.resultCardId)?.name ?? 'Fusion result';
+    actionNotice =
+      resultName +
+      ' added to Summoning Area. ' +
+      recipe.instanceIds.length +
+      ' source cards removed from this planner. You can undo this fusion.';
+  }
+  function undoFusion() {
+    if (!previousFusionInputs) return;
+    occurrences = previousFusionInputs;
+    previousFusionInputs = null;
+    actionNotice = 'Last fusion undone. Your previous cards have been restored.';
   }
 </script>
 
@@ -132,15 +182,24 @@
         Enter your available cards. Fusions and compatibility update automatically.
       </p>
     </div>
-    <button
-      class="control-button"
-      disabled={!occurrences.length}
-      onclick={() => {
-        occurrences = [];
-        filter = '';
-      }}>Clear inputs</button
-    >
+    <div class="flex flex-wrap items-center gap-2">
+      {#if previousFusionInputs}
+        <button type="button" class="control-button" onclick={undoFusion}>Undo last fusion</button>
+      {/if}
+      <button
+        type="button"
+        class="control-button"
+        disabled={!occurrences.length}
+        onclick={clearInputs}>Clear inputs</button
+      >
+    </div>
   </header>
+
+  {#if actionNotice}
+    <p class="mb-4 text-sm text-muted-foreground" role="status" aria-live="polite">
+      {actionNotice}
+    </p>
+  {/if}
 
   <div class="grid items-start gap-6 xl:grid-cols-[minmax(20rem,.8fr)_minmax(0,1.2fr)]">
     <section aria-label="Available cards" class="min-w-0">
@@ -244,7 +303,9 @@
       </div>
       <p class="mb-2 mt-4 text-xs leading-relaxed text-muted-foreground">
         Unlimited inputs for planning; this is not an in-game five-card hand simulation. Copies are
-        separate, and previews never consume your cards.
+        separate. Fusion previews do not consume cards; choosing "Summon result" applies a recipe to
+        this planner, removes only its source occurrences, and adds its result to Summoning Area.
+        This does not perform an action in the game.
       </p>
       <details class="text-xs leading-relaxed text-muted-foreground">
         <summary class="cursor-pointer py-1 font-medium">Gameplay scope</summary>
@@ -332,6 +393,7 @@
             {result}
             {cardById}
             {labels}
+            onapply={applyFusion}
           />{/each}
       {:else}
         <div class="py-8">

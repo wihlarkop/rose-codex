@@ -2,17 +2,19 @@
   import CardFlipTile from '../../components/cards/CardFlipTile.svelte';
   import FusionRecipeView from './FusionRecipeView.svelte';
   import type { BrowserCard } from '../../lib/dotr/browser';
-  import type { FusionResult } from '../../lib/dotr/fusion-discovery';
+  import type { FusionRecipe, FusionResult } from '../../lib/dotr/fusion-discovery';
   let {
     result,
     cardById,
     labels,
     special = false,
+    onapply,
   }: {
     result: FusionResult;
     cardById: Map<number, BrowserCard>;
     labels: Map<string, string>;
     special?: boolean;
+    onapply?: (recipe: FusionRecipe) => void;
   } = $props();
   let expanded = $state(false);
   let visibleAlternatives = $state(10);
@@ -44,7 +46,7 @@
         · {result.recipes.length}
         {result.recipes.length === 1 ? 'recipe' : 'recipes'}
       </p>
-      <FusionRecipeView recipe={preferred} {cardById} {labels} {special} />
+      <FusionRecipeView recipe={preferred} {cardById} {labels} {special} {onapply} />
       {#if result.recipes.length > 1}
         <details class="mt-3" ontoggle={(event) => (expanded = event.currentTarget.open)}>
           <summary class="cursor-pointer py-1 text-xs font-semibold text-primary">
@@ -55,7 +57,7 @@
           {#if expanded}
             <div class="mt-2 grid gap-4">
               {#each result.recipes.slice(1, visibleAlternatives + 1) as recipe}
-                <FusionRecipeView {recipe} {cardById} {labels} {special} />
+                <FusionRecipeView {recipe} {cardById} {labels} {special} {onapply} />
               {/each}
               {#if result.recipes.length > visibleAlternatives + 1}
                 <button

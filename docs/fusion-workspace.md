@@ -30,6 +30,31 @@ of ten; collapsed alternatives create no recipe DOM. Canonical `CardArtwork` and
 `CardFlipTile` show real DotR images, IDs, names, and known ATK/DEF. Sorting by ATK,
 materials, name or ID and result filtering operate only on presentation.
 
+## Apply a fusion result (optional planner action)
+
+Automatic discovery remains read-only until the user explicitly clicks
+**Summon result** beside a specific ordinary recipe. This planner action
+removes exactly the original Hand/Field occurrence IDs used by that recipe,
+keeps all unused occurrences and duplicate copies intact, and adds one new
+occurrence of the final result card to Summoning Area. Discovery and
+compatibility then recalculate automatically. The action works for direct
+recipes, longer sequential chains, and recipes beginning with a field
+occurrence; each alternative recipe applies its own documented materials.
+A one-step **Undo last fusion** restores the exact preceding input occurrences.
+Manually adding, copying, removing, moving or clearing cards invalidates undo.
+
+An ordinary fusion preview alone never consumes materials. Applying a recipe
+updates the **Rose Codex planning workspace only**, not the PS2 game, and is
+not a guarantee of legal summon timing, movement or placement. Existing
+Summoning Area occurrences unrelated to the recipe are not removed; this is
+a planning representation, not a physically constrained Summon Square.
+Special power-up transformations and unresolved random outcomes do not expose
+this ordinary fusion action.
+
+The main result tile already displays the fusion-result artwork. Ordered
+recipe steps use readable material IDs, occurrence labels and intermediate
+result names without repeating the result image as a tiny thumbnail.
+
 ## Compatibility
 
 Compatibility is calculated from all discovered ordinary recipes before any
