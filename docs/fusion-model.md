@@ -54,11 +54,12 @@ material/result ID references. `chain(ids)` folds successful ordinary fusions
 left-to-right, preserving intermediate results. It reports the failed step and
 stops rather than inventing the game's discard/replacement semantics.
 
-These pure primitives support a later hand permutation search without DOM,
-Astro or Svelte dependencies. M0 does not implement the hand UI or claim full
-equip/ritual/game-state simulation. Invalid card IDs and chains shorter than two
-fail explicitly. Same-ID material pairs are permitted when present in the table;
-two copies of a card are distinct hand slots, a concern for later hand enumeration.
+These pure primitives underpin the occurrence-aware automatic search in
+`src/lib/dotr/fusion-discovery.ts`, without DOM, Astro or Svelte dependencies.
+The engine does not claim full equip/ritual/game-state simulation. Invalid card
+IDs and chains shorter than two fail explicitly. Same-ID material pairs are
+permitted when present in the table; discovery requires two distinct occurrences.
+See [automatic discovery, compatibility, and limits](fusion-workspace.md).
 
 Regression cases cover exact recipes, unordered symmetry, a real successful
 chain, forward lookup, random versus deterministic power-ups, an ATK gap, and

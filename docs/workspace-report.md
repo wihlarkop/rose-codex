@@ -1,5 +1,9 @@
 # Tooling and workspace integration
 
+Historical acceptance for the original workspace integration. Its manual Fusion
+preview workflow has been replaced by [automatic discovery](fusion-workspace.md).
+The checks below describe that earlier delivery, not current-chain acceptance.
+
 ## Execution and ownership
 
 The Bun-powered Oxc foundation was committed separately as `bcd9490`.

@@ -1,5 +1,9 @@
 # UI Foundation and Card Picker
 
+Historical tooling and picker verification record; current presentation is
+documented in [DESIGN.md](../DESIGN.md). Obsolete navigation and image modes have
+been removed from this description.
+
 Completed on 2026-10-08 from clean main at `c973fde`.
 
 ## Implementation
@@ -9,19 +13,17 @@ Completed on 2026-10-08 from clean main at `c973fde`.
 - Only local shadcn-svelte Button, Input, Command and Popover primitives remain.
   Generated with CLI 1.7.0, using Bits UI 2.18.0; MIT notice retained. Unused
   generated Dialog/InputGroup/Textarea code was removed. No animation dependency.
-- Charcoal surfaces, warm off-white text, muted rose actions/selection, amber
+- Warm neutral surfaces, dark text, muted rose actions/selection, amber
   unavailable states and clear focus rings. Semantic CSS tokens drive Tailwind,
   primitives and custom cards. See DESIGN.md and the README picker contract.
-- Shared shell, active Cards navigation, compact homepage with real card links,
+- Shared shell, active navigation, homepage opening the library,
   and no unimplemented navigation destinations.
 - Library: prominent search, native kind/type/attribute filters, removable chips,
   reset, result count and recoverable empty state. Existing punctuation-insensitive,
   multi-token, case-insensitive name and exact numeric/padded-ID matching is reused.
-- Tiles default to authentic game screens, with an optional reviewed artwork crop.
-  Readable wrapping names precede classification/stats; ID and deck cost are secondary.
-- Static details retain full screenshots, prominent names/IDs, readable game
-  metadata, back/adjacent navigation and image provenance/confidence. Unknown stats,
-  absent passwords and untranscribed effects remain honest.
+- Tiles show authentic game screens and flip in place to canonical metadata.
+  Readable wrapping names remain visible. Unknown stats, absent passwords and
+  untranscribed effects remain honest; source/confidence lives in image documentation.
 - CardPicker searches the complete supplied BrowserCard catalog, shows the first
   20 real matches with counts, supports clear/no-results, and emits only a numeric
   canonical ID. CardQuickLookup handles navigation outside the picker. Optional
@@ -34,10 +36,10 @@ Completed on 2026-10-08 from clean main at `c973fde`.
 ## Acceptance and verification
 
 Chrome review at normal 1920px and narrow 1000px desktop widths covered homepage,
-active navigation, library, screen/artwork modes, filter chips/reset, empty recovery,
-and details for #000, #021, #676, Magic #683, Trap #829 and Ritual #830. The image
+active navigation, library image/metadata, filter chips/reset, empty recovery,
+and #000, #021, #676, Magic #683, Trap #829 and Ritual #830. The image
 and visible game number matched the reviewed available samples. #676 remained
-unavailable in grid, picker and detail. No horizontal overflow at the reviewed widths.
+unavailable in grid and picker. No horizontal overflow at the reviewed widths.
 
 Picker checks covered partial/exact/mixed-case names, multiple tokens, 21/021/000,
 no matches, clearing, arrows, Enter navigation, mouse selection and Escape returning
@@ -57,7 +59,7 @@ Production static preview confirmed keyboard quick lookup and Ritual filtering.
 
 Canonical data, image bytes/manifests, domain logic and tests have no diff. No image
 acquisition was rerun. Library JavaScript totals about 247 KiB uncompressed / 74 KiB
-gzip across its three generated chunks; detail/home components are not hydrated.
+gzip across its three generated chunks in that delivery; the shell is not hydrated.
 Images remain lazy-loaded with reserved aspect ratios and declared dimensions.
 
 Historical plans/reports were renamed descriptively with their contents preserved.

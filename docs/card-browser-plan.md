@@ -1,4 +1,7 @@
-# M1 implementation plan
+# Card Library implementation plan
+
+Historical data/image implementation plan. Current presentation uses full-screen
+tiles that flip in place; see [interface guidance](../DESIGN.md).
 
 Goal: a player can recognize and find DotR cards visually while playing on PC.
 The user's M1 request and artwork-focused grid answer are the design brief.
@@ -20,8 +23,8 @@ missing/probable/verified/manual-review status. Reviewed acquisition manifests
 become deterministic generator inputs; regeneration never re-downloads images.
 CI validates committed outputs, never crawls the gallery or downloads its images.
 
-Astro owns the shell and all /cards/NNN detail pages. One Svelte island owns local
-search/filter state and the linked image grid. A pure browser projection/filter
+Astro owns the shell and library routes. One Svelte island owns local
+search/filter state and the image grid with in-place metadata. A pure browser projection/filter
 module consumes canonical cards/images; it excludes effects/equip arrays and
 does not depend on a UI framework. Numeric queries match ID; name tokens ignore
 case/punctuation. Kind, type and attribute filters compose; native controls,
@@ -38,10 +41,10 @@ keyboard focus, result counts and empty/missing states remain explicit.
 - [x] Validation: test manifest/file disagreement, absent provenance, invalid
   WebP/dimensions/digest and extra assets. Extend canonical generation/validation
   without changing card/fusion/naming behavior. CI uses committed artifacts.
-- [x] Browser: test pure search/filter behavior, implement shell/grid/details,
+- [x] Browser: test pure search/filter behavior, implement shell/grid/metadata,
   lazy local images and deterministic placeholders; no fusion/tool placeholders.
 - [x] Acceptance: inspect desktop and smaller viewport, separated IDs and all
-  kinds, name/ID search, filters, empty/missing state and a static detail page.
+  kinds, name/ID search, filters, empty/missing state and card metadata.
   Run bun ci, data:validate, bun test, check, build, image checks and whitespace.
 - [x] Delivery preparation: fresh scoped review, update source/image/README/report
   docs. Root stages an explicit manifest, commits once and pushes normally to main;

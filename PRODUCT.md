@@ -5,7 +5,7 @@
 A static companion for desktop/laptop players of Yu-Gi-Oh! The Duelists of the
 Roses who want to recognize cards visually without memorizing names. The library
 supports local name/ID search, kind/type/attribute filters, authentic game imagery,
-static card details and keyboard-friendly visual quick lookup. Fusion planning
+in-grid card metadata and keyboard-friendly visual quick lookup. Fusion planning
 and browser-local deck construction reuse the same canonical cards and images.
 
 ## Constraints
@@ -20,8 +20,8 @@ explicit. Cloudflare deployment, the custom domain and R2 remain deferred.
 ## Presentation
 
 Warm-neutral, compact, subtle and desktop-oriented. Default tiles preserve the game
-screen, with an optional artwork view for scanning. Detail pages retain the
-full screenshot. Card imagery and readable names dominate the visual hierarchy.
+screen and flip in place to show metadata. Card imagery and readable names
+dominate the visual hierarchy; all workspace interactions stay on their route.
 
 ## Fusion Workspace
 
@@ -29,11 +29,19 @@ The reusable picker returns canonical IDs without owning navigation or game
 state. The workspace allows unlimited, individually removable card
 occurrences, including duplicates. Each unique instance ID references a canonical
 card ID and belongs to Hand or Summoning Area, with movement between zones.
-Results and intermediate fusion steps show images and the actual sequence.
-Hand and Summoning Area are organizational planning labels, with no claim about
-game capacity. Previews use the existing ordinary-fusion engine, stop at the
-first failed pair, and never consume materials. Failed-fusion discards, equips,
-rituals, and random transformations are outside this workspace.
+Entering cards automatically discovers ordinary direct fusions and ordered
+successful chains, including subsets and alternative recipes. Results group by
+final card and show images, materials, intermediate monsters, and occurrence
+labels. Every input shows direct, chain-only, no-current-ordinary-fusion, or
+undetermined compatibility derived from the full discovery set, before sorting
+or filtering. Known deterministic special pairs get a separate indicator.
+Hand and Summoning Area have unlimited planning capacity, not simulated game
+capacity. Field-assisted recipes begin with a field card; field pairs are
+conditional on legal movement. A 25,000-check budget bounds discovery. Budget,
+unsupported field sequences, and unresolved random pairs make limitations visible
+and prevent definitive negative compatibility. Previews never consume materials.
+Board legality, failed-fusion discards, equip bonuses, rituals, and random results
+are not simulated. See [Fusion behavior](docs/fusion-workspace.md).
 
 ## Deck Builder
 

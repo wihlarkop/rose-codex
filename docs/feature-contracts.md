@@ -1,5 +1,9 @@
 # Fusion and deck workspace contracts
 
+This records the original parallel integration contract. Automatic fusion
+discovery supersedes its manual preview and sequencing scope; the current
+contract is [Fusion Workspace](fusion-workspace.md). Deck contracts remain current.
+
 The authorized parallel wave adds `/fusion/` and `/decks/` to the existing static
 Astro app. Each route hosts one Svelte 5 island; all editing stays on that route.
 Keep the current warm neutral palette, compact controls and in-grid card flip.
@@ -23,11 +27,11 @@ The existing Card Library is outside this change.
 - Workspace occurrences have unique `instanceId: string` and `cardId: CardId`.
   Use `crypto.randomUUID()` when adding an occurrence. Removing/moving one
   occurrence must not affect another copy of the same canonical card.
-- Ordinary fusion uses unchanged `createFusionEngine(...).fuse/chain/forward`.
-  `chain` processes an explicitly ordered selection and stops at a failed pair;
-  it does not specify discarded cards. Special transformations remain separate,
-  and random results must remain unknown. Fusion previews do not consume or
-  replace workspace instances automatically.
+- Ordinary fusion uses unchanged `createFusionEngine(...).fuse/chain/forward`
+  beneath automatic occurrence-aware discovery. The engine stops at failed pairs
+  without specifying discarded cards. Special transformations remain separate,
+  and random results remain unknown. Fusion previews do not consume or replace
+  workspace instances automatically.
 - Deck persistence uses key `rose-codex.decks.v1` and envelope
   `{ schemaVersion: 1, decks: [{ id: string, name: string, cardIds: number[] }] }`.
   Store IDs and user names only. Duplicate occurrences are allowed in editing;
@@ -57,9 +61,9 @@ checks the actual browser interactions at desktop and a narrow viewport.
 
 Hand and Summoning Area are user-organized planning zones, with unlimited input
 instances. They do not assert unlimited in-game capacity. Research real game
-mechanics before deriving any field/hand calculations. Sequence order must be
-visible and editable; show successful intermediate results and the failed pair.
-Do not extend the solver or guess equip, ritual, failed-chain or random behavior.
+mechanics before deriving any field/hand calculations. Sequence order is
+discovered automatically and shown with intermediate results. Do not guess equip,
+ritual, failed-chain or random behavior.
 
 Deck count, total known cost, unknown cost and kind/type composition derive from
 canonical card metadata. Research construction rules and cite sources before

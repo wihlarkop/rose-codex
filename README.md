@@ -3,8 +3,9 @@
 A fast, static, browser-based companion for **Yu-Gi-Oh! The Duelists of the
 Roses (PS2)**. Current status: **visual card library, Fusion Workspace, and Deck Builder**.
 Open `/cards/` to browse/search the numbered library; select a card for its full
-game screen and metadata. `/fusion/` previews ordinary fusions with distinct planning
-occurrences; `/decks/` manages browser-local decks with JSON backups. Naming,
+game screen and metadata in place. `/fusion/` automatically discovers ordinary
+fusions and compatibility for distinct planning occurrences; `/decks/` manages
+browser-local decks with JSON backups. Naming,
 fusion reference, and reincarnation UIs remain future work.
 
 Long-term direction: Card Browser, Visual Fusion Simulator, Fusion Reference,
@@ -41,7 +42,7 @@ See [tooling coverage and exclusions](docs/tooling.md).
 Tailwind CSS 4.3.3 uses the official Vite integration. Local shadcn-svelte Nova
 primitives are limited to Button, Input, Command and Popover (CLI 1.7.0; Bits UI
 2.18.0). Their MIT notice is retained in `src/components/ui/LICENSE.md`.
-Astro renders the shell, homepage and details without hydration; the library
+Astro renders the shell without hydration; the library
 and quick lookup share one Svelte island and one canonical browser projection.
 
 Theme colors, radius and spacing live in `src/styles/global.css`. Change tokens
@@ -60,11 +61,16 @@ Feature state stays within each workspace; there is no global store.
 
 ## Planning workspaces
 
-Fusion supports duplicate occurrences, movement between Hand and Summoning Area,
-independent ordering/removal, and illustrated direct and ordered chain previews.
-Zones have unlimited planning capacity; they do not simulate game capacity.
-Only canonical ordinary fusions are evaluated. Previews never consume materials
-or infer failed-chain discards, equipment, rituals, or random transformations.
+Fusion automatically discovers ordinary direct results and sequential chains
+whenever cards are added, copied, removed, or moved between Hand and Summoning
+Area. Every occurrence shows compatibility from all found recipes. Result images,
+intermediates, materials, and expandable alternatives are grouped by final card;
+sorting/filtering do not affect compatibility. Deterministic special power-up
+pairs are separate. A 25,000-check budget and unsupported field/random mechanics
+produce visible partial status and undetermined negatives. Zones have unlimited
+planning capacity; they do not simulate game capacity or board legality.
+Previews never consume materials or infer failed-chain discards, equip bonuses,
+rituals, or random results. There are no manual pair or chain-building controls.
 
 Deck Builder supports multiple decks, names, duplication/deletion, individual
 copies, count/composition and known-cost summaries. Versioned localStorage saves

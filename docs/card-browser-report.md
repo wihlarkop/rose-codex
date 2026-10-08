@@ -1,4 +1,7 @@
-# M1 delivery report
+# Card Library delivery report
+
+Historical data/image acquisition and verification record. The current visual
+system and card flip behavior are described in [DESIGN.md](../DESIGN.md).
 
 2026-10-08. Started from clean main at M0 commit
 `cce72b064afbc9ed8c1efcac7b5a5162e4c845c5`.
@@ -25,8 +28,8 @@ Browser runtime and normal CI never fetch third-party image datasets.
 
 ## Application and boundaries
 
-`/cards/` is a dark, compact artwork-focused grid with ID/name, classification,
-ATK/DEF and deck cost. Local lazy images have declared dimensions/fixed viewports;
+`/cards/` is a compact full-screen card grid with in-place classification,
+ATK/DEF and deck cost on the metadata back. Local lazy images have declared dimensions/fixed viewports;
 missing/failed imagery has an ID-labelled placeholder. No search dependency,
 virtualization library, decorative game assets or future-tool pages.
 
@@ -34,11 +37,11 @@ Names match case/punctuation-insensitive tokens. Numeric queries match exact ID,
 including padded IDs. Kind/type/attribute filters compose. Nonmonster kinds clear
 and disable monster-only filters. Counts, clear controls and empty recovery are explicit.
 
-Astro owns the shell and 854 static `/cards/NNN/` routes. One Svelte island owns
-grid/filter state; pure projection/search stays in `src/lib/dotr/`. Detail shows
-full screenshot, canonical metadata, identity confidence/source and adjacent ID
-links. Untranscribed effects and Exodia's unknown stats are stated honestly.
-#065 uses a separately reviewed taller artwork window.
+Astro owns the shell and library routes. One Svelte island owns grid/filter and
+in-place flip state; pure projection/search stays in `src/lib/dotr/`. Tiles show
+full screenshots and canonical metadata. Untranscribed effects and Exodia's
+unknown stats remain honest. Image identity confidence/source is recorded in the
+canonical manifest and image documentation.
 
 ## Completed verification
 
@@ -68,9 +71,9 @@ discovered source associations and hash-bound identity reviews.
 Manual Chrome acceptance passed on development and built static output:
 desktop grid, `blue eyes` (000/002), `21`/`021` (Baby Dragon), Magic (118), Trap
 (29), Ritual (24), Monster/Dragon/LIGHT (4), kind-switch clearing, empty-result
-recovery, 676 placeholder and 021 detail. Separated artwork samples included
+recovery, 676 placeholder and 021 metadata. Inspected image samples included
 000, 021, 065, 350, 414, 683, 829 and 853; full-source pilots also covered 171,
-671 and 758. Exodia detail preserves unknown stats. A 390px viewport rendered
+671 and 758. Exodia metadata preserves unknown stats. A 390px viewport rendered
 two columns without horizontal overflow; override reset. All grid images were
 lazy; only 68/853 were decoded at the inspected desktop state. Screenshots are
 ignored under `.impeccable/review/`.

@@ -1,170 +1,162 @@
 <script lang="ts">
+  import CircleCheck from '@lucide/svelte/icons/circle-check';
+  import GitBranch from '@lucide/svelte/icons/git-branch';
+  import CircleMinus from '@lucide/svelte/icons/circle-minus';
+  import CircleHelp from '@lucide/svelte/icons/circle-help';
+  import Sparkles from '@lucide/svelte/icons/sparkles';
   import CardPicker from '../../components/cards/CardPicker.svelte';
   import CardArtwork from '../../components/cards/CardArtwork.svelte';
-  import CardFlipTile from '../../components/cards/CardFlipTile.svelte';
-  import { createFusionEngine } from '../../lib/dotr/fusion';
+  import FusionResultCard from './FusionResultCard.svelte';
+  import {
+    createFusionDiscovery,
+    type FusionOccurrence,
+    type FusionResult,
+    type FusionZone,
+  } from '../../lib/dotr/fusion-discovery';
   import type { BrowserCard } from '../../lib/dotr/browser';
   import type { Card, FusionData } from '../../lib/dotr/model';
 
-  type Zone = 'hand' | 'summoning';
-  type Occurrence = { instanceId: string; cardId: number; zone: Zone };
   let {
     cards,
     canonicalCards,
     fusionData,
   }: { cards: BrowserCard[]; canonicalCards: Card[]; fusionData: FusionData } = $props();
-
-  // Capture the static route payload once for this island.
   function createIslandData() {
     return {
-      engine: createFusionEngine(canonicalCards, fusionData),
+      discover: createFusionDiscovery(canonicalCards, fusionData),
       cardById: new Map(cards.map((card) => [card.id, card])),
     };
   }
-  const { engine, cardById } = createIslandData();
-  let occurrences = $state<Occurrence[]>([]);
-  let chainIds = $state<string[]>([]);
-  let directLeftId = $state('');
-  let directRightId = $state('');
-
-  const allOptions = $derived(
-    occurrences.flatMap((occurrence) => {
-      const card = cardById.get(occurrence.cardId);
-      return card ? [{ ...occurrence, card }] : [];
-    }),
+  const { discover, cardById } = createIslandData();
+  let occurrences = $state<FusionOccurrence[]>([]);
+  let sort = $state('atk');
+  let filter = $state('');
+  const discovery = $derived(discover(occurrences));
+  const compatibility = $derived(
+    new Map(discovery.compatibility.map((entry) => [entry.instanceId, entry])),
   );
-  const unknownOccurrences = $derived(
-    occurrences.filter((occurrence) => !cardById.has(occurrence.cardId)),
+  const hand = $derived(occurrences.filter((entry) => entry.zone === 'hand'));
+  const summoning = $derived(occurrences.filter((entry) => entry.zone === 'summoning'));
+  const labels = $derived(
+    new Map([
+      ...hand.map((entry, index) => [entry.instanceId, 'Hand ' + (index + 1)] as const),
+      ...summoning.map(
+        (entry, index) => [entry.instanceId, 'Summoning Area ' + (index + 1)] as const,
+      ),
+    ]),
   );
-  const hand = $derived(allOptions.filter((entry) => entry.zone === 'hand'));
-  const summoning = $derived(allOptions.filter((entry) => entry.zone === 'summoning'));
-  const directLeft = $derived(
-    allOptions.find((entry) => entry.instanceId === directLeftId) ?? allOptions[0],
+  const usable = $derived(
+    discovery.compatibility.filter(
+      (entry) => entry.ordinary === 'direct' || entry.ordinary === 'chain',
+    ).length,
   );
-  const directRight = $derived(
-    allOptions.find((entry) => entry.instanceId === directRightId) ?? allOptions[1],
+  const unevaluated = $derived(
+    discovery.compatibility.filter((entry) => entry.ordinary === 'undetermined').length,
   );
-  const directResult = $derived(
-    directLeft && directRight && directLeft.instanceId !== directRight.instanceId
-      ? engine.fuse(directLeft.cardId, directRight.cardId)
-      : null,
-  );
-  const orderedChain = $derived(
-    chainIds
-      .map((instanceId) => allOptions.find((entry) => entry.instanceId === instanceId))
-      .filter((entry) => entry !== undefined),
-  );
-  const chainResult = $derived(
-    orderedChain.length >= 2 ? engine.chain(orderedChain.map((entry) => entry.cardId)) : null,
-  );
-
-  function optionLabel(entry: (typeof allOptions)[number]) {
-    const zoneEntries = entry.zone === 'hand' ? hand : summoning;
-    const zoneName = entry.zone === 'hand' ? 'Hand' : 'Summoning Area';
-    const position =
-      zoneEntries.findIndex((candidate) => candidate.instanceId === entry.instanceId) + 1;
-    return `${entry.card.name} · ${zoneName} occurrence ${position} · #${String(entry.cardId).padStart(3, '0')}`;
+  const status = {
+    direct: { icon: CircleCheck, label: 'Direct fusion available', class: 'text-primary' },
+    chain: { icon: GitBranch, label: 'Available in fusion chain', class: 'text-primary' },
+    none: {
+      icon: CircleMinus,
+      label: 'No ordinary fusion with current cards',
+      class: 'text-muted-foreground',
+    },
+    undetermined: { icon: CircleHelp, label: 'Not fully evaluated', class: 'text-warning' },
+  };
+  const sortedResults = $derived.by(() => {
+    const query = filter.trim().toLowerCase();
+    return discovery.results
+      .filter((group) => {
+        const card = cardById.get(group.resultCardId)!;
+        return (
+          !query ||
+          card.name.toLowerCase().includes(query) ||
+          String(card.id).padStart(3, '0').includes(query)
+        );
+      })
+      .toSorted((a, b) => {
+        const left = cardById.get(a.resultCardId)!;
+        const right = cardById.get(b.resultCardId)!;
+        if (sort === 'atk') return (right.atk ?? -1) - (left.atk ?? -1) || left.id - right.id;
+        if (sort === 'materials')
+          return (
+            a.recipes[0]!.instanceIds.length - b.recipes[0]!.instanceIds.length ||
+            left.id - right.id
+          );
+        if (sort === 'name') return left.name.localeCompare(right.name) || left.id - right.id;
+        return left.id - right.id;
+      });
+  });
+  const specialResults = $derived.by(() => {
+    const groups = new Map<number, FusionResult>();
+    for (const recipe of discovery.specials) {
+      const group = groups.get(recipe.resultCardId) ?? {
+        resultCardId: recipe.resultCardId,
+        recipes: [],
+      };
+      group.recipes.push({
+        ...recipe,
+        mode: 'hand',
+        steps: [
+          {
+            materials: recipe.materials,
+            resultCardId: recipe.resultCardId,
+            sourceInstanceIds: [recipe.instanceIds[0]],
+            addedInstanceId: recipe.instanceIds[1],
+            inputInstanceIds: recipe.instanceIds,
+          },
+        ],
+      });
+      groups.set(recipe.resultCardId, group);
+    }
+    return [...groups.values()];
+  });
+  function add(cardId: number, zone: FusionZone) {
+    occurrences = [...occurrences, { instanceId: crypto.randomUUID(), cardId, zone }];
   }
-
-  function add(cardId: number, zone: Zone) {
-    const instanceId = crypto.randomUUID();
-    occurrences = [...occurrences, { instanceId, cardId, zone }];
-    if (!directLeftId) directLeftId = instanceId;
-    else if (!directRightId && directLeftId !== instanceId) directRightId = instanceId;
-  }
-
   function remove(instanceId: string) {
     occurrences = occurrences.filter((entry) => entry.instanceId !== instanceId);
-    chainIds = chainIds.filter((id) => id !== instanceId);
-    if (directLeftId === instanceId) directLeftId = '';
-    if (directRightId === instanceId) directRightId = '';
   }
-
-  function move(instanceId: string, zone: Zone) {
+  function move(instanceId: string, zone: FusionZone) {
     occurrences = occurrences.map((entry) =>
       entry.instanceId === instanceId ? { ...entry, zone } : entry,
     );
   }
-
-  function reorderZone(zone: Zone, instanceId: string, delta: number) {
-    const ids = occurrences.filter((entry) => entry.zone === zone).map((entry) => entry.instanceId);
-    const from = ids.indexOf(instanceId);
-    const to = from + delta;
-    if (from < 0 || to < 0 || to >= ids.length) return;
-    [ids[from], ids[to]] = [ids[to]!, ids[from]!];
-    let index = 0;
-    occurrences = occurrences.map((entry) =>
-      entry.zone === zone
-        ? occurrences.find((candidate) => candidate.instanceId === ids[index++])!
-        : entry,
-    );
-  }
-
-  function addToChain(instanceId: string) {
-    if (!chainIds.includes(instanceId)) chainIds = [...chainIds, instanceId];
-  }
-
-  function removeFromChain(instanceId: string) {
-    chainIds = chainIds.filter((id) => id !== instanceId);
-  }
-
-  function reorderChain(instanceId: string, delta: number) {
-    const from = chainIds.indexOf(instanceId);
-    const to = from + delta;
-    if (from < 0 || to < 0 || to >= chainIds.length) return;
-    const next = [...chainIds];
-    [next[from], next[to]] = [next[to]!, next[from]!];
-    chainIds = next;
-  }
-
-  function cardFor(id: number) {
-    return cardById.get(id);
-  }
 </script>
 
 <section aria-label="Fusion workspace">
-  <header class="mb-5 flex flex-wrap items-end justify-between gap-3">
+  <header class="mb-6 flex flex-wrap items-start justify-between gap-3">
     <div>
       <h1 class="m-0 text-2xl font-semibold tracking-tight">Fusion Workspace</h1>
-      <p class="mb-0 mt-1 max-w-3xl text-sm text-muted-foreground">
-        Organize card occurrences and preview ordinary fusions from the canonical DotR table.
+      <p class="mb-0 mt-1 text-sm text-muted-foreground">
+        Enter your available cards. Fusions and compatibility update automatically.
       </p>
     </div>
-    <p
-      class="m-0 max-w-xl rounded-md border border-border bg-surface px-3 py-2 text-xs leading-relaxed text-muted-foreground"
+    <button
+      class="control-button"
+      disabled={!occurrences.length}
+      onclick={() => {
+        occurrences = [];
+        filter = '';
+      }}>Clear inputs</button
     >
-      Hand and Summoning Area are planning labels. The workspace does not model game capacity,
-      failed-fusion discards, equips, rituals, or random outcomes. Previews never consume cards.
-    </p>
   </header>
 
-  {#if unknownOccurrences.length}
-    <p
-      class="mb-4 rounded-md border border-warning bg-surface p-3 text-sm text-warning"
-      role="alert"
-    >
-      Some workspace occurrences reference unknown canonical card IDs and are excluded from
-      previews.
-    </p>
-  {/if}
-
-  <div class="grid gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(25rem,.8fr)]">
-    <section aria-labelledby="zones-heading" class="min-w-0">
-      <h2 id="zones-heading" class="mb-3 text-lg font-semibold">Planning zones</h2>
-      <div class="grid gap-4 md:grid-cols-2">
-        {#each [{ zone: 'hand' as Zone, title: 'Hand', entries: hand }, { zone: 'summoning' as Zone, title: 'Summoning Area', entries: summoning }] as group (group.zone)}
+  <div class="grid items-start gap-6 xl:grid-cols-[minmax(20rem,.8fr)_minmax(0,1.2fr)]">
+    <section aria-label="Available cards" class="min-w-0">
+      <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-1">
+        {#each [{ zone: 'hand' as FusionZone, title: 'Hand', entries: hand }, { zone: 'summoning' as FusionZone, title: 'Summoning Area', entries: summoning }] as group (group.zone)}
           <section
-            class="rounded-lg border border-border bg-surface p-3"
+            class="min-w-0 rounded-lg border border-border bg-surface p-3"
             aria-labelledby={'zone-' + group.zone}
           >
             <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <h3 id={'zone-' + group.zone} class="m-0 text-base font-semibold">{group.title}</h3>
-                <p class="mb-0 mt-0.5 text-xs text-muted-foreground">
-                  {group.entries.length}
-                  {group.entries.length === 1 ? 'occurrence' : 'occurrences'}
-                </p>
-              </div>
+              <h2 id={'zone-' + group.zone} class="m-0 text-base font-semibold">
+                {group.title}
+                <span class="number ml-1 text-sm font-normal text-muted-foreground"
+                  >{group.entries.length}</span
+                >
+              </h2>
               <CardPicker
                 {cards}
                 label={'Add to ' + group.title}
@@ -172,62 +164,68 @@
               />
             </div>
             {#if group.entries.length}
-              <ol class="m-0 grid list-none gap-2 p-0">
-                {#each group.entries as entry, index (entry.instanceId)}
+              <ol class="m-0 grid list-none gap-3 p-0">
+                {#each group.entries as entry (entry.instanceId)}
+                  {@const card = cardById.get(entry.cardId)!}
+                  {@const match = compatibility.get(entry.instanceId)!}
+                  {@const indicator = status[match.ordinary]}
+                  {@const StatusIcon = indicator.icon}
                   <li
-                    class="flex min-w-0 flex-wrap items-center gap-2 rounded-md border border-border bg-background p-2"
+                    class="min-w-0 border-t border-border pt-3"
+                    aria-label={labels.get(entry.instanceId) + ': ' + card.name}
                   >
-                    <div class="w-14 shrink-0 overflow-hidden rounded-sm">
-                      <CardArtwork
-                        image={entry.card.image}
-                        name={entry.card.name}
-                        cardId={entry.cardId}
-                        decorative
-                      />
+                    <div class="flex min-w-0 items-start gap-3">
+                      <div class="w-16 shrink-0 overflow-hidden rounded-sm">
+                        <CardArtwork
+                          image={card.image}
+                          name={card.name}
+                          cardId={card.id}
+                          decorative
+                        />
+                      </div>
+                      <div class="min-w-0 flex-1">
+                        <p class="m-0 break-words text-sm font-semibold">{card.name}</p>
+                        <p class="mb-1 mt-0 text-xs text-muted-foreground">
+                          #{String(card.id).padStart(3, '0')} · {labels.get(entry.instanceId)}
+                        </p>
+                        <p
+                          class={'m-0 flex items-start gap-1.5 text-xs leading-relaxed ' +
+                            indicator.class}
+                        >
+                          <StatusIcon
+                            class="mt-0.5 size-3.5 shrink-0"
+                            aria-hidden="true"
+                          />{indicator.label}
+                        </p>
+                        {#if match.special}<p
+                            class="mb-0 mt-1 flex items-start gap-1.5 text-xs text-warning"
+                          >
+                            <Sparkles class="size-3.5 shrink-0" aria-hidden="true" />Special
+                            combination available
+                          </p>{/if}
+                      </div>
                     </div>
-                    <div class="min-w-0 flex-1">
-                      <p class="m-0 truncate text-sm font-medium">{entry.card.name}</p>
-                      <p class="m-0 text-xs text-muted-foreground">
-                        #{String(entry.cardId).padStart(3, '0')} · {entry.card.kind === 'monster'
-                          ? entry.card.monsterType
-                          : entry.card.kind}
-                        · {group.title}
-                        {index + 1}/{group.entries.length}
-                      </p>
-                    </div>
-                    <div
-                      class="ml-auto flex w-full min-w-0 flex-wrap justify-end gap-1 sm:w-auto sm:shrink-0"
-                    >
+                    <div class="mt-2 flex flex-wrap justify-end gap-2">
                       <button
                         class="control-button"
                         aria-label={'Move ' +
-                          entry.card.name +
+                          labels.get(entry.instanceId) +
+                          ', ' +
+                          card.name +
                           ' to ' +
                           (group.zone === 'hand' ? 'Summoning Area' : 'Hand')}
                         onclick={() =>
                           move(entry.instanceId, group.zone === 'hand' ? 'summoning' : 'hand')}
-                        >Move</button
+                        >{group.zone === 'hand' ? 'To Summoning Area' : 'To Hand'}</button
                       >
                       <button
                         class="control-button"
-                        aria-label={'Move ' + entry.card.name + ' earlier in ' + group.title}
-                        disabled={index === 0}
-                        onclick={() => reorderZone(group.zone, entry.instanceId, -1)}>↑</button
+                        aria-label={'Duplicate ' + labels.get(entry.instanceId) + ', ' + card.name}
+                        onclick={() => add(card.id, group.zone)}>Copy</button
                       >
                       <button
                         class="control-button"
-                        aria-label={'Move ' + entry.card.name + ' later in ' + group.title}
-                        disabled={index === group.entries.length - 1}
-                        onclick={() => reorderZone(group.zone, entry.instanceId, 1)}>↓</button
-                      >
-                      {#if !chainIds.includes(entry.instanceId)}<button
-                          class="control-button"
-                          aria-label={'Add ' + entry.card.name + ' to fusion chain'}
-                          onclick={() => addToChain(entry.instanceId)}>Chain +</button
-                        >{/if}
-                      <button
-                        class="control-button danger"
-                        aria-label={'Remove ' + entry.card.name + ' occurrence'}
+                        aria-label={'Remove ' + labels.get(entry.instanceId) + ', ' + card.name}
                         onclick={() => remove(entry.instanceId)}>Remove</button
                       >
                     </div>
@@ -235,348 +233,159 @@
                 {/each}
               </ol>
             {:else}
-              <p class="empty-state">
-                No cards here yet. Use the picker to add an occurrence; the same card can be added
-                more than once.
+              <p class="my-4 text-sm text-muted-foreground">
+                {group.zone === 'hand'
+                  ? 'Add the cards in your hand to find what they can produce.'
+                  : 'Add cards already on your field to explore field-assisted combinations.'}
               </p>
             {/if}
           </section>
         {/each}
       </div>
+      <p class="mb-2 mt-4 text-xs leading-relaxed text-muted-foreground">
+        Unlimited inputs for planning; this is not an in-game five-card hand simulation. Copies are
+        separate, and previews never consume your cards.
+      </p>
+      <details class="text-xs leading-relaxed text-muted-foreground">
+        <summary class="cursor-pointer py-1 font-medium">Gameplay scope</summary>
+        <p>
+          Hand chains combine two cards, then the result with each next card in order.
+          Field-assisted chains start with a field monster and add Hand cards. Field pairs need
+          legal movement. Summoning Area entries are candidate field cards, not a modeled board or
+          occupied square.
+        </p>
+        <p>
+          Board positions, movement, capacity, failed-fusion discards, rituals, ordinary equip
+          bonuses, and random transformation results are not simulated. Hand-chain-to-field timing
+          and longer sequences involving multiple field cards are not evaluated.
+        </p>
+        <p>
+          “No ordinary fusion” only describes this input set. The card may still have power-up,
+          ritual, or other uses.
+        </p>
+        <a
+          class="text-link"
+          href="https://www.videogamemanual.com/PS2/Yu-Gi-Oh%21%20The%20Duelists%20of%20the%20Roses%20%28USA%29.pdf"
+          target="_blank"
+          rel="noreferrer">US PS2 manual · Combos, p. 34</a
+        >
+      </details>
     </section>
 
-    <section aria-labelledby="preview-heading" class="min-w-0">
-      <h2 id="preview-heading" class="mb-3 text-lg font-semibold">Ordinary fusion previews</h2>
-      <section
-        class="mb-4 rounded-lg border border-border bg-surface p-3"
-        aria-labelledby="direct-heading"
-      >
-        <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h3 id="direct-heading" class="m-0 text-base font-semibold">Two-card preview</h3>
-          <span class="text-xs text-muted-foreground"
-            >Order does not affect ordinary fusion lookup</span
+    <section aria-labelledby="results-heading" class="min-w-0">
+      <div class="mb-4 border-b border-border pb-4">
+        <h2 id="results-heading" class="mb-1 mt-0 text-lg font-semibold">
+          Fusion results <span class="number text-sm font-normal text-muted-foreground"
+            >{discovery.results.length}</span
           >
-        </div>
-        {#if allOptions.length < 2}
-          <p class="empty-state">Add at least two card occurrences to preview a pair.</p>
-        {:else}
-          <div class="mb-3 grid gap-2 sm:grid-cols-2">
-            <label class="field-label"
-              >First occurrence<select
-                class="native-select"
-                value={directLeft?.instanceId ?? ''}
-                onchange={(event) => (directLeftId = event.currentTarget.value)}
-                aria-label="First occurrence for two-card preview"
-                >{#each allOptions as entry (entry.instanceId)}<option value={entry.instanceId}
-                    >{optionLabel(entry)}</option
-                  >{/each}</select
-              ></label
-            >
-            <label class="field-label"
-              >Second occurrence<select
-                class="native-select"
-                value={directRight?.instanceId ?? ''}
-                onchange={(event) => (directRightId = event.currentTarget.value)}
-                aria-label="Second occurrence for two-card preview"
-                >{#each allOptions as entry (entry.instanceId)}<option value={entry.instanceId}
-                    >{optionLabel(entry)}</option
-                  >{/each}</select
-              ></label
-            >
-          </div>
-          {#if directLeft && directRight && directLeft.instanceId === directRight.instanceId}
-            <p class="empty-state" role="status">
-              Choose two separate occurrences, including two copies of the same card if available.
-            </p>
-          {:else if directLeft && directRight}
-            <div class="preview-row">
-              <div class="preview-material">
-                <CardFlipTile
-                  card={directLeft.card}
-                  id={'fusion-direct-left-' + directLeft.instanceId}
-                />
-              </div>
-              <span class="operator" aria-hidden="true">+</span>
-              <div class="preview-material">
-                <CardFlipTile
-                  card={directRight.card}
-                  id={'fusion-direct-right-' + directRight.instanceId}
-                />
-              </div>
-              <span class="operator" aria-hidden="true">→</span>
-              {#if directResult !== null && cardFor(directResult)}
-                <div class="preview-material result">
-                  <p class="result-label">Fusion result</p>
-                  <CardFlipTile card={cardFor(directResult)!} id="fusion-direct-result" />
-                </div>
-              {:else}
-                <p class="no-result" role="status">No ordinary fusion is recorded for this pair.</p>
-              {/if}
-            </div>
-          {/if}
-        {/if}
-        <p class="mb-0 mt-3 text-xs text-muted-foreground">
-          Special power-ups, Insect Imitation, and their outcomes are not evaluated here.
+        </h2>
+        <p class="m-0 text-sm text-muted-foreground" role="status" aria-live="polite">
+          {occurrences.length} input cards · {discovery.complete ? '' : 'at least '}{usable} usable in
+          ordinary fusions · {discovery.complete
+            ? occurrences.length - usable + ' without ordinary combinations'
+            : unevaluated + ' not fully evaluated'}
         </p>
-      </section>
-
-      <section
-        class="rounded-lg border border-border bg-surface p-3"
-        aria-labelledby="chain-heading"
-      >
-        <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h3 id="chain-heading" class="m-0 text-base font-semibold">Ordered fusion chain</h3>
-            <p class="mb-0 mt-0.5 text-xs text-muted-foreground">
-              Add occurrences from either zone, then adjust this order.
-            </p>
+        {#if !discovery.complete}
+          <div class="warning-note mt-3" role="status">
+            <p class="m-0 font-semibold">Partial results · Not fully evaluated</p>
+            {#if discovery.limits.includes('budget')}<p class="mb-0 mt-1">
+                The {discovery.maxChecks.toLocaleString()}-check search budget was reached. Found
+                recipes remain available; more may exist. Try fewer inputs for a complete search.
+              </p>{/if}
+            {#if discovery.limits.includes('field-sequences')}<p class="mb-0 mt-1">
+                Hand-chain-to-field and longer sequences involving multiple field cards are not
+                evaluated. Unproven cards remain undetermined.
+              </p>{/if}
+            {#if discovery.limits.includes('random')}<p class="mb-0 mt-1">
+                An available Insect Imitation pair has a random, unresolved outcome. No result or
+                subsequent fusion is inferred.
+              </p>{/if}
           </div>
-          <button class="control-button" disabled={!chainIds.length} onclick={() => (chainIds = [])}
-            >Clear chain</button
-          >
+        {/if}
+      </div>
+      {#if discovery.results.length}
+        <div class="mb-5 flex flex-wrap items-end gap-3">
+          <label class="min-w-0 flex-1 text-xs text-muted-foreground"
+            >Find a result
+            <input
+              class="native-filter mt-1 w-full"
+              type="search"
+              bind:value={filter}
+              placeholder="Name or card ID"
+            />
+          </label>
+          <label class="text-xs text-muted-foreground"
+            >Sort results
+            <select class="native-filter mt-1 block max-w-full" bind:value={sort}>
+              <option value="atk">Highest ATK</option><option value="materials"
+                >Fewest materials</option
+              ><option value="name">Card name</option><option value="id">Card ID</option>
+            </select>
+          </label>
         </div>
-        {#if orderedChain.length}
-          <ol class="m-0 mb-3 grid list-none gap-1.5 p-0">
-            {#each orderedChain as entry, index (entry.instanceId)}
-              <li
-                class="flex min-w-0 items-center gap-2 rounded-md border border-border bg-background p-2"
-              >
-                <span class="w-6 shrink-0 text-center text-xs font-semibold text-muted-foreground"
-                  >{index + 1}</span
-                >
-                <div class="w-9 shrink-0 overflow-hidden rounded-sm">
-                  <CardArtwork
-                    image={entry.card.image}
-                    name={entry.card.name}
-                    cardId={entry.cardId}
-                    decorative
-                  />
-                </div>
-                <span class="min-w-0 flex-1 truncate text-sm">{entry.card.name}</span>
-                <button
-                  class="control-button"
-                  aria-label={'Move ' + entry.card.name + ' earlier in fusion chain'}
-                  disabled={index === 0}
-                  onclick={() => reorderChain(entry.instanceId, -1)}>↑</button
-                ><button
-                  class="control-button"
-                  aria-label={'Move ' + entry.card.name + ' later in fusion chain'}
-                  disabled={index === orderedChain.length - 1}
-                  onclick={() => reorderChain(entry.instanceId, 1)}>↓</button
-                ><button
-                  class="control-button"
-                  aria-label={'Remove ' + entry.card.name + ' from fusion chain'}
-                  onclick={() => removeFromChain(entry.instanceId)}>Remove</button
-                >
-              </li>
-            {/each}
-          </ol>
-        {:else}
-          <p class="empty-state mb-3">
-            Your chain is empty. Add an occurrence with “Chain +” from either planning zone.
+        {#if !sortedResults.length}<p class="text-sm text-muted-foreground">
+            No results match this search. <button class="text-link" onclick={() => (filter = '')}
+              >Clear result search</button
+            >
+          </p>{/if}
+        {#each sortedResults as result (result.resultCardId)}<FusionResultCard
+            {result}
+            {cardById}
+            {labels}
+          />{/each}
+      {:else}
+        <div class="py-8">
+          <h3 class="mb-2 mt-0 text-base font-semibold">
+            {occurrences.length < 2
+              ? 'What can your cards become?'
+              : discovery.complete
+                ? 'No ordinary fusions with these cards'
+                : 'No ordinary fusions found yet'}
+          </h3>
+          <p class="m-0 max-w-lg text-sm leading-relaxed text-muted-foreground">
+            {occurrences.length < 2
+              ? 'Add at least two cards. Direct fusions, longer chains, and each card’s compatibility will appear here automatically.'
+              : discovery.complete
+                ? 'Every supported ordinary sequence has been checked. Try adding another available card; these cards may still be useful for power-ups, rituals, or other game actions.'
+                : 'The search is incomplete within the displayed limits. These cards cannot be declared incompatible.'}
           </p>
-        {/if}
-        {#if orderedChain.length === 1}
-          <p class="empty-state mb-3">Add another occurrence to preview a chain.</p>
-        {/if}
-        {#if chainResult}
-          {#if chainResult.steps.length}
-            <ol
-              class="m-0 grid list-none gap-3 p-0"
-              aria-label="Successful intermediate fusion results"
-            >
-              {#each chainResult.steps as step, index (`${index}-${step.resultCardId}`)}
-                {@const resultCard = cardFor(step.resultCardId)}
-                {#if resultCard}<li class="chain-result">
-                    <p class="result-label">
-                      Step {index + 1} · {cardFor(step.materials[0])?.name} + {cardFor(
-                        step.materials[1],
-                      )?.name}
-                    </p>
-                    <div class="chain-card">
-                      <CardFlipTile
-                        card={resultCard}
-                        id={'fusion-chain-step-' + index + '-' + step.resultCardId}
-                      />
-                    </div>
-                  </li>{/if}
-              {/each}
-            </ol>
-          {/if}
-          {#if chainResult.status === 'no-fusion'}
-            {@const next = orderedChain[chainResult.at]}
-            {@const current = cardFor(chainResult.resultCardId)}
-            <div class="failure-panel" role="status">
-              <strong>Chain stopped at step {chainResult.at}.</strong><span
-                >No ordinary fusion for the current result and next occurrence. This preview does
-                not decide what the game discards.</span
-              >
-              {#if current && next}<div class="failure-pair">
-                  <div class="chain-card">
-                    <p class="result-label">Current result</p>
-                    <CardFlipTile
-                      card={current}
-                      id={'fusion-chain-failed-current-' + next.instanceId}
-                    />
-                  </div>
-                  <span class="operator" aria-hidden="true">+</span>
-                  <div class="chain-card">
-                    <p class="result-label">Next occurrence</p>
-                    <CardFlipTile
-                      card={next.card}
-                      id={'fusion-chain-failed-next-' + next.instanceId}
-                    />
-                  </div>
-                </div>{/if}
-            </div>
-          {:else if chainResult.status === 'complete' && cardFor(chainResult.resultCardId)}
-            {@const finalCard = cardFor(chainResult.resultCardId)!}
-            <div class="mt-3 border-t border-border pt-3">
-              <p class="result-label">Final chain result</p>
-              <div class="chain-card">
-                <CardFlipTile card={finalCard} id={'fusion-chain-final-' + finalCard.id} />
-              </div>
-            </div>
-          {/if}
-        {/if}
-        <p class="mb-0 mt-3 text-xs text-muted-foreground">
-          Successful steps use the canonical ordinary-fusion table. A preview does not remove
-          materials or determine failed-chain consumption.
-        </p>
-      </section>
+        </div>
+      {/if}
+      {#if specialResults.length}
+        <section class="mt-6" aria-labelledby="special-heading">
+          <h2 id="special-heading" class="mb-1 text-lg font-semibold">Special combinations</h2>
+          <p class="mb-4 mt-0 text-xs leading-relaxed text-muted-foreground">
+            Known deterministic power-up transformations for exact available pairs. Separate from
+            ordinary fusion; equip bonuses and subsequent chains are not evaluated.
+          </p>
+          {#each specialResults as result (result.resultCardId)}<FusionResultCard
+              {result}
+              {cardById}
+              {labels}
+              special
+            />{/each}
+        </section>
+      {/if}
     </section>
   </div>
 </section>
 
 <style>
-  .control-button {
-    min-height: 2rem;
+  :global(.control-button) {
+    min-height: 32px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--surface);
-    padding: 0.35rem 0.55rem;
+    padding: 0.25rem 0.5rem;
     color: var(--foreground);
-    font: inherit;
-    font-size: 0.7rem;
-    cursor: pointer;
-  }
-  .control-button:hover:not(:disabled) {
-    border-color: var(--primary);
-    color: var(--primary);
-  }
-  .control-button:focus-visible,
-  .native-select:focus-visible {
-    outline: 2px solid var(--ring);
-    outline-offset: 2px;
-  }
-  .control-button:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-  }
-  .control-button.danger {
-    color: var(--warning);
-  }
-  .empty-state {
-    margin: 0;
-    border-radius: var(--radius);
-    background: var(--background);
-    padding: 0.75rem;
-    color: var(--muted-foreground);
-    font-size: 0.8rem;
-    line-height: 1.45;
-  }
-  .field-label {
-    display: grid;
-    gap: 0.35rem;
-    color: var(--muted-foreground);
     font-size: 0.75rem;
   }
-  .native-select {
-    min-height: 2.5rem;
-    min-width: 0;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--background);
-    padding: 0.4rem 0.55rem;
-    color: var(--foreground);
-    font: inherit;
-    font-size: 0.8rem;
+  :global(.control-button:hover:not(:disabled)) {
+    background: var(--hover);
+    border-color: var(--primary);
   }
-  .preview-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.6rem;
-  }
-  .preview-material {
-    width: min(100%, 10rem);
-  }
-  .preview-material :global(.card-tile) {
-    height: 13rem;
-  }
-  .preview-material.result {
-    border-left: 1px solid var(--border);
-    padding-left: 0.6rem;
-  }
-  .operator {
-    color: var(--muted-foreground);
-    font-size: 1.2rem;
-    font-weight: 600;
-  }
-  .no-result {
-    margin: 0;
-    max-width: 12rem;
-    color: var(--warning);
-    font-size: 0.8rem;
-  }
-  .result-label {
-    margin: 0 0 0.4rem;
-    color: var(--muted-foreground);
-    font-size: 0.7rem;
-    font-weight: 600;
-  }
-  .chain-result {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    border-top: 1px solid var(--border);
-    padding-top: 0.7rem;
-  }
-  .chain-result .chain-card {
-    width: 8rem;
-  }
-  .chain-card :global(.card-tile) {
-    height: 12rem;
-  }
-  .failure-panel {
-    display: grid;
-    gap: 0.4rem;
-    border: 1px solid var(--warning);
-    border-radius: var(--radius);
-    background: var(--background);
-    padding: 0.75rem;
-    font-size: 0.8rem;
-  }
-  .failure-pair {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.6rem;
-    margin-top: 0.35rem;
-  }
-  .failure-pair .chain-card {
-    width: 8rem;
-  }
-  @media (max-width: 640px) {
-    .preview-row {
-      align-items: flex-start;
-    }
-    .preview-material {
-      width: calc(50% - 1.2rem);
-    }
-    .preview-material.result {
-      border-left: 0;
-      padding-left: 0;
-    }
+  :global(.control-button:disabled) {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 </style>
