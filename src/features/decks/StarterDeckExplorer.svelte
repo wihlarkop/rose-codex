@@ -19,9 +19,9 @@
     oncreate: (deck: StarterImport) => void;
   } = $props();
 
-  const cardById = new Map(cards.map((card) => [card.id, card]));
+  const cardById = $derived(new Map(cards.map((card) => [card.id, card])));
   const deckByLeader = new Map(starterData.decks.map((deck) => [deck.leaderCardId, deck]));
-  const costs = new Map(cards.map((card) => [card.id, card.deckCost]));
+  const costs = $derived(new Map(cards.map((card) => [card.id, card.deckCost])));
 
   let playerName = $state('');
   let selectedLeaderId = $state<number | null>(null);
@@ -157,7 +157,6 @@
         <div
           class="preview-scroll"
           role="region"
-          tabindex="0"
           aria-label="Forty-card starter contents"
         >
           <ul>
@@ -324,14 +323,8 @@
     color: var(--warning);
   }
   .preview-scroll {
-    max-height: 20rem;
-    overflow-y: auto;
     border: 1px solid var(--border);
     border-radius: var(--radius);
-  }
-  .preview-scroll:focus-visible {
-    outline: 2px solid var(--primary);
-    outline-offset: 2px;
   }
   .preview-scroll ul {
     margin: 0;
