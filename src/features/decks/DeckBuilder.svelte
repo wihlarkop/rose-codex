@@ -1,10 +1,9 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
-  import CardPicker from '../../components/cards/CardPicker.svelte';
   import CardArtwork from '../../components/cards/CardArtwork.svelte';
   import CardFlipTile from '../../components/cards/CardFlipTile.svelte';
   import { Button } from '../../components/ui/button';
-  import type { BrowserCard } from '../../lib/dotr/browser';
+  import { filterCards, type BrowserCard } from '../../lib/dotr/browser';
   import {
     DECK_STORAGE_KEY,
     knownDeckCost,
@@ -35,6 +34,8 @@
   let storageBlocked = $state(false);
   let writeFailed = $state(false);
   let importText = $state('');
+  let cardSearch = $state('');
+  let selectedSearchIndex = $state(0);
   let inspectedCardId = $state<number | null>(null);
   let confirmationDialog = $state<HTMLDialogElement | null>(null);
   let cancelConfirmationButton = $state<HTMLButtonElement | null>(null);
@@ -55,6 +56,17 @@
     }
     return [...groups.values()].sort((a, b) => a.card.name.localeCompare(b.card.name));
   });
+  const copyCounts = $derived.by(() => {
+    const counts = new Map<number, number>();
+    for (const id of active?.cardIds ?? []) counts.set(id, (counts.get(id) ?? 0) + 1);
+    return counts;
+  });
+  const matchingCards = $derived(
+    cardSearch.trim()
+      ? filterCards(cards, { query: cardSearch, kind: '', monsterType: '', attribute: '' })
+      : [],
+  );
+  const visibleMatches = $derived(matchingCards.slice(0, 12));
   const kinds = $derived.by(() => {
     const counts = new Map<string, number>();
     for (const id of active?.cardIds ?? []) {
@@ -211,6 +223,20 @@
     const id = active.id;
     occurrenceIds = { ...occurrenceIds, [id]: [...(occurrenceIds[id] ?? []), crypto.randomUUID()] };
     updateDeck(id, (deck) => ({ ...deck, cardIds: [...deck.cardIds, cardId] }));
+  }
+  function searchKeydown(event: KeyboardEvent) {
+    if (!visibleMatches.length) return;
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      selectedSearchIndex = Math.min(selectedSearchIndex + 1, visibleMatches.length - 1);
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      selectedSearchIndex = Math.max(selectedSearchIndex - 1, 0);
+    } else if (event.key === 'Enter' && !event.isComposing) {
+      event.preventDefault();
+      const match = visibleMatches[selectedSearchIndex];
+      if (match) addCard(match.id);
+    }
   }
   function removeCard(instanceId: string) {
     if (!active) return;
@@ -413,9 +439,62 @@
       <section class="picker surface" aria-label="Add cards">
         <div>
           <h2>Add cards</h2>
-          <p>Search by card name or number, then choose a card to add a copy.</p>
+          <p id="deck-search-help">
+            Search by name or card number. Use ↑/↓ and Enter to add from your keyboard.
+          </p>
         </div>
-        <CardPicker {cards} label="Add cards" onselect={addCard} />
+        <input
+          id="deck-card-search"
+          type="search"
+          aria-label="Search cards to add"
+          aria-describedby="deck-search-help"
+          aria-controls="deck-card-results"
+          placeholder="Search cards, e.g. Baby Dragon or 021…"
+          autocomplete="off"
+          bind:value={cardSearch}
+          oninput={() => (selectedSearchIndex = 0)}
+          onkeydown={searchKeydown}
+        />
+        {#if cardSearch.trim()}
+          <p class="search-feedback" role="status">
+            {matchingCards.length === 0
+              ? 'No matching cards. Try a different name or ID.'
+              : matchingCards.length > visibleMatches.length
+                ? `Showing ${visibleMatches.length} of ${matchingCards.length} matches · Keep typing to narrow results.`
+                : `${matchingCards.length} matching ${matchingCards.length === 1 ? 'card' : 'cards'}.`}
+          </p>
+        {/if}
+        <ul id="deck-card-results" class="search-results" aria-label="Card search results">
+          {#each visibleMatches as card, index (card.id)}
+            <li class="search-result" class:active={index === selectedSearchIndex}>
+              <div class="search-match">
+                <div class="search-artwork">
+                  <CardArtwork
+                    image={card.image}
+                    name={card.name}
+                    cardId={card.id}
+                    decorative
+                  />
+                </div>
+                <div class="search-text">
+                  <strong>{card.name}</strong>
+                  <span>
+                    #{String(card.id).padStart(3, '0')}
+                    · {card.monsterType ?? (card.kind === 'monster' ? 'Monster' : card.kind)}
+                  </span>
+                </div>
+              </div>
+              <div class="search-actions">
+                <span class="search-copies">{copyCounts.get(card.id) ?? 0} in deck</span>
+                <Button
+                  size="sm"
+                  aria-label={`Add ${card.name} to deck`}
+                  onclick={() => addCard(card.id)}
+                >+ Add</Button>
+              </div>
+            </li>
+          {/each}
+        </ul>
       </section>
 
       <section class="cards-section" aria-label="Cards in this deck">
@@ -500,7 +579,7 @@
         {:else}
           <div class="empty surface">
             <h3>Start with a card</h3>
-            <p>Search the card library above, then add your first copy here.</p>
+            <p>Use the search above to find a card and add your first copy.</p>
           </div>
         {/if}
       </section>
@@ -754,11 +833,10 @@
     color: var(--muted-foreground);
   }
   .picker {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+    display: grid;
+    gap: 0.65rem;
     padding: 0.8rem 1rem;
+    min-width: 0;
   }
   .picker h2,
   .section-heading h2 {
@@ -770,14 +848,85 @@
     color: var(--muted-foreground);
     font-size: 0.8125rem;
   }
-  .picker :global(button[aria-label^='Add cards']) {
-    border-color: var(--primary);
-    background: var(--primary);
-    color: var(--surface);
-    font-weight: 650;
+  #deck-card-search {
+    width: 100%;
+    min-width: 0;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--elevated);
+    color: var(--foreground);
+    font-size: 0.875rem;
   }
-  .picker :global(button[aria-label^='Add cards']:hover) {
-    filter: brightness(0.94);
+  #deck-card-search:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+  .search-feedback {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+  }
+  .search-results {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .search-result {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.45rem 0.75rem;
+    min-width: 0;
+    padding: 0.4rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .search-result.active {
+    border-color: var(--primary);
+    background: var(--selected);
+  }
+  .search-match {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 10rem;
+  }
+  .search-artwork {
+    width: 3rem;
+    flex-shrink: 0;
+  }
+  .search-artwork :global(.card-artwork) {
+    width: 3rem;
+    height: 2.4rem;
+    border-radius: 4px;
+  }
+  .search-text {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+  .search-text strong {
+    overflow: hidden;
+    font-size: 0.875rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .search-text span,
+  .search-copies {
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+  }
+  .search-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+    white-space: nowrap;
   }
   .cards-section {
     min-width: 0;
@@ -989,10 +1138,6 @@
     .summary,
     .guidance {
       grid-column: 1 / -1;
-    }
-    .picker {
-      align-items: flex-start;
-      flex-direction: column;
     }
   }
   @media (max-width: 420px) {
