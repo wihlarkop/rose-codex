@@ -82,8 +82,8 @@
       aria-invalid={Boolean(result.error)}
     />
     <p id="dotr-name-help">
-      1–12 characters. Uppercase, lowercase and spaces change the result. Enter your name exactly
-      as it appears in the English-language game.
+      1–12 characters. Uppercase, lowercase and spaces change the result. Enter your name exactly as
+      it appears in the English-language game.
     </p>
   </div>
 
@@ -114,7 +114,8 @@
             <span class="leader-description">
               <strong>{choice.leader.name}</strong>
               <span>Deck Leader · #{String(choice.leaderId).padStart(3, '0')}</span>
-              <span>{choice.deck ? '40-card starter list available' : 'Deck list unavailable'}</span>
+              <span>{choice.deck ? '40-card starter list available' : 'Deck list unavailable'}</span
+              >
             </span>
           {:else}
             <span>Unknown Deck Leader #{String(choice.leaderId).padStart(3, '0')}</span>
@@ -130,9 +131,9 @@
             <h3>{selected.leader.name} starter deck</h3>
             <p>
               {selected.deck.cardIds.length} main-deck cards ·
-              {previewRows.length} unique ·
-              Known Deck Cost {selectedCost?.known ?? 0}
-              {#if selectedCost?.unknown} · {selectedCost.unknown} unknown costs{/if}
+              {previewRows.length} unique · Known Deck Cost {selectedCost?.known ?? 0}
+              {#if selectedCost?.unknown}
+                · {selectedCost.unknown} unknown costs{/if}
             </p>
           </div>
           <button type="button" class="create-starter" onclick={createFromSelection}>
@@ -141,8 +142,8 @@
         </div>
         {#if selected.deck.status === 'manual-review'}
           <p class="evidence-note">
-            This starter list is flagged for manual review in Rose Codex's canonical data.
-            Compare its contents against your game before relying on it.
+            This starter list is flagged for manual review in Rose Codex's canonical data. Compare
+            its contents against your game before relying on it.
           </p>
         {:else}
           <p class="evidence-note">
@@ -150,10 +151,15 @@
           </p>
         {/if}
         <p class="leader-caveat">
-          Creates a separate editable 40-card deck. The chosen Deck Leader is recorded in the
-          new deck's name; leader selection and rank are not yet part of the saved deck format.
+          Creates a separate editable 40-card deck. The chosen Deck Leader is recorded in the new
+          deck's name; leader selection and rank are not yet part of the saved deck format.
         </p>
-        <div class="preview-scroll" role="region" tabindex="0" aria-label="Forty-card starter contents">
+        <div
+          class="preview-scroll"
+          role="region"
+          tabindex="0"
+          aria-label="Forty-card starter contents"
+        >
           <ul>
             {#each previewRows as row (row.id)}
               <li>
