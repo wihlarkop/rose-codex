@@ -51,10 +51,13 @@ export function setAsideHandCard(session: PracticeSession, instanceId: string): 
   };
 }
 
-export function handLink(cardIds: readonly number[]): string {
+export type HandLinkSource = 'simulator' | 'recipes';
+
+export function handLink(cardIds: readonly number[], source?: HandLinkSource): string {
   if (!cardIds.length || cardIds.length > 5 || !cardIds.every(Number.isSafeInteger))
     throw new RangeError('Hand link must contain between one and five canonical card IDs.');
-  return '/fusion/?hand=' + encodeURIComponent(cardIds.join(','));
+  const hand = '/fusion/?hand=' + encodeURIComponent(cardIds.join(','));
+  return source ? hand + '&from=' + source : hand;
 }
 
 export function parseHandLink(query: string, allowedIds: ReadonlySet<number>): number[] | null {
