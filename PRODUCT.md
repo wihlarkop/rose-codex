@@ -40,8 +40,10 @@ capacity. Field-assisted recipes begin with a field card; field pairs are
 conditional on legal movement. A 25,000-check budget bounds discovery. Budget,
 unsupported field sequences, and unresolved random pairs make limitations visible
 and prevent definitive negative compatibility. Previews never consume materials.
-Board legality, failed-fusion discards, equip bonuses, rituals, and random results
-are not simulated. See [Fusion behavior](docs/fusion-workspace.md).
+An optional explicit Summon result action consumes the chosen recipe's original
+planning occurrences and adds one result in Summoning Area, with one-step Undo;
+automatic previews never modify the workspace. Board legality, failed-fusion
+discards, equip bonuses, rituals, and random results are not simulated. See [Fusion behavior](docs/fusion-workspace.md).
 
 ## Deck Builder
 
