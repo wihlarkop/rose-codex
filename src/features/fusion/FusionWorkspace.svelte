@@ -303,8 +303,8 @@
       </div>
       <p class="mb-2 mt-4 text-xs leading-relaxed text-muted-foreground">
         Unlimited inputs for planning; this is not an in-game five-card hand simulation. Copies are
-        separate. Fusion previews do not consume cards; choosing "Summon result" applies a recipe
-        to this planner, removes only its source occurrences, and adds its result to Summoning Area.
+        separate. Fusion previews do not consume cards; choosing "Summon result" applies a recipe to
+        this planner, removes only its source occurrences, and adds its result to Summoning Area.
         This does not perform an action in the game.
       </p>
       <details class="text-xs leading-relaxed text-muted-foreground">
