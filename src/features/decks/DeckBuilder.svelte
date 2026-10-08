@@ -469,12 +469,7 @@
             <li class="search-result" class:active={index === selectedSearchIndex}>
               <div class="search-match">
                 <div class="search-artwork">
-                  <CardArtwork
-                    image={card.image}
-                    name={card.name}
-                    cardId={card.id}
-                    decorative
-                  />
+                  <CardArtwork image={card.image} name={card.name} cardId={card.id} decorative />
                 </div>
                 <div class="search-text">
                   <strong>{card.name}</strong>
@@ -489,8 +484,8 @@
                 <Button
                   size="sm"
                   aria-label={`Add ${card.name} to deck`}
-                  onclick={() => addCard(card.id)}
-                >+ Add</Button>
+                  onclick={() => addCard(card.id)}>+ Add</Button
+                >
               </div>
             </li>
           {/each}
