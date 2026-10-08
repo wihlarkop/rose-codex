@@ -256,6 +256,7 @@
       </p>
     </div>
     <div class="flex flex-wrap items-center gap-2">
+      <a href="/recipes/" class="control-button">Find recipes by result →</a>
       {#if previousFusionInputs}
         <button type="button" class="control-button" onclick={undoFusion}>Undo last fusion</button>
       {/if}
