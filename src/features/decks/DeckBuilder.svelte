@@ -467,6 +467,12 @@
         <StarterDeckExplorer {cards} oncreate={createStarterDeck} />
       </details>
 
+      <p class="m-0 text-xs text-muted-foreground">
+        Won a new card after a duel?
+        <a class="text-link" href="/collection/">Add it to My Collection</a>
+        first, then move it from reserve into your 40-card deck.
+      </p>
+
       <section class="picker surface" aria-label="Add cards">
         <div>
           <h2>Add cards</h2>

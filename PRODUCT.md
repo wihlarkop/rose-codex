@@ -65,6 +65,20 @@ cards into a **new** editable browser-local deck. The selected leader is named i
 the deck title, not stored as a structured Deck Leader under schema version 1.
 Shuffle, draws, Deck Leader ranks and match legality remain future work.
 
+## Owned Collection and deck-assisted Fusion
+
+`/collection/` records per-card owned copy counts under a separate versioned
+localStorage key, initially estimated conservatively from the maximum
+usage across existing deck presets. The user explicitly moves active deck
+cards to Reserve or moves owned Reserve cards back into a deck. Existing
+overfull deck contents and the deck storage schema are preserved.
+Full legality checks, syncing game rewards, and structured leader data
+remain out of scope.
+
+Fusion can display any saved deck and let a user select specific real
+Hand/Field cards from it, not automatically load all 40 into Hand.
+Deck-assisted Fusion does not shuffle or draw yet.
+
 ## Evidence and open questions
 
 Canonical data covers 854 numbered records, IDs 000..853. Metadata is mostly

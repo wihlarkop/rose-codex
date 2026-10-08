@@ -32,6 +32,19 @@ deck in the workspace. Invalid imports leave the current decks intact. If the
 replacement cannot be saved, it remains in the tab with an unsaved warning and
 backup/retry actions.
 
+## Collection and Reserve
+
+Cards actually acquired in the game are tracked separately on
+[My Collection](/collection/). After a duel, add the won card to owned
+inventory rather than increasing the duel deck beyond 40. Collection
+separates the selected deck's copies from Reserve and lets the player move
+specific cards out of an existing 43-card deck without losing them.
+
+Existing version-1 deck JSON remains unchanged. Deck Builder retains its
+unrestricted planning editor; changes here do not automatically imply a
+corresponding owned copy. Collection highlights any deficit when selecting
+such a deck. See [Collection design](collection.md).
+
 ## Naming-based starter decks
 
 Expand **Try starter decks by player name** above the card search. Enter the

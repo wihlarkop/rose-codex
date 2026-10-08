@@ -6,6 +6,23 @@ zone movement, or clear. There is no manual pair selection, chain button, or
 sequence editor. State is local to the island and is not persisted. Unlimited
 planning inputs are not a simulation of the game's five-card hand or board.
 
+## Select cards from a saved deck
+
+An expandable **Choose cards from a saved deck** panel loads existing
+`rose-codex.decks.v1` deck presets into a visual picker. It does not put the
+entire 40-card deck into Hand. Players choose each available card from their
+actual Hand or Field, with correct copy counts relative to that deck and a
+five-card Hand limit for this deck-assisted selection only. Existing manual
+planning inputs remain available and unlimited.
+
+These selections exist only inside Fusion Workspace. They do not draw,
+shuffle, consume a saved deck copy, alter Collection, or persist a duel state.
+Opening another deck never silently replaces existing Hand or Field cards.
+A Refresh decks control reloads the current browser's storage; corrupt or
+unavailable storage is reported without blocking manual Fusion.
+A saved deck above 40 is marked as an over-target preset with a link to
+[Collection](/collection/) to choose reserve cards.
+
 ## Discovery contract
 
 `src/lib/dotr/fusion-discovery.ts` is pure TypeScript above the unchanged canonical
