@@ -38,6 +38,12 @@ independent game disassembly. No emulator, original console, or regional naming
 comparison was performed. The current contract targets the inspected English
 name-entry research.
 
+The [Deck Leader Reference](/leaders/) now allows players to review the
+selected starter's monster type, ranked ability research and general
+Leader rules. The Naming Simulator links to that reference. Choosing
+a card in this reference does not change the original starter or
+persist a Deck Leader assignment.
+
 ## Naming simulator in Deck Builder
 
 The Deck Builder contains an expandable **Try starter decks by player name**
