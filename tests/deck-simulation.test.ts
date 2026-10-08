@@ -41,4 +41,7 @@ test('transfers a validated five-card Hand through Fusion URL without losing cop
   expect(parseHandLink('?hand=21,36,534,0,683,587', new Set(ids))).toEqual([]);
   expect(parseHandLink('?hand=garbage', new Set(ids))).toEqual([]);
   expect(parseHandLink('?filter=21', new Set(ids))).toBeNull();
+  expect(handLink([21, 36], 'simulator')).toBe('/fusion/?hand=21%2C36&from=simulator');
+  expect(handLink([21, 36], 'recipes')).toBe('/fusion/?hand=21%2C36&from=recipes');
+  expect(parseHandLink('?hand=21%2C36&from=recipes', new Set([21, 36]))).toEqual([21, 36]);
 });
