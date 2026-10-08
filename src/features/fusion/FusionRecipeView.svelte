@@ -78,15 +78,15 @@
 <style>
   .summon-primary {
     min-height: 34px;
-    padding: .4rem .75rem;
+    padding: 0.4rem 0.75rem;
     border: 1px solid var(--primary);
     border-radius: var(--radius);
     background: var(--primary);
     color: var(--primary-foreground);
-    font-size: .75rem;
+    font-size: 0.75rem;
     font-weight: 650;
   }
   .summon-primary:hover {
-    filter: brightness(.94);
+    filter: brightness(0.94);
   }
 </style>
