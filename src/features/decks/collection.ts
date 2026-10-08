@@ -35,7 +35,7 @@ export function validateCollection(
   const owned: Record<string, number> = {};
   for (const [key, count] of Object.entries(raw.owned as Record<string, unknown>)) {
     const id = Number(key);
-    if (!/^\\d+$/.test(key) || String(id) !== key || !allowedCardIds.has(id))
+    if (!/^[0-9]+$/.test(key) || String(id) !== key || !allowedCardIds.has(id))
       throw new Error('Collection contains an unknown card ID.');
     if (typeof count !== 'number' || !Number.isSafeInteger(count) || count < 1)
       throw new Error('Collection counts must be positive safe integers.');
