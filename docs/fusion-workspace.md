@@ -38,6 +38,16 @@ IDs without modifying the originating saved deck, owned collection or
 practice session. Invalid links are not silently accepted. The manual
 Hand/Field pickers remain available.
 
+## Reverse result lookup
+
+Players who know the **target result** but not its required material cards
+can use [Fusion Encyclopedia](/recipes/), accessible directly from the
+Fusion Workspace header. It lists the full resolved ordinary **direct pair**
+table for the selected result, with Collection copy readiness and
+**Try in Fusion** links to prefill the exact two materials. It does not
+claim all multi-step reverse-chain paths. Deterministic power-up
+transformations are separate from ordinary fusions.
+
 ## Discovery contract
 
 `src/lib/dotr/fusion-discovery.ts` is pure TypeScript above the unchanged canonical
