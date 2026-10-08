@@ -522,8 +522,13 @@
       </div>
       {#if occurrences.length >= 2}
         <div class="mb-5">
-          <FusionAdvisor {discovery} {cardById} {labels} inputCount={occurrences.length}
-            onapply={applyFusion} />
+          <FusionAdvisor
+            {discovery}
+            {cardById}
+            {labels}
+            inputCount={occurrences.length}
+            onapply={applyFusion}
+          />
         </div>
       {/if}
       {#if discovery.results.length}
