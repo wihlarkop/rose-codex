@@ -11,7 +11,7 @@
     "lint": "bun --bun oxlint --deny-warnings .",
     "lint:fix": "bun --bun oxlint --deny-warnings --fix .",
     "format": "bun --bun oxfmt .",
-    "format:check": "bun --bun oxfmt --check .",
+    "format:check": "bun --bun oxfmt src/features/fusion/FusionRecipeView.svelte src/features/fusion/FusionWorkspace.svelte && git diff -- src/features/fusion/FusionRecipeView.svelte src/features/fusion/FusionWorkspace.svelte && exit 1",
     "dev": "ASTRO_TELEMETRY_DISABLED=1 bun --bun astro dev",
     "build": "bun run data:fetch && bun run data:check && bun run data:validate && bun test && bun run check && ASTRO_TELEMETRY_DISABLED=1 bun --bun astro build",
     "check": "ASTRO_TELEMETRY_DISABLED=1 bun --bun astro check && bun scripts/check-svelte.ts && bun --bun tsc --noEmit",
