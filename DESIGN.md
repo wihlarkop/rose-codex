@@ -67,6 +67,11 @@ special, and undetermined compatibility. Results use one image/metadata tile per
 final card beside ordered illustrated steps; native disclosures reveal alternative
 recipes in small batches. Desktop inputs and results sit side by side; mobile
 stacks them. Clear, copy, remove and zone movement stay beside the relevant inputs.
-Deck Builder uses a deck rail beside an editor and card grid. See
+Deck Builder centers one active deck with compact selection and creation controls,
+an editable name, persistent save feedback, 40-card progress and known cost.
+The visual Add cards picker leads into grouped thumbnail rows with quantities and
+one-copy controls. Card inspection stays in place; individual copies and composition
+use disclosures. Deck options keeps JSON backups and guarded destructive actions
+secondary. See
 [Fusion behavior and acceptance](docs/fusion-workspace.md) and
 [historical workspace acceptance](docs/workspace-report.md).

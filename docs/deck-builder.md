@@ -5,6 +5,26 @@ and canonical card IDs in `localStorage` under `rose-codex.decks.v1`; card art
 and metadata always come from the committed canonical library. JSON import and
 export use the same versioned envelope. Keep an export as a portable backup.
 
+## Building a deck
+
+Select a deck from **Your decks**, or choose **New deck**. Edit the active deck's
+name directly; changes save automatically in this browser. The header shows save
+status, progress toward 40 cards, and the known Deck Cost. Unknown costs stay
+separate from that total.
+
+Use **Add cards** to search the visual card picker by name or numbered ID.
+Cards are grouped into compact rows with thumbnails and quantities. Add or
+remove one copy beside its row, or expand the copy controls to remove a specific
+individual copy. Inspect a card in place to see its image and metadata. Composition
+and construction guidance remain available without a grid of 40 large tiles.
+
+**Deck options** contains duplication, deletion, and JSON backup controls.
+Deleting a deck and importing a replacement require confirmation. JSON export
+includes every deck; import validates the complete backup before replacing every
+deck in the workspace. Invalid imports leave the current decks intact. If the
+replacement cannot be saved, it remains in the tab with an unsaved warning and
+backup/retry actions.
+
 ## Construction rules
 
 The US PlayStation 2 instruction manual says a deck contains exactly 40 cards
@@ -41,3 +61,27 @@ data is preserved on startup and reported. Ordinary edits do not overwrite a
 corrupt record; an explicit valid import replaces it. Export backs up the current
 in-memory workspace, not the unreadable stored record. Read failures and failed
 writes are reported without claiming a save; write failures expose a retry action.
+
+## Browser acceptance
+
+The redesigned editor was exercised in Chrome on 2026-10-09 at 1920 × 889,
+390 × 844, and 320 × 740. Checks used the running app and its production static
+build, with disposable storage fixtures on a separate local origin.
+
+| Journey | Observed result |
+| --- | --- |
+| Empty deck and adding cards | Clear empty state and Add cards action; name/ID search, keyboard selection and focus return worked |
+| Copies and inspection | Quantities updated through 1x–4x; individual and one-copy removal updated counts/costs; image/metadata inspection stayed on the page and worked by keyboard |
+| Construction and composition | A 40-card fixture used 14 grouped rows; 41-card and four-copy warnings appeared; known cost and unknown #671 cost stayed separate; kind and monster-type summaries remained available |
+| Deck lifecycle | Create, select, rename on Enter/blur, duplicate, delete and refresh restoration worked; blank names restored the previous name |
+| Destructive guards | Cancel and Escape preserved decks and returned focus; explicit confirmation deleted the captured deck or replaced all decks; mobile options and confirmations stayed within the viewport |
+| JSON backups | Export included every deck in the existing version-1 format; confirmed round-trip import preserved names, IDs, card order and copies; an unknown card ID was rejected without replacement |
+| Storage protection | Existing saved data loaded with zero startup writes; corrupt data remained byte-for-byte unchanged through edits/export; denied reads allowed editing with zero writes |
+| Storage recovery | Quota and import-write failures displayed unsaved status; export retained in-tab edits; retry saved after writes were restored; only a confirmed valid import replaced a corrupt record |
+| Responsive layout | Desktop and narrow mobile layouts had no horizontal document overflow, including pending rename feedback at 320px |
+
+Oxlint, Oxfmt, Astro/Svelte/TypeScript checks, canonical data reproduction and
+validation, the existing 111 tests (244 expectations), and the static build
+passed. No test files, dependencies, card data, shared card components, Fusion
+code, storage key, or schema were changed. These are agent-driven browser
+acceptance journeys, not a new-player usability study or a complete legality check.
