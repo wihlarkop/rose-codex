@@ -68,4 +68,4 @@
   .text-link { color: var(--primary); text-decoration: underline; }
 }
 @media (max-width: 1050px) { .app-container { width: calc(100% - 3rem); } .header-context { display: none; } }
-@media (max-width: 600px) { .app-container { width: calc(100% - 1.5rem); } .header-inner { gap: var(--space-4); } .site-main { padding-top: var(--space-6); } .page-header { flex-wrap: wrap; } }
+@media (max-width: 600px) { .app-container { width: calc(100% - 1.5rem); } .header-inner { flex-wrap: wrap; gap: var(--space-2) var(--space-4); padding-block: var(--space-3); } .site-nav { flex-basis: 100%; } .site-main { padding-top: var(--space-6); } .page-header { flex-wrap: wrap; } }

@@ -48,6 +48,14 @@
     }
     return [...counts.entries()];
   });
+  const monsterTypes = $derived.by(() => {
+    const counts = new Map<string, number>();
+    for (const id of active?.cardIds ?? []) {
+      const card = cardById.get(id);
+      if (card?.monsterType) counts.set(card.monsterType, (counts.get(card.monsterType) ?? 0) + 1);
+    }
+    return [...counts.entries()];
+  });
 
   onMount(() => {
     try {
@@ -260,6 +268,11 @@
               >{#each kinds as [kind, count], i}{i ? ' · ' : ''}{kind}: {count}{/each}</span
             >
           </div>
+          {#if monsterTypes.length}
+            <p class="m-0 text-xs text-muted-foreground" aria-label="Monster type composition">
+              Monster types: {#each monsterTypes as [type, count], i}{i ? ' · ' : ''}{type}: {count}{/each}
+            </p>
+          {/if}
         </section>
         <section class="picker surface" aria-label="Add a card">
           <div>
@@ -347,7 +360,7 @@
   .deck-rail {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius);
   }
   .deck-rail {
     padding: 1rem;
@@ -476,7 +489,7 @@
     min-width: 0;
     padding: 0.5rem;
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius);
     background: var(--surface);
   }
   .copy-label {

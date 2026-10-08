@@ -29,7 +29,8 @@ quarter-rem scale. Prefer existing tokens and utilities over new literal colors.
 The custom `app-container` avoids Tailwind's responsive `container` utility.
 
 The homepage opens directly into the functional Card Library; `/cards/` remains
-an equivalent library route. The shell exposes only the Cards destination.
+an equivalent library route. The shell exposes Cards, Fusion, and Decks with
+the current destination marked. Navigation wraps on narrow screens.
 Content is capped at 1480px with 32px desktop gutters, then 24px on narrow
 desktops. The library uses 220px minimum tiles and 16px gaps, yielding a denser
 six-column grid at wide desktop sizes and larger cards as the viewport narrows.
@@ -54,10 +55,15 @@ image and metadata treatment across homepage, library, detail and picker uses.
 Standard controls use the existing shadcn-svelte primitives; Tailwind handles
 routine layout and shared CSS variables define the palette. Custom CSS is limited
 to product-specific image crops and the card flip. Astro renders static pages.
-One library Svelte island owns local interaction; canonical models, search and
+Each workspace has one Svelte island owning local interaction; canonical models, search and
 game mechanics remain outside presentation components. Images are local,
 lazy-loaded and dimensioned. Provenance and confidence remain available on
 detail pages.
 
 Historical acceptance is preserved in [Card Browser report](docs/card-browser-report.md).
 Current implementation is described in [UI Foundation report](docs/ui-foundation-report.md).
+
+Fusion and Deck Builder reuse the picker, card imagery, flip tiles, semantic
+tokens, and native controls. Fusion uses two planning lists beside illustrated
+previews; Deck Builder uses a deck rail beside an editor and card grid. Both
+stack on narrow screens. See [workspace acceptance](docs/workspace-report.md).

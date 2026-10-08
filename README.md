@@ -1,9 +1,11 @@
 # Rose Codex
 
 A fast, static, browser-based companion for **Yu-Gi-Oh! The Duelists of the
-Roses (PS2)**. Current status: **visual card library and reusable card picker**.
+Roses (PS2)**. Current status: **visual card library, Fusion Workspace, and Deck Builder**.
 Open `/cards/` to browse/search the numbered library; select a card for its full
-game screen and metadata. Fusion, naming, deck and reincarnation UIs remain future work.
+game screen and metadata. `/fusion/` previews ordinary fusions with distinct planning
+occurrences; `/decks/` manages browser-local decks with JSON backups. Naming,
+fusion reference, and reincarnation UIs remain future work.
 
 Long-term direction: Card Browser, Visual Fusion Simulator, Fusion Reference,
 Naming / Starter Deck Simulator, Deck Tools, and Reincarnation Tools.
@@ -24,7 +26,7 @@ bun run build
 ```
 
 Astro 7.3.6 produces static assets in `dist/`. The card browser uses one Svelte 5
-interactive island. TypeScript 6.0.3 satisfies the integrations'
+interactive island per workspace. TypeScript 6.0.3 satisfies the integrations'
 current peer ranges (TypeScript 7 is not supported by these pinned checkers).
 Everything runs through Bun, including the installed Wrangler entry point.
 
@@ -54,7 +56,24 @@ and ArrowUp/ArrowDown/Enter; Popover supplies Escape and focus return. The callb
 returns only canonical identity. `CardQuickLookup` handles navigation separately;
 future tools can handle selection without copying picker behavior. Artwork,
 tiles, stats and suggestion rows are project-owned under `src/components/cards/`.
-No global store or Fusion Workspace is implemented.
+Feature state stays within each workspace; there is no global store.
+
+## Planning workspaces
+
+Fusion supports duplicate occurrences, movement between Hand and Summoning Area,
+independent ordering/removal, and illustrated direct and ordered chain previews.
+Zones have unlimited planning capacity; they do not simulate game capacity.
+Only canonical ordinary fusions are evaluated. Previews never consume materials
+or infer failed-chain discards, equipment, rituals, or random transformations.
+
+Deck Builder supports multiple decks, names, duplication/deletion, individual
+copies, count/composition and known-cost summaries. Versioned localStorage saves
+only IDs and names; JSON import validates the entire envelope before replacement.
+Storage failures leave editing available and prompt users to export a backup.
+Count/copy guidance does not establish legality without a leader and opponent.
+
+See [Fusion behavior](docs/fusion-workspace.md), [deck format and rules](docs/deck-builder.md),
+and [integration and acceptance evidence](docs/workspace-report.md).
 
 
 ## Data

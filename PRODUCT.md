@@ -5,7 +5,8 @@
 A static companion for desktop/laptop players of Yu-Gi-Oh! The Duelists of the
 Roses who want to recognize cards visually without memorizing names. The library
 supports local name/ID search, kind/type/attribute filters, authentic game imagery,
-static card details and keyboard-friendly visual quick lookup.
+static card details and keyboard-friendly visual quick lookup. Fusion planning
+and browser-local deck construction reuse the same canonical cards and images.
 
 ## Constraints
 
@@ -18,19 +19,31 @@ explicit. Cloudflare deployment, the custom domain and R2 remain deferred.
 
 ## Presentation
 
-Dark, compact, subtle and desktop-oriented. Default tiles preserve the game
+Warm-neutral, compact, subtle and desktop-oriented. Default tiles preserve the game
 screen, with an optional artwork view for scanning. Detail pages retain the
 full screenshot. Card imagery and readable names dominate the visual hierarchy.
 
-## Future Fusion Workspace
+## Fusion Workspace
 
 The reusable picker returns canonical IDs without owning navigation or game
-state. A future workspace will allow unlimited, individually removable card
-instances, including duplicates. Each unique instance ID references a canonical
+state. The workspace allows unlimited, individually removable card
+occurrences, including duplicates. Each unique instance ID references a canonical
 card ID and belongs to Hand or Summoning Area, with movement between zones.
-Results and intermediate fusion steps should show images and the actual sequence.
-Summoning Area semantics require game research before implementation. No fixed
-five/six-card input limit, zone state or solver changes are implemented now.
+Results and intermediate fusion steps show images and the actual sequence.
+Hand and Summoning Area are organizational planning labels, with no claim about
+game capacity. Previews use the existing ordinary-fusion engine, stop at the
+first failed pair, and never consume materials. Failed-fusion discards, equips,
+rituals, and random transformations are outside this workspace.
+
+## Deck Builder
+
+Multiple named decks support individual copies, duplication/deletion, count,
+composition, and known-cost totals with unknown costs reported separately.
+Names and canonical card IDs persist in versioned browser storage and portable
+JSON. Invalid imports leave the workspace intact; corrupt saved records remain
+untouched until explicit valid replacement. Storage errors allow in-tab editing
+and JSON export. The 40-card and three-copy guidance does not confirm legality:
+leader selection/rank and opponent cost are not modeled.
 
 ## Evidence and open questions
 

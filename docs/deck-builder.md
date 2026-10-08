@@ -37,5 +37,7 @@ has no recorded deck cost.
 Imports are checked in full for supported schema, deck structure, nonblank
 names and IDs, unique deck IDs, and canonical card IDs before replacing the
 workspace. Duplicated card IDs are allowed as separate copies. Malformed saved
-data is preserved on startup and reported; export the in-memory workspace to
-recover it before choosing an import.
+data is preserved on startup and reported. Ordinary edits do not overwrite a
+corrupt record; an explicit valid import replaces it. Export backs up the current
+in-memory workspace, not the unreadable stored record. Read failures and failed
+writes are reported without claiming a save; write failures expose a retry action.

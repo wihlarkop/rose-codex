@@ -13,7 +13,11 @@ const { title, description = 'Recognize and find cards from Yu-Gi-Oh! The Duelis
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header"><div class="app-container header-inner">
       <a class="brand" href="/"><svg class="brand-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 2 8 5v10l-8 5-8-5V7Z" stroke="currentColor" stroke-width="1.5"/><path d="m12 6 5 3v6l-5 3-5-3V9Zm0 4 2 1v2l-2 1-2-1v-2Z" stroke="currentColor" stroke-width="1.5"/></svg>Rose <span>Codex</span></a>
-      <nav class="site-nav" aria-label="Main navigation"><a href="/cards/" aria-current={Astro.url.pathname.startsWith('/cards') ? 'page' : undefined}>Cards</a></nav><span class="header-context">THE DUELISTS OF THE ROSES</span>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="/cards/" aria-current={Astro.url.pathname === '/' || Astro.url.pathname.startsWith('/cards') ? 'page' : undefined}>Cards</a>
+        <a href="/fusion/" aria-current={Astro.url.pathname.startsWith('/fusion') ? 'page' : undefined}>Fusion</a>
+        <a href="/decks/" aria-current={Astro.url.pathname.startsWith('/decks') ? 'page' : undefined}>Decks</a>
+      </nav><span class="header-context">THE DUELISTS OF THE ROSES</span>
     </div></header>
     <main id="main" class="app-container site-main"><slot /></main>
     <footer class="site-footer"><div class="app-container">
