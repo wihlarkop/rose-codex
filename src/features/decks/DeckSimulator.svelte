@@ -49,7 +49,14 @@
     new Map(handInputs.map((entry, index) => [entry.instanceId, 'Hand ' + (index + 1)] as const)),
   );
   const discovery = $derived(discover(handInputs));
-  const fusionHref = $derived(hand.length ? handLink(hand.map((entry) => entry.cardId), 'simulator') : '');
+  const fusionHref = $derived(
+    hand.length
+      ? handLink(
+          hand.map((entry) => entry.cardId),
+          'simulator',
+        )
+      : '',
+  );
 
   function refreshDecks() {
     try {
