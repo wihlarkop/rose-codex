@@ -154,11 +154,7 @@
           Creates a separate editable 40-card deck. The chosen Deck Leader is recorded in the new
           deck's name; leader selection and rank are not yet part of the saved deck format.
         </p>
-        <div
-          class="preview-scroll"
-          role="region"
-          aria-label="Forty-card starter contents"
-        >
+        <div class="preview-scroll" role="region" aria-label="Forty-card starter contents">
           <ul>
             {#each previewRows as row (row.id)}
               <li>
