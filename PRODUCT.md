@@ -77,6 +77,19 @@ cards into a **new** editable browser-local deck. The selected leader is named i
 the deck title, not stored as a structured Deck Leader under schema version 1.
 Shuffle, draws, Deck Leader ranks and match legality remain future work.
 
+## Deck Leader Reference
+
+The read-only `/leaders/` page uses canonical Monster cards and the 17
+starter choices to explain Deck Leader role, twelve promoted ranks, and
+sourced community reports about type-specific ability milestones. The
+rank/ability reports are labelled incomplete, with explicit caveats about
+monster level and unverified individual unlocks; absence of a report does
+not mean an ability is unavailable. The interface defaults to starter
+Twin-Headed Behemoth #034 and links from selected starter previews.
+A hypothetical rank chooser does **not** read or modify user save data,
+declare a card eligible, change deck storage, or power gameplay strategy.
+See [Deck Leader research](docs/deck-leader.md).
+
 ## Owned Collection and deck-assisted Fusion
 
 `/collection/` records per-card owned copy counts under a separate versioned
