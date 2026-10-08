@@ -73,5 +73,8 @@ The visual Add cards picker leads into grouped thumbnail rows with quantities an
 one-copy controls. Card inspection stays in place; individual copies and composition
 use disclosures. Deck options keeps JSON backups and guarded destructive actions
 secondary. See
+An expandable naming-based starter chooser sits before inline card search,
+letting players preview three name-determined Deck Leader options and create a
+separate editable 40-card deck without interrupting ordinary card entry.
 [Fusion behavior and acceptance](docs/fusion-workspace.md) and
 [historical workspace acceptance](docs/workspace-report.md).
