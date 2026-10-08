@@ -42,8 +42,7 @@
   const selectedDeck = $derived(savedDecks.find((deck) => deck.id === selectedDeckId));
   const deckCardCounts = $derived.by(() => {
     const counts = new Map<number, number>();
-    for (const id of selectedDeck?.cardIds ?? [])
-      counts.set(id, (counts.get(id) ?? 0) + 1);
+    for (const id of selectedDeck?.cardIds ?? []) counts.set(id, (counts.get(id) ?? 0) + 1);
     return counts;
   });
   const deckCards = $derived.by(() => {
@@ -82,7 +81,8 @@
     const alreadyUsed = occurrences.filter((entry) => entry.cardId === cardId).length;
     if (alreadyUsed >= allowed) return;
     if (zone === 'hand' && hand.length >= 5) {
-      actionNotice = 'Five cards already in Hand. Remove a card before selecting another from this deck.';
+      actionNotice =
+        'Five cards already in Hand. Remove a card before selecting another from this deck.';
       return;
     }
     add(cardId, zone);
@@ -259,10 +259,12 @@
   <div class="grid items-start gap-6 xl:grid-cols-[minmax(20rem,.8fr)_minmax(0,1.2fr)]">
     <section aria-label="Available cards" class="min-w-0">
       <details class="mb-5 min-w-0 rounded-lg border border-border bg-surface p-3">
-        <summary class="cursor-pointer text-sm font-semibold text-primary">Choose cards from a saved deck</summary>
+        <summary class="cursor-pointer text-sm font-semibold text-primary"
+          >Choose cards from a saved deck</summary
+        >
         <p class="my-2 text-xs text-muted-foreground">
-          Choose the cards actually in your Hand or Field; loading a deck never adds all 40
-          to Hand and does not change the saved deck or your collection.
+          Choose the cards actually in your Hand or Field; loading a deck never adds all 40 to Hand
+          and does not change the saved deck or your collection.
         </p>
         {#if deckStorageWarning}
           <p class="warning-note" role="alert">{deckStorageWarning}</p>
@@ -276,7 +278,9 @@
               {/each}
             </select>
           </label>
-          <button class="control-button mt-4" type="button" onclick={loadSavedDecks}>Refresh decks</button>
+          <button class="control-button mt-4" type="button" onclick={loadSavedDecks}
+            >Refresh decks</button
+          >
         </div>
         {#if selectedDeck}
           {#if selectedDeck.cardIds.length !== 40}
@@ -311,12 +315,18 @@
                       #{String(entry.id).padStart(3, '0')} · {entered}/{entry.count} selected
                     </span>
                   </div>
-                  <button class="control-button" disabled={entered >= entry.count || hand.length >= 5}
+                  <button
+                    class="control-button"
+                    disabled={entered >= entry.count || hand.length >= 5}
                     aria-label={'Add ' + entry.card.name + ' from deck to Hand'}
-                    onclick={() => addDeckOccurrence(entry.id, 'hand')}>+ Hand</button>
-                  <button class="control-button" disabled={entered >= entry.count}
+                    onclick={() => addDeckOccurrence(entry.id, 'hand')}>+ Hand</button
+                  >
+                  <button
+                    class="control-button"
+                    disabled={entered >= entry.count}
                     aria-label={'Add ' + entry.card.name + ' from deck to Summoning Area'}
-                    onclick={() => addDeckOccurrence(entry.id, 'summoning')}>+ Field</button>
+                    onclick={() => addDeckOccurrence(entry.id, 'summoning')}>+ Field</button
+                  >
                 </li>
               {/each}
             </ul>
@@ -326,7 +336,8 @@
           </div>
         {:else}
           <p class="text-xs text-muted-foreground">
-            No saved deck available. <a class="text-link" href="/decks/">Create or import a deck</a>.
+            No saved deck available. <a class="text-link" href="/decks/">Create or import a deck</a
+            >.
           </p>
         {/if}
       </details>
