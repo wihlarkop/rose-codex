@@ -23,6 +23,21 @@ unavailable storage is reported without blocking manual Fusion.
 A saved deck above 40 is marked as an over-target preset with a link to
 [Collection](/collection/) to choose reserve cards.
 
+## Suggested Plays and simulator Hand
+
+When two or more inputs are present, the Fusion Workspace shows the leading
+ordinary fusion choices ranked by **highest known ATK**, then fewer materials,
+known DEF and result ID. It displays each material step and allows the same
+explicit **Summon result** planning action as the detailed results below.
+This is a transparent heuristic, not an optimal duel prediction.
+
+The [Deck Simulator](deck-simulator.md) can transfer its currently drawn Hand
+through a validated `?hand=` URL (one to five canonical IDs, preserving
+duplicates). Fusion creates separate planning occurrences from the transferred
+IDs without modifying the originating saved deck, owned collection or
+practice session. Invalid links are not silently accepted. The manual
+Hand/Field pickers remain available.
+
 ## Discovery contract
 
 `src/lib/dotr/fusion-discovery.ts` is pure TypeScript above the unchanged canonical

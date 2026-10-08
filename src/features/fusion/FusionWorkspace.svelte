@@ -8,6 +8,8 @@
   import CardPicker from '../../components/cards/CardPicker.svelte';
   import CardArtwork from '../../components/cards/CardArtwork.svelte';
   import FusionResultCard from './FusionResultCard.svelte';
+  import FusionAdvisor from './FusionAdvisor.svelte';
+  import { parseHandLink } from '../../lib/dotr/deck-simulation';
   import {
     createFusionDiscovery,
     type FusionOccurrence,
@@ -75,7 +77,23 @@
         (error instanceof Error ? error.message : 'Unknown storage error.');
     }
   }
-  onMount(loadSavedDecks);
+  onMount(() => {
+    loadSavedDecks();
+    const linkedHand = parseHandLink(window.location.search, new Set(cardById.keys()));
+    if (linkedHand === null) return;
+    if (!linkedHand.length) {
+      actionNotice = 'Invalid Hand link. Choose cards manually or return to Deck Simulator.';
+      return;
+    }
+    occurrences = linkedHand.map((cardId) => ({
+      instanceId: crypto.randomUUID(),
+      cardId,
+      zone: 'hand' as const,
+    }));
+    actionNotice =
+      linkedHand.length +
+      ' cards loaded from Deck Simulator. The saved deck and practice draw remain unchanged.';
+  });
   function addDeckOccurrence(cardId: number, zone: FusionZone) {
     const allowed = deckCardCounts.get(cardId) ?? 0;
     const alreadyUsed = occurrences.filter((entry) => entry.cardId === cardId).length;
@@ -502,6 +520,17 @@
           </div>
         {/if}
       </div>
+      {#if occurrences.length >= 2}
+        <div class="mb-5">
+          <FusionAdvisor
+            {discovery}
+            {cardById}
+            {labels}
+            inputCount={occurrences.length}
+            onapply={applyFusion}
+          />
+        </div>
+      {/if}
       {#if discovery.results.length}
         <div class="mb-5 flex flex-wrap items-end gap-3">
           <label class="min-w-0 flex-1 text-xs text-muted-foreground"

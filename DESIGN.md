@@ -65,6 +65,14 @@ cards are entered into owned inventory rather than implicitly extending the
 Fusion provides a collapsible saved-deck picker for individual Hand/Field
 selection without mutating the original deck, sharing canonical art and data.
 
+Simulator is a compact fifth navigation destination for explicit, ephemeral
+40-card practice. Its five-card Hand displays canonical artwork in responsive
+rows with set-aside and draw-to-five controls. A shared Suggested Plays panel
+ranks known ordinary fusion sequences by a plainly labeled ATK heuristic and
+shows each ordered step. The same panel appears in Fusion Workspace. Hand
+transfer is a validated local URL link, not hidden shared state, and never
+mutates saved deck/Collection data.
+
 Historical acceptance is preserved in [Card Browser report](docs/card-browser-report.md).
 Current implementation is described in [UI Foundation report](docs/ui-foundation-report.md).
 

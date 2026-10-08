@@ -79,6 +79,20 @@ Fusion can display any saved deck and let a user select specific real
 Hand/Field cards from it, not automatically load all 40 into Hand.
 Deck-assisted Fusion does not shuffle or draw yet.
 
+## Deck practice and suggested fusion plays
+
+`/simulate/` loads saved 40-card decks without writing to deck or owned-card
+storage. Players shuffle a copied deck, draw a five-card Hand without
+replacement, set aside selected copies, and draw into open Hand slots. This
+practice does not claim to model game turn rules or its RNG.
+
+Suggested Plays reuses canonical fusion discovery to show up to three
+ordered, valid fusion recipes ranked by highest known result ATK, then fewer
+materials, DEF and ID. This ranking is guidance, not optimal duel strategy.
+Simulator Hands can be opened in Fusion through a validated card-ID query.
+The full Fusion Workspace also shows suggestions for its current inputs.
+See [Deck Simulator](docs/deck-simulator.md).
+
 ## Evidence and open questions
 
 Canonical data covers 854 numbered records, IDs 000..853. Metadata is mostly

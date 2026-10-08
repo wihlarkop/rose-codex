@@ -459,6 +459,14 @@
         {/if}
       </section>
 
+      <p class="m-0 text-xs text-muted-foreground">
+        Want to test draws and fusion sequences?
+        <a class="text-link" href={'/simulate/?deck=' + encodeURIComponent(active.id)}>
+          Try this deck in Simulator
+        </a>
+        (practice only; your saved cards will not change).
+      </p>
+
       <details class="starter-tool surface">
         <summary>
           Try starter decks by player name
