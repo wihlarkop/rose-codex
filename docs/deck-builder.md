@@ -45,6 +45,13 @@ unrestricted planning editor; changes here do not automatically imply a
 corresponding owned copy. Collection highlights any deficit when selecting
 such a deck. See [Collection design](collection.md).
 
+## Practice draw and fusion suggestions
+
+Use **Try this deck in Simulator** for a saved 40-card deck. The separate
+[Deck Simulator](/simulate/) shuffles a copied deck and draws five cards
+without replacement, with direct fusion suggestions and a one-click link to
+open that Hand in Fusion. Neither practice nor Fusion modifies the saved deck.
+
 ## Naming-based starter decks
 
 Expand **Try starter decks by player name** above the card search. Enter the
