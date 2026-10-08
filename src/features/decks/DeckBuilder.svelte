@@ -2,6 +2,7 @@
   import { onMount, tick } from 'svelte';
   import CardArtwork from '../../components/cards/CardArtwork.svelte';
   import CardFlipTile from '../../components/cards/CardFlipTile.svelte';
+  import StarterDeckExplorer from './StarterDeckExplorer.svelte';
   import { Button } from '../../components/ui/button';
   import { filterCards, type BrowserCard } from '../../lib/dotr/browser';
   import {
@@ -168,6 +169,28 @@
     activeId = deck.id;
     inspectedCardId = null;
     save();
+  }
+  function createStarterDeck(starter: { name: string; cardIds: number[] }) {
+    if (starter.cardIds.length !== 40 || !starter.cardIds.every((id) => allowedIds.has(id))) {
+      notice = 'This starter list is incomplete or contains unknown cards. No deck was created.';
+      return;
+    }
+    const deck: DeckRecord = {
+      id: crypto.randomUUID(),
+      name: starter.name,
+      cardIds: [...starter.cardIds],
+    };
+    decks = [...decks, deck];
+    occurrenceIds = {
+      ...occurrenceIds,
+      [deck.id]: deck.cardIds.map(() => crypto.randomUUID()),
+    };
+    activeId = deck.id;
+    inspectedCardId = null;
+    const saved = save();
+    notice = saved
+      ? 'Starter deck created. You can now edit all 40 cards.'
+      : 'Starter deck is available in this tab, but was not saved. Export JSON to keep a copy.';
   }
   function renameDeck(id: string, name: string, input: HTMLInputElement) {
     if (!name.trim()) {
@@ -435,6 +458,14 @@
           <p class="guidance">{constructionNotes.join(' ')}</p>
         {/if}
       </section>
+
+      <details class="starter-tool surface">
+        <summary>
+          Try starter decks by player name
+          <span>Find the three choices offered by DotR and preview their 40 cards</span>
+        </summary>
+        <StarterDeckExplorer {cards} oncreate={createStarterDeck} />
+      </details>
 
       <section class="picker surface" aria-label="Add cards">
         <div>
@@ -826,6 +857,22 @@
   .type-composition p {
     margin: 0.25rem 0 0;
     color: var(--muted-foreground);
+  }
+  .starter-tool {
+    min-width: 0;
+  }
+  .starter-tool > summary {
+    padding: 0.85rem 1rem;
+    cursor: pointer;
+    color: var(--primary);
+    font-size: 0.875rem;
+    font-weight: 650;
+  }
+  .starter-tool > summary span {
+    margin-left: 0.5rem;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    font-weight: 400;
   }
   .picker {
     display: grid;

@@ -53,6 +53,16 @@ untouched until explicit valid replacement. Storage errors allow in-tab editing
 and JSON export. The 40-card and three-copy guidance does not confirm legality:
 leader selection/rank and opponent cost are not modeled.
 
+## Naming & Starter Deck Simulator
+
+Deck Builder embeds an optional name-based starter explorer. The exact English
+DotR player name maps to one of 16 groups and three possible starting Deck
+Leaders. All 17 unique leader choices have a recorded 40-card list; #458 remains
+flagged for manual review. Users can preview an option and copy its main-deck
+cards into a **new** editable browser-local deck. The selected leader is named in
+the deck title, not stored as a structured Deck Leader under schema version 1.
+Shuffle, draws, Deck Leader ranks and match legality remain future work.
+
 ## Evidence and open questions
 
 Canonical data covers 854 numbered records, IDs 000..853. Metadata is mostly
