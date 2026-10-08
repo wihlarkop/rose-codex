@@ -32,6 +32,21 @@ deck in the workspace. Invalid imports leave the current decks intact. If the
 replacement cannot be saved, it remains in the tab with an unsaved warning and
 backup/retry actions.
 
+## Naming-based starter decks
+
+Expand **Try starter decks by player name** above the card search. Enter the
+same player name as the English game to see three possible starter Deck Leaders.
+The name is case-sensitive, limited to 1–12 characters, and preserves spaces.
+Select one of the three cards to preview its 40 recorded main-deck cards, copy
+counts and known deck cost. **Create as new deck** adds a separate editable deck
+without modifying existing decks or replacing the current browser backup.
+
+The selected Deck Leader appears in the new deck's name, not in its stored
+main-deck card IDs. Deck Leader selection, ranks and duel legality are not yet
+modeled by the current version-1 deck schema. The lists have limited source
+verification; #458 is flagged for manual review. See
+[Naming and starter research](naming.md) for the calculation and evidence.
+
 ## Construction rules
 
 The US PlayStation 2 instruction manual says a deck contains exactly 40 cards
