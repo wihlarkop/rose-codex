@@ -12,8 +12,15 @@ name directly; changes save automatically in this browser. The header shows save
 status, progress toward 40 cards, and the known Deck Cost. Unknown costs stay
 separate from that total.
 
-Use **Add cards** to search the visual card picker by name or numbered ID.
-Cards are grouped into compact rows with thumbnails and quantities. Add or
+The **Add cards** search field is always visible. Type a card name or numbered ID
+to see matching cards with authentic thumbnails and a current in-deck copy count.
+Use **+ Add** beside a result, or use the Up/Down keys and Enter directly from the
+search field. Search remains open after adding a card, so multiple copies and
+several different cards can be added without reopening a picker. A blank search
+shows no result rows; broad queries show up to twelve matches and ask users to
+narrow their search for more.
+
+Deck contents are grouped into compact rows with thumbnails and quantities. Add or
 remove one copy beside its row, or expand the copy controls to remove a specific
 individual copy. Inspect a card in place to see its image and metadata. Composition
 and construction guidance remain available without a grid of 40 large tiles.
