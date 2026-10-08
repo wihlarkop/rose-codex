@@ -1,0 +1,14 @@
+---
+import Shell from '../../layouts/Shell.astro';
+import FusionWorkspace from '../../features/fusion/FusionWorkspace.svelte';
+import cards from '../../../data/canonical/cards.json';
+import images from '../../../data/canonical/images.json';
+import fusions from '../../../data/canonical/fusions.json';
+import { browserCards } from '../../lib/dotr/browser';
+import type { Card, FusionData, ImageRecord } from '../../lib/dotr/model';
+const canonicalCards = cards as Card[];
+const library = browserCards(canonicalCards, images as ImageRecord[]);
+---
+<Shell title="Fusion Workspace">
+  <FusionWorkspace cards={library} canonicalCards={canonicalCards} fusionData={fusions as FusionData} client:load />
+</Shell>
