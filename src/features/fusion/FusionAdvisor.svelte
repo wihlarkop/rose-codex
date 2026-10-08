@@ -25,9 +25,8 @@
 <section class="rounded-lg border border-border bg-surface p-3" aria-label="Suggested fusion plays">
   <h2 class="m-0 text-base font-semibold">Suggested Plays</h2>
   <p class="mb-3 mt-1 text-xs leading-relaxed text-muted-foreground">
-    Ranked by highest known result ATK, with fewer materials as a tiebreaker.
-    Follow the recipe in order. This is fusion guidance, not a guaranteed best move
-    against an opponent or terrain.
+    Ranked by highest known result ATK, with fewer materials as a tiebreaker. Follow the recipe in
+    order. This is fusion guidance, not a guaranteed best move against an opponent or terrain.
   </p>
   {#if !discovery.complete}
     <p class="mb-3 text-xs text-warning">
@@ -61,11 +60,13 @@
       {/each}
     </ol>
   {:else if inputCount < 2}
-    <p class="m-0 text-sm text-muted-foreground">Add at least two cards to see possible fusion plays.</p>
+    <p class="m-0 text-sm text-muted-foreground">
+      Add at least two cards to see possible fusion plays.
+    </p>
   {:else}
     <p class="m-0 text-sm text-muted-foreground">
-      No supported ordinary fusion recipe was found with these inputs.
-      Keeping cards separate may be useful, but choosing a summon needs board and opponent information.
+      No supported ordinary fusion recipe was found with these inputs. Keeping cards separate may be
+      useful, but choosing a summon needs board and opponent information.
     </p>
   {/if}
 </section>
