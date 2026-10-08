@@ -1,7 +1,6 @@
 <script lang="ts">
   import CardPicker from './CardPicker.svelte';
   import type { BrowserCard } from '../../lib/dotr/browser';
-  let { cards }: { cards: BrowserCard[] } = $props();
-  function openDetail(cardId: number) { window.location.assign('/cards/' + String(cardId).padStart(3, '0') + '/'); }
+  let { cards, onselect, selectedCardId = null }: { cards: BrowserCard[]; onselect: (cardId: number) => void; selectedCardId?: number | null } = $props();
 </script>
-<CardPicker {cards} label="Quick lookup" onselect={openDetail} />
+<CardPicker {cards} label="Quick lookup" {selectedCardId} {onselect} />

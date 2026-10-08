@@ -8,11 +8,11 @@ const library = browserCards(cards as Card[], images as ImageRecord[]);
 const all = { query: '', kind: '', monsterType: '', attribute: '' };
 
 describe('visual library search and filters', () => {
-  test('projects all cards without effect/password/equip payload', () => {
+  test('projects canonical inspect metadata without fusion payload', () => {
     expect(library).toHaveLength(854);
     expect(library[0]).not.toHaveProperty('powerUpCardIds');
     expect(library[0]).not.toHaveProperty('effect');
-    expect(library[0]).not.toHaveProperty('password');
+    expect(library[0]!.password).toBe((cards as Card[])[0]!.password);
   });
   test('searches punctuation-insensitive name tokens', () => {
     expect(filterCards(library, { ...all, query: ' bLuE   eyes ' }).map(c => c.id)).toContain(0);
@@ -38,9 +38,9 @@ describe('visual library search and filters', () => {
     source[21]!.status = 'manual-review';
     expect(browserCards(cards as Card[], source)[21]!.image).toBeNull();
   });
-  test('uses the alternate artwork window only for the reviewed #065 screen', () => {
-    expect(library[65]!.image?.compactScreen).toBe(true);
-    expect(library[21]!.image?.compactScreen).toBe(false);
+  test('uses the authentic screenshot presentation for every available image', () => {
+    expect(library[65]!.image).toMatchObject({ url: expect.any(String), width: 273, height: 302 });
+    expect(library[65]!.image).not.toHaveProperty('compactScreen');
     expect(library[676]!.image).toBeNull();
   });
 });

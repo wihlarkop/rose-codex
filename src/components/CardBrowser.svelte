@@ -1,24 +1,42 @@
 <script lang="ts">
+  import { tick } from 'svelte';
   import SearchIcon from '@lucide/svelte/icons/search';
   import XIcon from '@lucide/svelte/icons/x';
   import { Button } from './ui/button';
   import { Input } from './ui/input';
-  import CardTile from './cards/CardTile.svelte';
+  import CardFlipTile from './cards/CardFlipTile.svelte';
   import CardQuickLookup from './cards/CardQuickLookup.svelte';
   import { ATTRIBUTES, MONSTER_TYPES } from '../lib/dotr/model';
   import { filterCards, type BrowserCard } from '../lib/dotr/browser';
   let { cards }: { cards: BrowserCard[] } = $props();
   let query = $state(''); let kind = $state(''); let monsterType = $state(''); let attribute = $state('');
-  let presentation = $state<'screen' | 'artwork'>('screen');
+  let flippedIds = $state(new Set<number>());
+  let quickLookupCardId = $state<number | null>(null);
   const results = $derived(filterCards(cards, { query, kind, monsterType, attribute }));
   const monstersAllowed = $derived(!kind || kind === 'monster');
   const active = $derived(Boolean(query || kind || monsterType || attribute));
   function clear() { query = ''; kind = ''; monsterType = ''; attribute = ''; }
   function changeKind() { if (kind && kind !== 'monster') { monsterType = ''; attribute = ''; } }
+  function setFlipped(cardId: number, next: boolean) {
+    const updated = new Set(flippedIds);
+    if (next) updated.add(cardId); else updated.delete(cardId);
+    flippedIds = updated;
+  }
+  async function locateCard(cardId: number) {
+    query = String(cardId).padStart(3, '0');
+    kind = ''; monsterType = ''; attribute = '';
+    quickLookupCardId = cardId;
+    flippedIds = new Set([cardId]);
+    await tick();
+    const target = document.getElementById('library-card-' + String(cardId).padStart(3, '0'));
+    target?.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    target?.focus({ preventScroll: true });
+  }
 </script>
+<section class="library-content" aria-label="Card library">
 <header class="page-header">
   <div><h1 class="page-title">Card library</h1><p class="page-description">Find the card in front of you. All 854 cards from The Duelists of the Roses.</p></div>
-  <CardQuickLookup {cards} />
+  <CardQuickLookup {cards} selectedCardId={quickLookupCardId} onselect={locateCard} />
 </header>
 <div class="toolbar" role="search" aria-label="Find a DotR card">
   <div class="relative search-field">
@@ -47,27 +65,23 @@
 {/if}
 <div class="result-summary">
   <p role="status" aria-live="polite"><strong class="text-foreground number">{results.length}</strong> of {cards.length} cards <span class="order">· DotR ID order</span></p>
-  <div class="view-switch" role="group" aria-label="Image view">
-    <Button variant="ghost" class="h-8 px-3 text-xs" aria-pressed={presentation === 'screen'} onclick={() => presentation = 'screen'}>Game screen</Button>
-    <Button variant="ghost" class="h-8 px-3 text-xs" aria-pressed={presentation === 'artwork'} onclick={() => presentation = 'artwork'}>Artwork</Button>
-  </div>
 </div>
 <noscript><p>Search and filters need JavaScript. You can still browse every card below.</p></noscript>
 {#if results.length === 0}
   <div class="empty-results"><h2 class="text-xl font-semibold">No cards found</h2><p class="mt-2 mb-5 text-sm text-muted-foreground">Try part of a name, an ID from 000 to 853, or reset your filters.</p><Button variant="outline" onclick={clear}>Clear search and filters</Button></div>
 {:else}
-  <ul class="card-grid">{#each results as card (card.id)}<li><CardTile {card} {presentation} /></li>{/each}</ul>
+  <ul class="card-grid">{#each results as card (card.id)}<li><CardFlipTile {card} flipped={flippedIds.has(card.id)} onflip={setFlipped} /></li>{/each}</ul>
 {/if}
+</section>
 <style>
+  .library-content { min-width: 0; container-type: inline-size; }
   .toolbar { display: grid; grid-template-columns: minmax(260px, 2.5fr) repeat(3, minmax(130px, 1fr)) auto; gap: var(--space-3); }
   .search-field { min-width: 0; }
   .active-filters { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
   .filter-chip { display: inline-flex; align-items: center; gap: var(--space-2); background: var(--selected); color: var(--primary); padding: var(--space-1) var(--space-2); border-radius: var(--radius); font-size: .75rem; }
   .result-summary { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-block: var(--space-4); color: var(--muted-foreground); font-size: .875rem; }
-  .view-switch { display: flex; background: var(--surface); border-radius: var(--radius); padding: 2px; }
-  .view-switch :global(button[aria-pressed="true"]) { background: var(--selected); color: var(--primary); }
-  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: var(--space-3); padding: 0; margin: 0; list-style: none; }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-4); padding: 0; margin: 0; list-style: none; }
   .empty-results { text-align: center; padding: 4rem var(--space-4); background: var(--surface); border-radius: var(--radius); }
-  @media (max-width: 1100px) { .toolbar { grid-template-columns: repeat(3, minmax(0, 1fr)) auto; } .search-field { grid-column: 1 / -1; } }
-  @media (max-width: 600px) { .toolbar { grid-template-columns: 1fr 1fr; } .order { display: none; } .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); } }
+  @container (max-width: 1100px) { .toolbar { grid-template-columns: repeat(3, minmax(0, 1fr)) auto; } .search-field { grid-column: 1 / -1; } }
+  @container (max-width: 700px) { .toolbar { grid-template-columns: 1fr 1fr; } .order { display: none; } .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); } }
 </style>

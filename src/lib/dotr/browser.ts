@@ -1,7 +1,8 @@
 import type { Card, ImageRecord } from './model';
 
-export type BrowserCard = Pick<Card, 'id' | 'name' | 'kind' | 'monsterType' | 'attribute' | 'atk' | 'def' | 'deckCost'> & {
-  image: { url: string; width: number; height: number; compactScreen: boolean } | null;
+export type BrowserCard = Pick<Card, 'id' | 'name' | 'kind' | 'monsterType' | 'attribute' | 'level' | 'atk' | 'def' | 'deckCost' | 'trapRange' | 'magicClass' | 'password'> & {
+  effectText: string | null;
+  image: { url: string; width: number; height: number } | null;
 };
 export interface CardFilters {
   query: string;
@@ -12,12 +13,12 @@ export interface CardFilters {
 
 export function browserCards(cards: Card[], images: ImageRecord[]): BrowserCard[] {
   const byId = new Map(images.map(image => [image.cardId, image]));
-  return cards.map(({ id, name, kind, monsterType, attribute, atk, def, deckCost }) => {
+  return cards.map(({ id, name, kind, monsterType, attribute, level, atk, def, deckCost, trapRange, magicClass, password, effect }) => {
     const image = byId.get(id);
     return {
-      id, name, kind, monsterType, attribute, atk, def, deckCost,
+      id, name, kind, monsterType, attribute, level, atk, def, deckCost, trapRange, magicClass, password, effectText: effect.text,
       image: image && ['verified', 'probable'].includes(image.status)
-        ? { url: `/cards/${image.file}`, width: image.width!, height: image.height!, compactScreen: id === 65 && image.width === 273 && image.height === 302 } : null,
+        ? { url: `/cards/${image.file}`, width: image.width!, height: image.height! } : null,
     };
   });
 }

@@ -1,26 +1,12 @@
 ---
 import Shell from '../layouts/Shell.astro';
-import CardTile from '../components/cards/CardTile.svelte';
-import { Button } from '../components/ui/button';
+import CardBrowser from '../components/CardBrowser.svelte';
 import cards from '../../data/canonical/cards.json';
 import images from '../../data/canonical/images.json';
 import { browserCards } from '../lib/dotr/browser';
 import type { Card, ImageRecord } from '../lib/dotr/model';
-const featured = browserCards(cards as Card[], images as ImageRecord[]).filter(card => [0, 21, 683, 829].includes(card.id));
+const library = browserCards(cards as Card[], images as ImageRecord[]);
 ---
-<Shell title="Rose Codex">
-  <header class="page-header"><div><h1 class="page-title">Your DotR companion</h1><p class="page-description">Recognize cards, check their stats, and get back to the duel.</p></div><Button href="/cards/" class="h-10 rounded-md">Browse all 854 cards →</Button></header>
-  <section class="home-library" aria-labelledby="library-heading">
-    <div class="section-heading"><h2 id="library-heading">The card library</h2><span>Authentic game imagery · Search by name or ID</span></div>
-    <ul>{featured.map(card => <li><CardTile card={card} /></li>)}</ul>
-    <p class="home-note">853 DotR images available. Card #676 is withheld while its image identity is reviewed.</p>
-  </section>
+<Shell title="Card library">
+  <CardBrowser cards={library} client:load />
 </Shell>
-<style>
-  .home-library { max-width: 1040px; margin-top: var(--space-8); }
-  .section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-4); }
-  .section-heading h2 { font-size: 1rem; font-weight: 600; } .section-heading span, .home-note { color: var(--muted-foreground); font-size: .875rem; }
-  ul { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); list-style: none; padding: 0; }
-  .home-note { margin-top: var(--space-4); }
-  @media(max-width: 700px) { ul { grid-template-columns: repeat(2, minmax(0, 1fr)); } .section-heading { flex-wrap: wrap; } }
-</style>

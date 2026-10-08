@@ -1,12 +1,12 @@
 @import "tailwindcss";
 @custom-variant dark (&:is(.dark *));
 :root {
-  color-scheme: dark;
-  --background: #181b20; --surface: #22262c; --elevated: #2a2f36;
-  --foreground: #f1eee8; --muted-foreground: #b6b8be; --border: #3d424c;
-  --primary: #d5a4ad; --primary-foreground: #24171c; --ring: #ecc3ca;
-  --hover: #30363e; --selected: #44313a; --warning: #e4bf84;
-  --warning-background: #342d23; --destructive: #eea2a2; --artwork-background: #14171b;
+  color-scheme: light;
+  --background: #f0ede8; --surface: #fbf9f5; --elevated: #e7e2dc;
+  --foreground: #29272a; --muted-foreground: #666166; --border: #d4cec8;
+  --primary: #995665; --primary-foreground: #fffaf8; --ring: #ac6877;
+  --hover: #eee8e4; --selected: #f0e2e6; --warning: #855d29;
+  --warning-background: #f2e8d6; --destructive: #a84549; --artwork-background: #e2ddd7;
   --card: var(--surface); --card-foreground: var(--foreground);
   --popover: var(--elevated); --popover-foreground: var(--foreground);
   --secondary: var(--elevated); --secondary-foreground: var(--foreground);
@@ -43,7 +43,7 @@
 @layer components {
   .app-container { width: min(100% - 4rem, 1480px); margin-inline: auto; }
   .number { font-variant-numeric: tabular-nums; } .muted { color: var(--muted-foreground); }
-  .site-header { background: var(--surface); }
+  .site-header { background: var(--surface); border-bottom: 1px solid var(--border); }
   .header-inner { display: flex; align-items: center; gap: var(--space-8); min-height: 64px; }
   .brand { display: inline-flex; align-items: center; gap: var(--space-3); text-decoration: none; font-size: 1.125rem; font-weight: 700; letter-spacing: -.025em; white-space: nowrap; }
   .brand-mark { color: var(--primary); width: 27px; height: 27px; } .brand span { color: var(--primary); }
@@ -52,7 +52,7 @@
   .site-nav a:hover { color: var(--foreground); background: var(--hover); }
   .site-nav a[aria-current="page"] { background: var(--selected); color: var(--primary); }
   .header-context { margin-left: auto; color: var(--muted-foreground); font-size: .75rem; }
-  .site-main { padding-block: var(--space-8) 3rem; min-height: calc(100vh - 138px); }
+  .site-main { padding-block: var(--space-6) 3rem; min-height: calc(100vh - 138px); }
   .page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-6); margin-bottom: var(--space-6); }
   .page-title { font-size: clamp(1.7rem, 2vw, 2rem); font-weight: 650; line-height: 1.2; letter-spacing: -.025em; }
   .page-description { color: var(--muted-foreground); margin-top: var(--space-2); font-size: .875rem; max-width: 65ch; }
