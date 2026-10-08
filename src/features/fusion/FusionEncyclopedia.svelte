@@ -5,7 +5,6 @@
   import {
     buildFusionEncyclopedia,
     missingOwnedCopies,
-    type EncyclopediaRecipe,
   } from '../../lib/dotr/fusion-encyclopedia';
   import type { FusionData } from '../../lib/dotr/model';
   import { handLink } from '../../lib/dotr/deck-simulation';
@@ -161,8 +160,8 @@
         </ul>
       {:else}
         <p class="helper">
-          Search {encyclopedia.resultIds.length} recorded result cards. Showing Thousand Dragon
-          as a starting example.
+          Search {encyclopedia.resultIds.length} recorded result cards. Select a result to change
+          the recipes displayed on the right.
         </p>
       {/if}
       <div class="collection-status">
@@ -326,7 +325,7 @@
           </section>
         {/if}
         <p class="scope-note">
-          Scope: all recorded **direct, ordinary two-card pairs** for this result;
+          Scope: all recorded direct, ordinary two-card pairs for this result;
           chains that first create an intermediate monster are not enumerated here.
           Use Fusion Workspace to explore chains from your actual Hand.
           Unresolved random transformations cannot be mapped to a specific target.
