@@ -36,22 +36,22 @@
     {#each recipe.steps as step, index}
       {@const result = cardById.get(step.resultCardId)!}
       <li class="min-w-0">
-          <p class="m-0 break-words">
-            <span class="font-medium"
-              >{number(step.materials[0])} {cardById.get(step.materials[0])?.name}</span
-            >
-            <span class="text-muted-foreground">
-              ({index === 0
-                ? labels.get(step.sourceInstanceIds[0]!)
-                : 'step ' + index + ' result'})</span
-            >
-            +
-            <span class="font-medium"
-              >{number(step.materials[1])} {cardById.get(step.materials[1])?.name}</span
-            >
-            <span class="text-muted-foreground"> ({labels.get(step.addedInstanceId)})</span>
-          </p>
-          <p class="mb-0 mt-0.5 font-semibold text-primary">→ {number(result.id)} {result.name}</p>
+        <p class="m-0 break-words">
+          <span class="font-medium"
+            >{number(step.materials[0])} {cardById.get(step.materials[0])?.name}</span
+          >
+          <span class="text-muted-foreground">
+            ({index === 0
+              ? labels.get(step.sourceInstanceIds[0]!)
+              : 'step ' + index + ' result'})</span
+          >
+          +
+          <span class="font-medium"
+            >{number(step.materials[1])} {cardById.get(step.materials[1])?.name}</span
+          >
+          <span class="text-muted-foreground"> ({labels.get(step.addedInstanceId)})</span>
+        </p>
+        <p class="mb-0 mt-0.5 font-semibold text-primary">→ {number(result.id)} {result.name}</p>
       </li>
     {/each}
   </ol>
