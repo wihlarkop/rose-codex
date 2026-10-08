@@ -1,0 +1,34 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc"],
+  "categories": { "correctness": "error" },
+  "env": { "builtin": true },
+  "ignorePatterns": [
+    "node_modules/**",
+    "dist/**",
+    ".astro/**",
+    ".wrangler/**",
+    ".worktrees/**",
+    "data/**",
+    "public/**",
+    "src/components/ui/**"
+  ],
+  "overrides": [
+    { "files": ["src/**"], "env": { "browser": true } },
+    {
+      "files": ["scripts/**", "tests/**", "*.config.*"],
+      "env": { "node": true },
+      "globals": { "Bun": "readonly" }
+    },
+    {
+      "files": ["**/*.svelte"],
+      "env": { "svelte": true },
+      "rules": { "no-unused-vars": "off" }
+    },
+    {
+      "files": ["**/*.astro"],
+      "env": { "astro": true },
+      "rules": { "no-unused-vars": "off" }
+    }
+  ]
+}

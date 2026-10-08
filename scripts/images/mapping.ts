@@ -21,7 +21,7 @@ export function parseGallery(wikitext: string): GalleryEntry[] {
     const caption = row[3]!;
     const link = /^\[\[([^\]]+)\]\]$/.exec(caption);
     const galleryName = (link ? link[1]!.split('|').at(-1)! : caption).trim();
-    if (!galleryName || /[\[\]{}<>]/.test(galleryName)) throw new Error(`Unrecognized card label ${caption}`);
+    if (!galleryName || /[[\]{}<>]/.test(galleryName)) throw new Error(`Unrecognized card label ${caption}`);
     ids.add(cardId); filenames.add(filename);
     entries.push({ cardId, galleryName, filename });
   }

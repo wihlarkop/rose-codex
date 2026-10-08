@@ -15,6 +15,8 @@ Install **Bun 1.4.2**, as pinned in `.bun-version` and `package.json`.
 ```sh
 bun ci
 bun run dev
+bun run lint
+bun run format:check
 bun run data:validate
 bun test
 bun run check
@@ -25,6 +27,12 @@ Astro 7.3.6 produces static assets in `dist/`. The card browser uses one Svelte 
 interactive island. TypeScript 6.0.3 satisfies the integrations'
 current peer ranges (TypeScript 7 is not supported by these pinned checkers).
 Everything runs through Bun, including the installed Wrangler entry point.
+
+Oxlint and Oxfmt run through Bun too. `bun run lint:fix` applies safe lint fixes;
+`bun run format` writes scoped formatting. Existing application/data/test files
+are excluded from the initial formatting baseline to avoid a broad rewrite.
+Astro formatting is unsupported; framework/type checks remain required.
+See [tooling coverage and exclusions](docs/tooling.md).
 
 ## UI foundation
 
