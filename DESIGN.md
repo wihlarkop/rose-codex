@@ -67,10 +67,13 @@ selection without mutating the original deck, sharing canonical art and data.
 
 Simulator is a compact fifth navigation destination for explicit, ephemeral
 40-card practice. Its five-card Hand displays canonical artwork in responsive
-rows with set-aside and draw-to-five controls. A shared Suggested Plays panel
+rows with set-aside and draw-to-five controls. Its Suggested Plays panel
 ranks known ordinary fusion sequences by a plainly labeled ATK heuristic and
-shows each ordered step. The same panel appears in Fusion Workspace. Hand
-transfer is a validated local URL link, not hidden shared state, and never
+shows each ordered step. Fusion Workspace avoids duplicate full recipes:
+one result receives an inline recommendation label, while multiple results
+show compact navigable top-ranked suggestions leading to a single detailed
+result and Summon action. Hand transfer is a validated local URL link with
+a visible Simulator/Recipes source label, not hidden shared state, and never
 mutates saved deck/Collection data.
 
 Fusion Encyclopedia is an independent compact **Recipes** page linked from
