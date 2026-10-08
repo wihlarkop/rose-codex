@@ -83,6 +83,15 @@ and optionally send a pair to Fusion. Long lists render in batches; special
 transformations remain visually and semantically separate from ordinary
 fusion. It never mutates deck or Collection storage.
 
+Deck Leader Reference is a read-only searchable Monster lookup, with a
+shortlist of 17 named starter leaders, a concise art/details preview, the
+twelve ordered ranks and an explicitly qualified type ability research list.
+Selected example rank is hypothetical: no player/save rank is asserted.
+Source links and unavailable-evidence notes remain adjacent to reports.
+A starter preview links to the corresponding Leader card without modifying
+any browser deck data. The layout retains compact warm-neutral cards and
+collapses into a single column on narrow screens.
+
 Historical acceptance is preserved in [Card Browser report](docs/card-browser-report.md).
 Current implementation is described in [UI Foundation report](docs/ui-foundation-report.md).
 
