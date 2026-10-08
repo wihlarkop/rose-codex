@@ -302,7 +302,7 @@
                             .join(', ')}
                         </span>
                       {/if}
-                      <a class="try-link" href={handLink(row.recipe.materials)}>Try in Fusion →</a>
+                      <a class="try-link" href={handLink(row.recipe.materials, 'recipes')}>Try in Fusion →</a>
                     </div>
                   </li>
                 {/each}
