@@ -346,7 +346,7 @@
                       Missing materials
                     {/if}
                   </span>
-                  <a class="try-link" href={handLink(recipe.materials)}>Check in Fusion →</a>
+                  <a class="try-link" href={handLink(recipe.materials, 'recipes')}>Check in Fusion →</a>
                 </li>
               {/each}
             </ul>
