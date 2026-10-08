@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import CircleCheck from '@lucide/svelte/icons/circle-check';
   import GitBranch from '@lucide/svelte/icons/git-branch';
   import CircleMinus from '@lucide/svelte/icons/circle-minus';
@@ -8,7 +8,7 @@
   import CardPicker from '../../components/cards/CardPicker.svelte';
   import CardArtwork from '../../components/cards/CardArtwork.svelte';
   import FusionResultCard from './FusionResultCard.svelte';
-  import FusionAdvisor from './FusionAdvisor.svelte';
+  import { suggestFusionPlays } from '../../lib/dotr/fusion-advisor';
   import { parseHandLink } from '../../lib/dotr/deck-simulation';
   import {
     createFusionDiscovery,
@@ -90,9 +90,18 @@
       cardId,
       zone: 'hand' as const,
     }));
+    const source = new URLSearchParams(window.location.search).get('from');
+    const origin =
+      source === 'simulator'
+        ? 'Deck Simulator'
+        : source === 'recipes'
+          ? 'Fusion Encyclopedia'
+          : 'a shared Hand link';
     actionNotice =
       linkedHand.length +
-      ' cards loaded from Deck Simulator. The saved deck and practice draw remain unchanged.';
+      ' cards loaded from ' +
+      origin +
+      '. Your saved decks and Collection remain unchanged.';
   });
   function addDeckOccurrence(cardId: number, zone: FusionZone) {
     const allowed = deckCardCounts.get(cardId) ?? 0;
@@ -108,6 +117,8 @@
   let sort = $state('atk');
   let filter = $state('');
   const discovery = $derived(discover(occurrences));
+  const suggestedPlays = $derived(suggestFusionPlays(discovery, cardById));
+  const topResultId = $derived(suggestedPlays[0]?.resultCardId ?? null);
   const compatibility = $derived(
     new Map(discovery.compatibility.map((entry) => [entry.instanceId, entry])),
   );
@@ -187,6 +198,14 @@
     }
     return [...groups.values()];
   });
+  async function viewSuggestedResult(resultCardId: number) {
+    // Restore the card when the user's current name filter hides the suggestion.
+    filter = '';
+    await tick();
+    const target = document.getElementById('fusion-result-' + resultCardId);
+    target?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    target?.focus({ preventScroll: true });
+  }
   function resetUndo() {
     previousFusionInputs = null;
     actionNotice = '';
@@ -521,16 +540,48 @@
           </div>
         {/if}
       </div>
-      {#if occurrences.length >= 2}
-        <div class="mb-5">
-          <FusionAdvisor
-            {discovery}
-            {cardById}
-            {labels}
-            inputCount={occurrences.length}
-            onapply={applyFusion}
-          />
-        </div>
+      {#if discovery.results.length > 1 && suggestedPlays.length}
+        <section
+          class="mb-5 rounded-lg border border-border bg-surface p-3"
+          aria-label="Suggested fusion plays"
+        >
+          <h3 class="m-0 text-base font-semibold">Suggested Plays</h3>
+          <p class="mb-3 mt-1 text-xs leading-relaxed text-muted-foreground">
+            Top confirmed results by known ATK, then fewer materials. Select a result to see its
+            steps and Summon action below. This does not account for the opponent or terrain.
+          </p>
+          {#if !discovery.complete}
+            <p class="mb-3 text-xs text-warning">
+              Partial search: undiscovered fusion options may exist.
+            </p>
+          {/if}
+          <ol class="m-0 grid list-none gap-2 p-0">
+            {#each suggestedPlays as play, index (play.resultCardId)}
+              {@const card = cardById.get(play.resultCardId)!}
+              <li>
+                <button
+                  type="button"
+                  class="flex w-full min-w-0 flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-surface p-2 text-left hover:border-primary hover:bg-selected"
+                  aria-label={'View ' + card.name + ' fusion result and its recipe'}
+                  onclick={() => viewSuggestedResult(play.resultCardId)}
+                >
+                  <span class="min-w-0 text-sm">
+                    <span class="mr-2 text-xs font-semibold text-primary">#{index + 1}</span>
+                    <strong>{card.name}</strong>
+                    <span class="text-xs text-muted-foreground">
+                      · #{String(card.id).padStart(3, '0')}
+                    </span>
+                  </span>
+                  <span class="text-xs text-muted-foreground">
+                    ATK {play.atk ?? 'unknown'} · {play.recipe.instanceIds.length} materials ·
+                    {occurrences.length - play.recipe.instanceIds.length} unused
+                    <span class="ml-1 font-semibold text-primary">View →</span>
+                  </span>
+                </button>
+              </li>
+            {/each}
+          </ol>
+        </section>
       {/if}
       {#if discovery.results.length}
         <div class="mb-5 flex flex-wrap items-end gap-3">
@@ -562,6 +613,9 @@
             {cardById}
             {labels}
             onapply={applyFusion}
+            recommended={result.resultCardId === topResultId}
+            onlyResult={discovery.results.length === 1}
+            partial={!discovery.complete}
           />{/each}
       {:else}
         <div class="py-8">
