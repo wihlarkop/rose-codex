@@ -153,6 +153,9 @@
         <p class="leader-caveat">
           Creates a separate editable 40-card deck. The chosen Deck Leader is recorded in the new
           deck's name; leader selection and rank are not yet part of the saved deck format.
+          <a class="text-link" href={'/leaders/?card=' + selected.leaderId}>
+            View this Deck Leader's rank and ability reference →
+          </a>
         </p>
         <div class="preview-scroll" role="region" aria-label="Forty-card starter contents">
           <ul>
