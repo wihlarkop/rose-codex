@@ -8,12 +8,18 @@
     cardById,
     labels,
     special = false,
+    recommended = false,
+    onlyResult = false,
+    partial = false,
     onapply,
   }: {
     result: FusionResult;
     cardById: Map<number, BrowserCard>;
     labels: Map<string, string>;
     special?: boolean;
+    recommended?: boolean;
+    onlyResult?: boolean;
+    partial?: boolean;
     onapply?: (recipe: FusionRecipe) => void;
   } = $props();
   let expanded = $state(false);
@@ -23,6 +29,8 @@
 </script>
 
 <article
+  id={(special ? 'special-result-' : 'fusion-result-') + card.id}
+  tabindex="-1"
   class="min-w-0 border-b border-border py-5 first:pt-0"
   aria-label={card.name + (special ? ' special combination' : ' fusion result')}
 >
@@ -31,6 +39,9 @@
       <CardFlipTile {card} id={(special ? 'special-result-' : 'fusion-result-') + card.id} />
     </div>
     <div class="min-w-0">
+      {#if recommended && !special}
+        <p class="mb-1 mt-0 text-xs font-semibold text-primary">Recommended fusion</p>
+      {/if}
       <h3 class="mb-1 mt-0 text-base font-semibold">
         {card.name}
         <span class="number text-sm font-normal text-muted-foreground"
@@ -46,7 +57,27 @@
         · {result.recipes.length}
         {result.recipes.length === 1 ? 'recipe' : 'recipes'}
       </p>
-      <FusionRecipeView recipe={preferred} {cardById} {labels} {special} {onapply} />
+      {#if recommended && !special}
+        <p
+          class="mb-3 mt-0 rounded-md bg-elevated px-3 py-2 text-xs leading-relaxed text-muted-foreground"
+        >
+          <strong class="text-foreground">Why this result?</strong>
+          {onlyResult
+            ? partial
+              ? 'The only ordinary fusion confirmed so far; search is partial.'
+              : 'The only available ordinary fusion with these inputs.'
+            : 'Highest known result ATK among currently discovered ordinary fusions.'}
+          This guidance does not consider the opponent or terrain.
+        </p>
+      {/if}
+      <FusionRecipeView
+        recipe={preferred}
+        {cardById}
+        {labels}
+        {special}
+        {onapply}
+        prominent={recommended && !special}
+      />
       {#if result.recipes.length > 1}
         <details class="mt-3" ontoggle={(event) => (expanded = event.currentTarget.open)}>
           <summary class="cursor-pointer py-1 text-xs font-semibold text-primary">

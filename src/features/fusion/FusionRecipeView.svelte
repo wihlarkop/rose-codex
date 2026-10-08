@@ -6,12 +6,14 @@
     cardById,
     labels,
     special = false,
+    prominent = false,
     onapply,
   }: {
     recipe: FusionRecipe;
     cardById: Map<number, BrowserCard>;
     labels: Map<string, string>;
     special?: boolean;
+    prominent?: boolean;
     onapply?: ((recipe: FusionRecipe) => void) | undefined;
   } = $props();
   const number = (id: number) => '#' + String(id).padStart(3, '0');
@@ -58,7 +60,7 @@
   {#if !special && onapply}
     <button
       type="button"
-      class="control-button mt-3"
+      class={prominent ? 'summon-primary mt-3' : 'control-button mt-3'}
       aria-label={'Apply ' + cardById.get(recipe.resultCardId)?.name + ' fusion to Summoning Area'}
       onclick={() => onapply(recipe)}>Summon result</button
     >
@@ -72,3 +74,19 @@
     </p>
   {/if}
 </div>
+
+<style>
+  .summon-primary {
+    min-height: 34px;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--primary);
+    border-radius: var(--radius);
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-size: 0.75rem;
+    font-weight: 650;
+  }
+  .summon-primary:hover {
+    filter: brightness(0.94);
+  }
+</style>

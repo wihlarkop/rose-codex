@@ -25,11 +25,21 @@ A saved deck above 40 is marked as an over-target preset with a link to
 
 ## Suggested Plays and simulator Hand
 
-When two or more inputs are present, the Fusion Workspace shows the leading
-ordinary fusion choices ranked by **highest known ATK**, then fewer materials,
-known DEF and result ID. It displays each material step and allows the same
-explicit **Summon result** planning action as the detailed results below.
-This is a transparent heuristic, not an optimal duel prediction.
+The Fusion Workspace presents each ordinary result **once**. For exactly one
+confirmed result it skips the separate Suggested Plays panel, marks that result
+as recommended, explains that it is the only confirmed fusion, and exposes its
+single **Summon result** action alongside the ordered recipe. For multiple
+confirmed results, Suggested Plays is a compact, up-to-three ranked navigation
+list: choosing a suggestion clears any result-name filter, moves keyboard focus
+to the corresponding result and scrolls it into view. It does **not** repeat
+the material steps or Summon buttons.
+
+Ranking remains **highest known result ATK**, then fewer materials, known DEF
+and result ID. The highest-ranked result has a concise explanation and a more
+prominent Summon button; other recipes retain their existing actions.
+A missing-result state does not display a redundant advisory panel. Incomplete
+discovery is labelled as partial rather than a guarantee of optimal play.
+This is a transparent heuristic, not opponent- or terrain-aware strategy.
 
 The [Deck Simulator](deck-simulator.md) can transfer its currently drawn Hand
 through a validated `?hand=` URL (one to five canonical IDs, preserving

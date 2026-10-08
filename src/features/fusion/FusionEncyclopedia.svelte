@@ -302,7 +302,9 @@
                             .join(', ')}
                         </span>
                       {/if}
-                      <a class="try-link" href={handLink(row.recipe.materials)}>Try in Fusion →</a>
+                      <a class="try-link" href={handLink(row.recipe.materials, 'recipes')}
+                        >Try in Fusion →</a
+                      >
                     </div>
                   </li>
                 {/each}
@@ -346,7 +348,9 @@
                       Missing materials
                     {/if}
                   </span>
-                  <a class="try-link" href={handLink(recipe.materials)}>Check in Fusion →</a>
+                  <a class="try-link" href={handLink(recipe.materials, 'recipes')}
+                    >Check in Fusion →</a
+                  >
                 </li>
               {/each}
             </ul>
