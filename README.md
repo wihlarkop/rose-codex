@@ -1,7 +1,7 @@
 # Rose Codex
 
 A fast, static, browser-based companion for **Yu-Gi-Oh! The Duelists of the
-Roses (PS2)**. Current status: **M1 — visual card library and DotR image pipeline**.
+Roses (PS2)**. Current status: **visual card library and reusable card picker**.
 Open `/cards/` to browse/search the numbered library; select a card for its full
 game screen and metadata. Fusion, naming, deck and reincarnation UIs remain future work.
 
@@ -25,6 +25,29 @@ Astro 7.3.6 produces static assets in `dist/`. The card browser uses one Svelte 
 interactive island. TypeScript 6.0.3 satisfies the integrations'
 current peer ranges (TypeScript 7 is not supported by these pinned checkers).
 Everything runs through Bun, including the installed Wrangler entry point.
+
+## UI foundation
+
+Tailwind CSS 4.3.3 uses the official Vite integration. Local shadcn-svelte Nova
+primitives are limited to Button, Input, Command and Popover (CLI 1.7.0; Bits UI
+2.18.0). Their MIT notice is retained in `src/components/ui/LICENSE.md`.
+Astro renders the shell, homepage and details without hydration; the library
+and quick lookup share one Svelte island and one canonical browser projection.
+
+Theme colors, radius and spacing live in `src/styles/global.css`. Change tokens
+there; `@theme inline` exposes them to Tailwind and shadcn. Use semantic surface,
+foreground, muted, primary, selected and ring tokens in custom components.
+See [interface guidance](DESIGN.md) and [UI report](docs/ui-foundation-report.md).
+
+`CardPicker` accepts `cards: BrowserCard[]`, `onselect(cardId: number)`, optional
+`label` and `selectedCardId`. It searches the full supplied catalog and shows the
+first 20 matches with an honest count. Command supplies combobox/listbox semantics
+and ArrowUp/ArrowDown/Enter; Popover supplies Escape and focus return. The callback
+returns only canonical identity. `CardQuickLookup` handles navigation separately;
+future tools can handle selection without copying picker behavior. Artwork,
+tiles, stats and suggestion rows are project-owned under `src/components/cards/`.
+No global store or Fusion Workspace is implemented.
+
 
 ## Data
 

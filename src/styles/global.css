@@ -1,38 +1,71 @@
+@import "tailwindcss";
+@custom-variant dark (&:is(.dark *));
 :root {
   color-scheme: dark;
-  --background: #12191d; --surface: #1a2429; --control: #202d33;
-  --line: #35434a; --text: #edf1f2; --muted: #b4c2c9; --accent: #e1ba91; --focus: #f2cfab;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: var(--text); background: var(--background); line-height: 1.5;
-  scrollbar-color: var(--line) var(--background);
+  --background: #181b20; --surface: #22262c; --elevated: #2a2f36;
+  --foreground: #f1eee8; --muted-foreground: #b6b8be; --border: #3d424c;
+  --primary: #d5a4ad; --primary-foreground: #24171c; --ring: #ecc3ca;
+  --hover: #30363e; --selected: #44313a; --warning: #e4bf84;
+  --warning-background: #342d23; --destructive: #eea2a2; --artwork-background: #14171b;
+  --card: var(--surface); --card-foreground: var(--foreground);
+  --popover: var(--elevated); --popover-foreground: var(--foreground);
+  --secondary: var(--elevated); --secondary-foreground: var(--foreground);
+  --muted: var(--hover); --accent: var(--selected); --accent-foreground: var(--foreground);
+  --input: var(--border); --radius: .375rem;
+  --space-1: .25rem; --space-2: .5rem; --space-3: .75rem; --space-4: 1rem; --space-6: 1.5rem; --space-8: 2rem;
+  --text: var(--foreground); --line: var(--border); --control: var(--elevated); --focus: var(--ring);
 }
-* { box-sizing: border-box; }
-body { margin: 0; }
-a { color: inherit; text-underline-offset: .2em; }
-button, input, select { font: inherit; }
-button, select, input { color: var(--text); background: var(--control); border: 1px solid var(--line); border-radius: 5px; }
-button { cursor: pointer; }
-button:hover { border-color: var(--accent); }
-input { caret-color: var(--accent); }
-input::placeholder { color: var(--muted); opacity: 1; }
-select:disabled { opacity: .55; cursor: not-allowed; }
-:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
-::selection { color: var(--background); background: var(--accent); }
-h1, h2, p { margin-top: 0; }
-h1 { font-size: clamp(1.7rem, 2.2vw, 2.2rem); line-height: 1.2; letter-spacing: -.025em; margin-bottom: .55rem; }
-h2 { font-size: 1.2rem; }
-.muted { color: var(--muted); }
-.number { font-variant-numeric: tabular-nums; }
-.container { width: min(100% - 3rem, 1480px); margin-inline: auto; }
-.site-header { border-bottom: 1px solid var(--line); }
-.header-inner { display: flex; align-items: center; gap: 2rem; min-height: 70px; }
-.brand { font-size: 1.25rem; font-weight: 700; letter-spacing: -.025em; text-decoration: none; }
-.brand span { color: var(--accent); }
-.site-nav a { display: inline-block; padding: .4rem 0; color: var(--muted); text-decoration: none; }
-.site-nav a[aria-current="page"] { color: var(--text); border-bottom: 2px solid var(--accent); }
-.site-main { padding-block: 2rem 3rem; min-height: calc(100vh - 180px); }
-.site-footer { border-top: 1px solid var(--line); padding-block: 1.2rem; font-size: .8rem; color: var(--muted); }
-.site-footer .container { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .7rem; }
-.skip-link { position: absolute; left: 1rem; top: -5rem; padding: .7rem; background: var(--control); z-index: 10; }
-.skip-link:focus { top: .5rem; }
-@media (max-width: 600px) { .container { width: calc(100% - 1.5rem); } .header-inner { min-height: 60px; gap: 1.5rem; } .site-main { padding-top: 1.5rem; } }
+@theme inline {
+  --color-background: var(--background); --color-foreground: var(--foreground);
+  --color-surface: var(--surface); --color-elevated: var(--elevated);
+  --color-card: var(--card); --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover); --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary); --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary); --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted); --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent); --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border); --color-input: var(--input); --color-ring: var(--ring);
+  --color-hover: var(--hover); --color-selected: var(--selected); --color-warning: var(--warning); --color-destructive: var(--destructive);
+  --radius-sm: calc(var(--radius) - 2px); --radius-md: var(--radius); --radius-lg: calc(var(--radius) + 2px);
+}
+@layer base {
+  * { box-sizing: border-box; border-color: var(--border); }
+  body { margin: 0; background: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.5; }
+  a { text-underline-offset: .2em; } button, input, select { font: inherit; }
+  button:not(:disabled), select:not(:disabled) { cursor: pointer; }
+  input[type="search"]::-webkit-search-cancel-button { appearance: none; }
+  input { caret-color: var(--primary); }
+  :focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+  ::selection { background: var(--primary); color: var(--primary-foreground); }
+  html { scrollbar-color: var(--border) var(--background); }
+  h1, h2, h3 { text-wrap: balance; }
+}
+@layer components {
+  .app-container { width: min(100% - 4rem, 1480px); margin-inline: auto; }
+  .number { font-variant-numeric: tabular-nums; } .muted { color: var(--muted-foreground); }
+  .site-header { background: var(--surface); }
+  .header-inner { display: flex; align-items: center; gap: var(--space-8); min-height: 64px; }
+  .brand { display: inline-flex; align-items: center; gap: var(--space-3); text-decoration: none; font-size: 1.125rem; font-weight: 700; letter-spacing: -.025em; white-space: nowrap; }
+  .brand-mark { color: var(--primary); width: 27px; height: 27px; } .brand span { color: var(--primary); }
+  .site-nav { display: flex; align-items: center; gap: var(--space-2); }
+  .site-nav a { color: var(--muted-foreground); padding: var(--space-2) var(--space-4); border-radius: var(--radius); text-decoration: none; font-size: .875rem; font-weight: 600; }
+  .site-nav a:hover { color: var(--foreground); background: var(--hover); }
+  .site-nav a[aria-current="page"] { background: var(--selected); color: var(--primary); }
+  .header-context { margin-left: auto; color: var(--muted-foreground); font-size: .75rem; }
+  .site-main { padding-block: var(--space-8) 3rem; min-height: calc(100vh - 138px); }
+  .page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-6); margin-bottom: var(--space-6); }
+  .page-title { font-size: clamp(1.7rem, 2vw, 2rem); font-weight: 650; line-height: 1.2; letter-spacing: -.025em; }
+  .page-description { color: var(--muted-foreground); margin-top: var(--space-2); font-size: .875rem; max-width: 65ch; }
+  .site-footer { padding-block: var(--space-4); color: var(--muted-foreground); font-size: .75rem; }
+  .site-footer .app-container { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); }
+  .site-footer a:hover { color: var(--primary); }
+  .skip-link { position: absolute; left: var(--space-4); top: -5rem; z-index: 100; padding: var(--space-3); background: var(--elevated); border-radius: var(--radius); }
+  .skip-link:focus { top: var(--space-2); }
+  .native-filter { height: 40px; min-width: 0; background: var(--elevated); color: var(--foreground); border: 1px solid var(--border); border-radius: var(--radius); padding-inline: var(--space-3); font-size: .875rem; }
+  .native-filter:disabled { opacity: .5; cursor: not-allowed; }
+  .tag { display: inline-flex; align-items: center; gap: var(--space-2); background: var(--elevated); color: var(--muted-foreground); border-radius: var(--radius-sm); padding: var(--space-1) var(--space-2); font-size: .75rem; }
+  .warning-note { background: var(--warning-background); color: var(--warning); border-radius: var(--radius); padding: var(--space-3) var(--space-4); font-size: .875rem; }
+  .text-link { color: var(--primary); text-decoration: underline; }
+}
+@media (max-width: 1050px) { .app-container { width: calc(100% - 3rem); } .header-context { display: none; } }
+@media (max-width: 600px) { .app-container { width: calc(100% - 1.5rem); } .header-inner { gap: var(--space-4); } .site-main { padding-top: var(--space-6); } .page-header { flex-wrap: wrap; } }

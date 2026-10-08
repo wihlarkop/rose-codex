@@ -8,7 +8,5 @@ import type { Card, ImageRecord } from '../../lib/dotr/model';
 const library = browserCards(cards as Card[], images as ImageRecord[]);
 ---
 <Shell title="Cards">
-  <h1>Card library</h1><p class="muted intro">Find the card you see in The Duelists of the Roses.</p>
   <CardBrowser cards={library} client:load />
 </Shell>
-<style>.intro { margin-bottom: 0; }</style>

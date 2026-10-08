@@ -1,58 +1,52 @@
 ---
 name: Rose Codex
-description: Compact visual DotR library for desktop play
+description: Compact visual DotR companion for desktop play
 colors:
-  background: "#12191d"
-  artworkBackground: "#0b1114"
-  surface: "#1a2429"
-  control: "#202d33"
-  line: "#35434a"
-  text: "#edf1f2"
-  muted: "#b4c2c9"
-  accent: "#e1ba91"
-  focus: "#f2cfab"
+  background: "#181b20"
+  surface: "#22262c"
+  elevated: "#2a2f36"
+  foreground: "#f1eee8"
+  mutedForeground: "#b6b8be"
+  border: "#3d424c"
+  primary: "#d5a4ad"
+  selected: "#44313a"
+  ring: "#ecc3ca"
+  warning: "#e4bf84"
 rounded:
-  control: "5px"
+  control: "6px"
   tile: "6px"
 ---
 # Rose Codex interface
 
-## Overview
+A compact tool for recognizing cards while playing DotR on desktop. Charcoal
+surfaces and warm off-white text support authentic game imagery; muted rose
+marks active navigation, actions and selections. Amber identifies unavailable
+imagery. System UI type keeps names readable; numbers use tabular figures.
 
-M1 is an Operate surface: identify a card quickly while playing DotR on desktop.
-The user specified a dark, compact, subtle card-focused grid and chose artwork
-cropping for tiles with the original full screenshot on detail. No decorative
-game assets, animated presentation, modal preview or future tool placeholders.
+Tokens in `src/styles/global.css` are the source of truth. Tailwind's inline theme
+maps semantic colors and radii to those variables. Spacing follows the small
+quarter-rem scale. Prefer existing tokens and utilities over new literal colors.
+The custom `app-container` avoids Tailwind's responsive `container` utility.
 
-## Colors
+The shell exposes only the working Cards destination. Content is capped at
+1480px with 32px desktop gutters, then 24px on narrow desktops. Tiles have a
+190px minimum width, 12px gaps, wrapping names and secondary stats/classification.
+The default view preserves the game screen. An explicit artwork view retains
+the previously reviewed crop, including the special #065 window. Details always
+show the full image. Missing #676 remains an ID-labelled placeholder.
 
-Source: src/styles/global.css. Neutral dark surfaces support the game's varied
-artwork; a muted warm accent identifies the brand, card IDs and keyboard focus.
+The toolbar offers immediate local search and kind/type/attribute filters,
+removable active chips, reset and result counts. Quick lookup uses a visual
+Command/Popover picker with prominent keyboard selection and focus. Native
+selects remain appropriate for the short filter lists. No animation system,
+decorative game assets, speculative navigation or future workspace UI.
 
-## Typography
+Custom CardArtwork, CardTile, CardStats and CardPickerOption components share
+image/metadata treatment across actual homepage, library, detail and picker uses.
+Astro renders static pages. One library Svelte island owns local interaction;
+canonical models/search/game mechanics remain outside presentation components.
+Images are local, lazy-loaded and dimensioned. Provenance and confidence remain
+available on detail pages.
 
-System UI type supports dense reading; numeric metadata uses tabular figures.
-
-## Layout
-
-Shared content width 1480px, desktop gutter 24px, small
-viewport gutter 12px. Native controls have 42px minimum height and visible labels.
-
-The shell has one real navigation entry, Cards. Grid tiles use a 4:3 artwork
-viewport and 170px minimum width; two columns at smaller widths. Names wrap;
-IDs remain explicit. Type/attribute and ATK/DEF/deck cost stay secondary. Search
-and filters precede results; empty and missing states offer clear recovery.
-
-## Components
-
-One Svelte island filters canonical projections locally. Astro renders the shell
-and ID detail pages. Links and controls remain keyboard accessible. Local images
-use lazy loading, declared natural dimensions and a fixed artwork viewport.
-The one full WebP per ID is clipped for grid display, with no second image set.
-Sources/identity confidence remain available on detail. Missing or uncertain
-imagery uses an ID-labelled placeholder rather than generic artwork.
-
-Provenance is hash-bound in the image manifests, rather than embedded metadata
-that would alter the reproducible converted asset bytes. Screenshot evidence
-from acceptance is kept in ignored .impeccable/review/. Browser acceptance and
-fresh-review results are recorded in docs/m1-report.md.
+Historical acceptance is preserved in [Card Browser report](docs/card-browser-report.md).
+Current acceptance is recorded in [UI Foundation report](docs/ui-foundation-report.md).

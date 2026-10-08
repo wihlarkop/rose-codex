@@ -3,7 +3,13 @@
   "compilerOptions": {
     "types": ["bun"],
     "resolveJsonModule": true,
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "$lib": ["./src/lib"],
+      "$lib/*": ["./src/lib/*"],
+      "$components": ["./src/components"],
+      "$components/*": ["./src/components/*"]
+    }
   },
   "include": [".astro/types.d.ts", "**/*"],
   "exclude": ["dist", "node_modules", "data/raw"]

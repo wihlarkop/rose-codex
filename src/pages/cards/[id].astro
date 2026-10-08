@@ -1,8 +1,10 @@
 ---
 import Shell from '../../layouts/Shell.astro';
+import CardArtwork from '../../components/cards/CardArtwork.svelte';
+import { Button } from '../../components/ui/button';
 import cards from '../../../data/canonical/cards.json';
 import images from '../../../data/canonical/images.json';
-import { imageAvailable } from '../../lib/dotr/images';
+import { browserCards } from '../../lib/dotr/browser';
 import type { Card, ImageRecord } from '../../lib/dotr/model';
 export function getStaticPaths() {
   return cards.map(card => ({ params: { id: String(card.id).padStart(3, '0') }, props: { card, image: images[card.id] } }));
@@ -10,54 +12,51 @@ export function getStaticPaths() {
 interface Props { card: Card; image: ImageRecord }
 const { card, image } = Astro.props;
 const id = String(card.id).padStart(3, '0');
-const available = imageAvailable(image);
+const visual = browserCards([card], [image])[0]!;
 const kind = card.kind === 'monster' ? 'Monster' : card.kind === 'magic' ? 'Magic' : card.kind === 'trap' ? 'Trap' : 'Ritual';
 const fields = [
-  ['Card kind', kind], ['Monster type', card.monsterType], ['Attribute', card.attribute],
   ['Level', card.kind === 'monster' ? card.level ?? 'Unknown' : null],
-  ['ATK', card.kind === 'monster' ? card.atk ?? 'Unknown' : null], ['DEF', card.kind === 'monster' ? card.def ?? 'Unknown' : null],
   ['Deck cost', card.deckCost ?? 'Unknown'], ['Password', card.password ?? 'Not recorded'],
-  ['Trap range', card.trapRange ? `${card.trapRange === 'full' ? 'Full' : 'Limited'} range` : null],
+  ['Trap range', card.trapRange ? (card.trapRange === 'full' ? 'Full range' : 'Limited range') : null],
   ['Magic class', card.magicClass === 'power-up' ? 'Power Up' : null],
 ];
 ---
-<Shell title={`${id} · ${card.name}`} description={`DotR card ${id}: ${card.name}. Game image and card details.`}>
-  <a class="back-link" href="/cards/">Back to card library</a>
+<Shell title={id + ' · ' + card.name} description={'DotR card ' + id + ': ' + card.name + '. Game image and card details.'}>
+  <div class="detail-back"><Button href="/cards/" variant="ghost" class="h-9 px-2 text-muted-foreground">← Card library</Button></div>
   <div class="detail-layout">
-    <div>
-      {available ? <img class="game-screen" src={`/cards/${image.file}`} alt={`${card.name} — DotR game screen, card ${id}`} width={image.width!} height={image.height!} /> :
-        <div class="detail-placeholder"><span class="number">{id}</span><p>DotR image unavailable</p></div>}
-      <p class="image-caption muted">{available ? 'Full DotR game screen' : image.status === 'manual-review' ? 'Source image needs identity review before it can be shown.' : 'No reliable DotR image is available yet.'}</p>
+    <div class="screen-column">
+      <div class="screen-frame"><CardArtwork image={visual.image} name={card.name} cardId={card.id} natural eager /></div>
+      <p class="image-caption">{visual.image ? 'Full DotR game screen · Card #' + id : 'Source image needs identity review before it can be shown.'}</p>
     </div>
     <article>
-      <h1>{card.name}</h1><p class="identity number">DotR {id} · {kind}</p>
+      <p class="detail-id number">CARD #{id}</p><h1 class="page-title">{card.name}</h1>
+      <div class="classification"><span class="tag">{kind}</span>{card.monsterType && <span class="tag">{card.monsterType}</span>}{card.attribute && <span class="tag">{card.attribute}</span>}</div>
+      {card.kind === 'monster' && <div class="detail-stats"><div><span>ATK</span><strong class="number">{card.atk ?? 'Unknown'}</strong></div><div><span>DEF</span><strong class="number">{card.def ?? 'Unknown'}</strong></div></div>}
       <dl>{fields.filter(([, value]) => value !== null).map(([label, value]) => <div><dt>{label}</dt><dd class="number">{value}</dd></div>)}</dl>
-      {card.id === 671 && <p class="muted">This special library entry has no ordinary stats recorded.</p>}
-      <p class="muted effect-note">Effect text is not available in Rose Codex yet.</p>
-      {available && image.source && <details>
-        <summary>Image source and identity</summary><p><a href={image.source}>Original Yugipedia DotR image</a></p>
-        <p class="muted">{image.status === 'verified' ? 'Card name and visible game number reviewed.' : 'Mapped by the gallery’s explicit DotR number. Individual screenshot content has not been manually checked.'}</p>
-      </details>}
+      {!visual.image && <p class="warning-note">Image unavailable. This card's source image has not been confidently matched to its canonical identity.</p>}
+      {card.id === 671 && <p class="detail-note">This special library entry has no ordinary stats recorded.</p>}
+      <p class="detail-note">Effect text is not available in Rose Codex yet.</p>
+      {visual.image && image.source && <details><summary>Image source and identity</summary><p><a class="text-link" href={image.source}>Original Yugipedia DotR image</a></p><p>{image.status === 'verified' ? 'Card name and visible game number reviewed.' : 'Mapped by the gallery’s explicit DotR number. Individual screenshot content has not been manually checked.'}</p></details>}
       <nav class="adjacent" aria-label="Adjacent DotR cards">
-        {card.id > 0 && <a href={`/cards/${String(card.id - 1).padStart(3, '0')}/`}>Previous · {String(card.id - 1).padStart(3, '0')}</a>}
-        {card.id < 853 && <a href={`/cards/${String(card.id + 1).padStart(3, '0')}/`}>Next · {String(card.id + 1).padStart(3, '0')}</a>}
+        {card.id > 0 && <Button variant="outline" href={'/cards/' + String(card.id - 1).padStart(3, '0') + '/'} class="h-9 rounded-md text-xs">← Previous · {String(card.id - 1).padStart(3, '0')}</Button>}
+        {card.id < 853 && <Button variant="outline" href={'/cards/' + String(card.id + 1).padStart(3, '0') + '/'} class="h-9 rounded-md text-xs">Next · {String(card.id + 1).padStart(3, '0')} →</Button>}
       </nav>
     </article>
   </div>
 </Shell>
 <style>
-  .back-link { display: inline-block; color: var(--muted); margin-bottom: 1.5rem; }
-  .detail-layout { display: grid; grid-template-columns: minmax(0, 580px) minmax(280px, 1fr); gap: 2.5rem; max-width: 1120px; }
-  .game-screen { display: block; width: 100%; height: auto; border-radius: 5px; }
-  .image-caption { font-size: .8rem; margin-top: .75rem; }
-  .detail-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; aspect-ratio: 5 / 4; background: var(--surface); border: 1px solid var(--line); border-radius: 5px; }
-  .detail-placeholder span { font-size: 3rem; color: var(--accent); }
-  .detail-placeholder p { margin: .5rem 0 0; color: var(--muted); }
-  .identity { color: var(--accent); margin-bottom: 1.25rem; }
-  dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 0 0 1.5rem; }
-  dt { color: var(--muted); font-size: .8rem; } dd { margin: .25rem 0 0; font-weight: 600; }
-  .effect-note, details { font-size: .9rem; } summary { cursor: pointer; color: var(--muted); }
-  details p { margin-block: .7rem; }
-  .adjacent { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 2rem; border-top: 1px solid var(--line); padding-top: 1rem; font-size: .9rem; }
-  @media (max-width: 800px) { .detail-layout { grid-template-columns: 1fr; gap: 1.5rem; } .game-screen { max-width: 580px; } }
+  .detail-back { margin: -.5rem 0 var(--space-6) -.5rem; }
+  .detail-layout { display: grid; grid-template-columns: minmax(0, 580px) minmax(280px, 1fr); gap: 3rem; max-width: 1120px; }
+  .screen-frame { border-radius: var(--radius); overflow: hidden; }
+  .image-caption { color: var(--muted-foreground); font-size: .75rem; margin-top: var(--space-3); }
+  .detail-id { color: var(--primary); font-size: .75rem; letter-spacing: .06em; margin-bottom: var(--space-2); font-weight: 600; }
+  .classification { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
+  .detail-stats { display: flex; gap: 3rem; padding-block: var(--space-6); }
+  .detail-stats div { display: flex; flex-direction: column; } .detail-stats span { font-size: .75rem; color: var(--muted-foreground); } .detail-stats strong { font-size: 1.75rem; font-weight: 600; }
+  dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); margin-block: var(--space-6); }
+  dt { color: var(--muted-foreground); font-size: .875rem; } dd { margin-top: var(--space-1); font-size: 1rem; font-weight: 500; }
+  .detail-note, details { font-size: .875rem; color: var(--muted-foreground); margin-top: var(--space-6); } summary { cursor: pointer; color: var(--foreground); } details p { margin-top: var(--space-3); }
+  .adjacent { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-8); }
+  @media(max-width: 850px) { .detail-layout { grid-template-columns: minmax(0, 1fr) minmax(260px, 1fr); gap: var(--space-6); } }
+  @media(max-width: 650px) { .detail-layout { grid-template-columns: 1fr; } .screen-column { max-width: 580px; } }
 </style>
