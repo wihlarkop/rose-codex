@@ -37,3 +37,23 @@ community simulator credits the same research author; it is not a second
 independent game disassembly. No emulator, original console, or regional naming
 comparison was performed. The current contract targets the inspected English
 name-entry research.
+
+## Naming simulator in Deck Builder
+
+The Deck Builder contains an expandable **Try starter decks by player name**
+section. Enter the player's original in-game name exactly (1–12 supported
+characters, case and whitespace preserved). The UI calls
+`starterDecksForName` without normalizing the name, then displays the three
+canonical Deck Leader choices for the computed group. Selecting a leader shows
+the corresponding recorded 40-card list, grouped copy counts, local DotR card
+thumbnails and known/unknown Deck Cost. This is a lookup, not a random generator.
+
+The canonical data has 17 leader-specific 40-card lists covering every leader
+referenced by the 16 naming groups. Each list is sourced, not independently
+verified against an original game session; the #458 list is explicitly flagged
+`manual-review` and the UI highlights that limitation. The selected leader is
+**not** saved as a separate deck-leader property because the existing version-1
+Deck Builder schema only stores deck IDs, names and main-deck card IDs. Instead,
+**Create as new deck** makes a new editable copy of the 40 cards and includes the
+leader's name in the deck title. Existing user decks are never replaced. This
+simulator does not implement a duel, draw, Deck Leader rank, or legality checks.
