@@ -64,8 +64,10 @@ Fusion and Deck Builder reuse the picker, card imagery, flip tiles, semantic
 tokens, and native controls. Fusion uses compact occurrence lists beside automatic
 results. Icons and readable labels distinguish direct, chain-only, neutral,
 special, and undetermined compatibility. Results use one image/metadata tile per
-final card beside ordered illustrated steps; native disclosures reveal alternative
-recipes in small batches. Desktop inputs and results sit side by side; mobile
+final card beside ordered text steps; native disclosures reveal alternative
+recipes in small batches. A small explicit Summon result action on each ordinary
+recipe consumes only its source planning occurrences, places the resulting card
+in Summoning Area and exposes one-step Undo; previews remain read-only. Desktop inputs and results sit side by side; mobile
 stacks them. Clear, copy, remove and zone movement stay beside the relevant inputs.
 Deck Builder centers one active deck with compact selection and creation controls,
 an editable name, persistent save feedback, 40-card progress and known cost.
