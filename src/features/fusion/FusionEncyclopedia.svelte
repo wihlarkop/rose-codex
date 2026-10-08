@@ -2,10 +2,7 @@
   import { onMount } from 'svelte';
   import CardArtwork from '../../components/cards/CardArtwork.svelte';
   import { filterCards, type BrowserCard } from '../../lib/dotr/browser';
-  import {
-    buildFusionEncyclopedia,
-    missingOwnedCopies,
-  } from '../../lib/dotr/fusion-encyclopedia';
+  import { buildFusionEncyclopedia, missingOwnedCopies } from '../../lib/dotr/fusion-encyclopedia';
   import type { FusionData } from '../../lib/dotr/model';
   import { handLink } from '../../lib/dotr/deck-simulation';
   import { COLLECTION_STORAGE_KEY, validateCollection } from '../decks/collection';
@@ -41,7 +38,8 @@
   const readyCount = $derived(
     owned === null
       ? null
-      : ordinary.filter((recipe) => missingOwnedCopies(recipe.materials, owned)?.length === 0).length,
+      : ordinary.filter((recipe) => missingOwnedCopies(recipe.materials, owned)?.length === 0)
+          .length,
   );
   const matchingMaterials = $derived(
     materialSearch.trim()
@@ -117,8 +115,8 @@
     <div>
       <h1 class="page-title">Fusion Encyclopedia</h1>
       <p class="page-description">
-        Pick a result card to see every recorded ordinary two-card fusion pair.
-        Compare materials against the copies you own, then try a pair in Fusion Workspace.
+        Pick a result card to see every recorded ordinary two-card fusion pair. Compare materials
+        against the copies you own, then try a pair in Fusion Workspace.
       </p>
     </div>
     <a class="text-link text-sm" href="/fusion/">Open Fusion Workspace →</a>
@@ -140,7 +138,8 @@
           {resultMatches.length
             ? `${resultMatches.length} matching result ${resultMatches.length === 1 ? 'card' : 'cards'}`
             : 'No recorded fusion result matches that search.'}
-          {#if resultMatches.length > 12} · Showing first 12; refine your search{/if}
+          {#if resultMatches.length > 12}
+            · Showing first 12; refine your search{/if}
         </p>
         <ul class="result-choices" aria-label="Matching fusion results">
           {#each resultMatches.slice(0, 12) as card (card.id)}
@@ -151,17 +150,28 @@
                 aria-label={'View recipes for ' + card.name}
                 onclick={() => selectResult(card.id)}
               >
-                <span class="artwork"><CardArtwork image={card.image} name={card.name} cardId={card.id} decorative /></span>
-                <span class="choice-name">{card.name}<small>#{String(card.id).padStart(3, '0')}</small></span>
-                <span class="choice-count">{(encyclopedia.ordinary.get(card.id) ?? []).length} pairs</span>
+                <span class="artwork"
+                  ><CardArtwork
+                    image={card.image}
+                    name={card.name}
+                    cardId={card.id}
+                    decorative
+                  /></span
+                >
+                <span class="choice-name"
+                  >{card.name}<small>#{String(card.id).padStart(3, '0')}</small></span
+                >
+                <span class="choice-count"
+                  >{(encyclopedia.ordinary.get(card.id) ?? []).length} pairs</span
+                >
               </button>
             </li>
           {/each}
         </ul>
       {:else}
         <p class="helper">
-          Search {encyclopedia.resultIds.length} recorded result cards. Select a result to change
-          the recipes displayed on the right.
+          Search {encyclopedia.resultIds.length} recorded result cards. Select a result to change the
+          recipes displayed on the right.
         </p>
       {/if}
       <div class="collection-status">
@@ -184,7 +194,12 @@
       {#if selected}
         <section class="surface result-summary" aria-label="Selected result card">
           <div class="selected-artwork">
-            <CardArtwork image={selected.image} name={selected.name} cardId={selected.id} decorative />
+            <CardArtwork
+              image={selected.image}
+              name={selected.name}
+              cardId={selected.id}
+              decorative
+            />
           </div>
           <div class="selected-info">
             <span class="eyebrow">Selected fusion result</span>
@@ -198,7 +213,8 @@
               {#if readyCount !== null}
                 · <strong>{readyCount}</strong> have enough copies in Collection
               {/if}
-              {#if special.length} · <strong>{special.length}</strong> special transformation{/if}
+              {#if special.length}
+                · <strong>{special.length}</strong> special transformation{/if}
             </p>
           </div>
         </section>
@@ -208,8 +224,8 @@
             <div>
               <h2>Ordinary fusion pairs</h2>
               <p class="helper">
-                Both materials are original card IDs. Each pair is a direct lookup from the
-                recorded DotR fusion table, not an inferred type-based rule.
+                Both materials are original card IDs. Each pair is a direct lookup from the recorded
+                DotR fusion table, not an inferred type-based rule.
               </p>
             </div>
           </div>
@@ -228,7 +244,11 @@
               {#if owned !== null}
                 <label>
                   Collection status
-                  <select class="search-input" bind:value={filter} onchange={() => (displayed = 20)}>
+                  <select
+                    class="search-input"
+                    bind:value={filter}
+                    onchange={() => (displayed = 20)}
+                  >
                     <option value="all">All recipes (ready first)</option>
                     <option value="ready">Have both materials</option>
                     <option value="missing">Missing materials</option>
@@ -250,7 +270,12 @@
                         {#if index === 1}<span class="plus" aria-hidden="true">+</span>{/if}
                         <div class="ingredient">
                           <span class="artwork">
-                            <CardArtwork image={card.image} name={card.name} cardId={card.id} decorative />
+                            <CardArtwork
+                              image={card.image}
+                              name={card.name}
+                              cardId={card.id}
+                              decorative
+                            />
                           </span>
                           <div class="ingredient-text">
                             <strong>{card.name}</strong>
@@ -269,7 +294,12 @@
                         <span class="ownership ready">Enough owned copies</span>
                       {:else}
                         <span class="ownership">
-                          Missing {row.missing.map((part) => `${part.needed - part.owned} × ${byId.get(part.cardId)?.name ?? '#' + part.cardId}`).join(', ')}
+                          Missing {row.missing
+                            .map(
+                              (part) =>
+                                `${part.needed - part.owned} × ${byId.get(part.cardId)?.name ?? '#' + part.cardId}`,
+                            )
+                            .join(', ')}
                         </span>
                       {/if}
                       <a class="try-link" href={handLink(row.recipe.materials)}>Try in Fusion →</a>
@@ -288,9 +318,7 @@
               </p>
             {/if}
           {:else}
-            <p class="empty-message">
-              This card has no recorded ordinary two-card fusion recipe.
-            </p>
+            <p class="empty-message">This card has no recorded ordinary two-card fusion recipe.</p>
           {/if}
         </section>
 
@@ -298,8 +326,8 @@
           <section class="recipe-section" aria-label="Special transformations">
             <h2>Special transformations</h2>
             <p class="helper">
-              Deterministic card changes from the separate transformation data.
-              These are not ordinary fusion recipes or part of ordinary chains.
+              Deterministic card changes from the separate transformation data. These are not
+              ordinary fusion recipes or part of ordinary chains.
             </p>
             <ul class="recipe-list">
               {#each special as recipe (recipe.materials.join('-'))}
@@ -325,10 +353,10 @@
           </section>
         {/if}
         <p class="scope-note">
-          Scope: all recorded direct, ordinary two-card pairs for this result;
-          chains that first create an intermediate monster are not enumerated here.
-          Use Fusion Workspace to explore chains from your actual Hand.
-          Unresolved random transformations cannot be mapped to a specific target.
+          Scope: all recorded direct, ordinary two-card pairs for this result; chains that first
+          create an intermediate monster are not enumerated here. Use Fusion Workspace to explore
+          chains from your actual Hand. Unresolved random transformations cannot be mapped to a
+          specific target.
         </p>
       {:else}
         <div class="surface empty-message">Choose a result card to view its recipes.</div>
@@ -355,34 +383,35 @@
   }
   .field-label {
     display: block;
-    font-size: .8125rem;
+    font-size: 0.8125rem;
     font-weight: 650;
-    margin-bottom: .4rem;
+    margin-bottom: 0.4rem;
   }
   .search-input {
     width: 100%;
     min-width: 0;
-    padding: .6rem .7rem;
+    padding: 0.6rem 0.7rem;
     background: var(--elevated);
     color: var(--foreground);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    font-size: .8125rem;
+    font-size: 0.8125rem;
   }
   .helper {
-    margin: .45rem 0;
+    margin: 0.45rem 0;
     color: var(--muted-foreground);
-    font-size: .75rem;
+    font-size: 0.75rem;
     line-height: 1.5;
   }
-  .result-choices, .recipe-list {
+  .result-choices,
+  .recipe-list {
     list-style: none;
-    margin: .65rem 0 0;
+    margin: 0.65rem 0 0;
     padding: 0;
   }
   .result-choices {
     display: grid;
-    gap: .3rem;
+    gap: 0.3rem;
     max-height: 26rem;
     overflow-y: auto;
   }
@@ -391,8 +420,8 @@
     min-width: 0;
     display: flex;
     align-items: center;
-    gap: .5rem;
-    padding: .45rem;
+    gap: 0.5rem;
+    padding: 0.45rem;
     background: transparent;
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -413,15 +442,18 @@
   .artwork :global(.card-artwork) {
     width: 100%;
   }
-  .choice-name, .ingredient-text {
+  .choice-name,
+  .ingredient-text {
     display: grid;
     min-width: 0;
-    gap: .1rem;
-    font-size: .75rem;
+    gap: 0.1rem;
+    font-size: 0.75rem;
   }
-  .choice-name small, .ingredient-text span, .choice-count {
+  .choice-name small,
+  .ingredient-text span,
+  .choice-count {
     color: var(--muted-foreground);
-    font-size: .6875rem;
+    font-size: 0.6875rem;
   }
   .choice-count {
     margin-left: auto;
@@ -429,13 +461,13 @@
   }
   .collection-status {
     margin-top: 1rem;
-    padding-top: .75rem;
+    padding-top: 0.75rem;
     border-top: 1px solid var(--border);
-    font-size: .8125rem;
+    font-size: 0.8125rem;
   }
   .collection-status p {
     color: var(--muted-foreground);
-    margin: .4rem 0;
+    margin: 0.4rem 0;
     line-height: 1.5;
   }
   .collection-status .collection-warning {
@@ -443,13 +475,13 @@
   }
   .small-button {
     display: block;
-    margin-top: .6rem;
-    padding: .35rem .55rem;
+    margin-top: 0.6rem;
+    padding: 0.35rem 0.55rem;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--surface);
     color: var(--foreground);
-    font-size: .75rem;
+    font-size: 0.75rem;
   }
   .small-button:hover {
     border-color: var(--primary);
@@ -477,18 +509,18 @@
   }
   .selected-info h2 {
     font-size: 1.25rem;
-    margin: .1rem 0;
+    margin: 0.1rem 0;
   }
   .eyebrow {
-    font-size: .6875rem;
+    font-size: 0.6875rem;
     color: var(--muted-foreground);
     font-weight: 650;
     text-transform: uppercase;
-    letter-spacing: .04em;
+    letter-spacing: 0.04em;
   }
   .recipe-count {
-    font-size: .8125rem;
-    margin: .65rem 0 0;
+    font-size: 0.8125rem;
+    margin: 0.65rem 0 0;
   }
   .recipe-section {
     min-width: 0;
@@ -502,16 +534,16 @@
     display: flex;
     flex-wrap: wrap;
     align-items: end;
-    gap: .6rem;
-    margin-top: .75rem;
-    padding: .7rem;
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+    padding: 0.7rem;
   }
   .recipe-filters label {
     display: grid;
-    gap: .3rem;
+    gap: 0.3rem;
     flex: 1;
     min-width: 10rem;
-    font-size: .75rem;
+    font-size: 0.75rem;
     font-weight: 600;
   }
   .recipe-filters .helper {
@@ -520,35 +552,35 @@
   }
   .recipe-list {
     display: grid;
-    gap: .45rem;
+    gap: 0.45rem;
   }
   .recipe-row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: .75rem;
+    gap: 0.75rem;
     min-width: 0;
-    padding: .6rem .7rem;
+    padding: 0.6rem 0.7rem;
   }
   .pair {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     flex: 1;
-    gap: .5rem;
+    gap: 0.5rem;
     min-width: 0;
   }
   .ingredient {
     display: flex;
     align-items: center;
-    gap: .45rem;
+    gap: 0.45rem;
     flex: 1 1 11rem;
     min-width: 0;
   }
   .ingredient-text strong {
     overflow-wrap: anywhere;
-    font-size: .8125rem;
+    font-size: 0.8125rem;
   }
   .plus {
     color: var(--muted-foreground);
@@ -557,12 +589,12 @@
   .pair-actions {
     display: grid;
     justify-items: end;
-    gap: .4rem;
+    gap: 0.4rem;
     margin-left: auto;
     min-width: 9rem;
   }
   .ownership {
-    font-size: .75rem;
+    font-size: 0.75rem;
     color: var(--muted-foreground);
     text-align: right;
   }
@@ -570,50 +602,52 @@
     color: var(--primary);
     font-weight: 650;
   }
-  .try-link, .show-more {
+  .try-link,
+  .show-more {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: .45rem .65rem;
+    padding: 0.45rem 0.65rem;
     border: 1px solid var(--primary);
     border-radius: var(--radius);
     color: var(--primary-foreground);
     background: var(--primary);
     text-decoration: none;
-    font-size: .75rem;
+    font-size: 0.75rem;
     font-weight: 650;
     text-align: center;
     cursor: pointer;
   }
-  .try-link:hover, .show-more:hover {
-    filter: brightness(.94);
+  .try-link:hover,
+  .show-more:hover {
+    filter: brightness(0.94);
   }
   .show-more {
-    margin-top: .75rem;
+    margin-top: 0.75rem;
     width: 100%;
   }
   .empty-message {
     padding: 1rem;
     color: var(--muted-foreground);
-    font-size: .875rem;
+    font-size: 0.875rem;
   }
   .special-row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: .6rem;
+    gap: 0.6rem;
     justify-content: space-between;
-    padding: .6rem .75rem;
+    padding: 0.6rem 0.75rem;
   }
   .special-pair {
     flex: 1;
-    font-size: .8125rem;
+    font-size: 0.8125rem;
     min-width: 12rem;
   }
   .scope-note {
     margin: 0;
     color: var(--muted-foreground);
-    font-size: .75rem;
+    font-size: 0.75rem;
     line-height: 1.6;
   }
   @media (max-width: 830px) {
