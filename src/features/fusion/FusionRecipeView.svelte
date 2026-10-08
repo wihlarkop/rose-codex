@@ -12,7 +12,7 @@
     cardById: Map<number, BrowserCard>;
     labels: Map<string, string>;
     special?: boolean;
-    onapply?: (recipe: FusionRecipe) => void;
+    onapply?: ((recipe: FusionRecipe) => void) | undefined;
   } = $props();
   const number = (id: number) => '#' + String(id).padStart(3, '0');
 </script>
