@@ -60,7 +60,7 @@
       <h1 class="page-title">PCSX2 Save Inspector</h1>
       <p class="page-description">
         Inspect a copy of your PS2 File Memory Card safely in your browser.
-        Read-only structure and game folder discovery; no game-save editing.
+        Read-only memory card structure and bounded DotR folder contents; no game-save editing.
       </p>
     </div>
     <a class="text-link text-sm" href="/collection/">My Collection →</a>
@@ -73,7 +73,7 @@
           <div>
             <h2 class="text-base font-semibold">Open a memory card</h2>
             <p class="mt-1 text-xs leading-relaxed text-muted-foreground">
-              Only PCSX2 file-based <strong>.ps2</strong> cards are supported in v1.
+              Only PCSX2 file-based <strong>.ps2</strong> cards are supported.
               Folder Memory Cards and exported .psu / .max / .cbs saves are not parsed.
             </p>
           </div>
@@ -217,6 +217,72 @@
             </p>
           {/if}
         </section>
+
+        {#if inspection.saveFolders.length}
+          <section class="rounded-lg border border-border bg-surface p-4"
+            aria-label="DotR save folder research">
+            <h2 class="text-base font-semibold">Inside candidate DotR save folders</h2>
+            <p class="mt-1 text-xs leading-relaxed text-muted-foreground">
+              Read-only filesystem metadata from the <strong>SLUS-20515</strong>
+              directory. A short file-header preview is useful for researching
+              save structure, but does <strong>not</strong> decode owned cards or decks.
+              Preview hex can include save-specific bytes; share it only if you intend to.
+            </p>
+            <div class="mt-3 grid gap-3">
+              {#each inspection.saveFolders as folder (folder.name)}
+                <article class="rounded-md border border-border bg-elevated p-3">
+                  <div class="flex flex-wrap items-baseline justify-between gap-2">
+                    <h3 class="break-all text-sm font-semibold">{folder.name}</h3>
+                    <span class="text-xs text-muted-foreground">
+                      {folder.entries.length} found · {folder.scannedEntries} / {folder.declaredEntries} records scanned
+                    </span>
+                  </div>
+                  {#if folder.warning}
+                    <p class="warning-note mt-2" role="alert">
+                      Incomplete directory: {folder.warning}
+                    </p>
+                  {/if}
+                  {#if folder.truncated}
+                    <p class="warning-note mt-2" role="status">
+                      First 96 records only; additional records were not inspected.
+                    </p>
+                  {/if}
+                  {#if folder.entries.length}
+                    <ul class="mt-3 grid gap-2">
+                      {#each folder.entries as entry, index (entry.name + ':' + index)}
+                        <li class="min-w-0 rounded-md border border-border bg-surface p-3">
+                          <div class="flex flex-wrap items-baseline justify-between gap-2">
+                            <strong class="break-all text-sm">{entry.name}</strong>
+                            <span class="text-xs tabular-nums text-muted-foreground">
+                              {entry.type} · {entry.type === 'file' ? entry.length.toLocaleString('en-US') + ' bytes' : entry.length + ' entries'}
+                            </span>
+                          </div>
+                          {#if entry.prefixHex}
+                            <details class="mt-2 text-xs text-muted-foreground">
+                              <summary class="cursor-pointer text-primary">
+                                Raw first {Math.min(entry.length, 24)} bytes · hex research preview
+                              </summary>
+                              <code class="mt-2 block break-all rounded-sm bg-elevated p-2 font-mono text-xs leading-relaxed">
+                                {entry.prefixHex}
+                              </code>
+                            </details>
+                          {/if}
+                          {#if entry.warning}
+                            <p class="warning-note mt-2 text-xs">{entry.warning}</p>
+                          {/if}
+                        </li>
+                      {/each}
+                    </ul>
+                  {:else}
+                    <p class="mt-3 text-xs text-muted-foreground">
+                      No readable live entries in this folder.
+                    </p>
+                  {/if}
+                </article>
+              {/each}
+            </div>
+          </section>
+        {/if}
       {/if}
     </div>
 
@@ -230,7 +296,7 @@
         </ol>
         <p class="mt-3 text-xs text-muted-foreground">
           Some users configure folder-based cards instead. They are not supported
-          by this v1 file inspector. Avoid modifying the live memory card while playing.
+          by this file inspector. Avoid modifying the live memory card while playing.
         </p>
         <a class="mt-3 inline-block text-xs text-link" href={PS2_MEMCARD_RESEARCH.pcsx2}
           rel="noreferrer" target="_blank">PCSX2 Memory Cards documentation ↗</a>
@@ -242,17 +308,18 @@
           <div>
             <strong class="text-primary">Available in v1</strong>
             <p class="mt-1 text-muted-foreground">
-              Raw .ps2 signature, filesystem geometry, ECC/spare layout, and
-              bounded root-directory listing. A matching SLUS-20515 name
-              is only a candidate DotR save indicator.
+              Raw .ps2 signature, filesystem geometry, ECC/spare layout, bounded
+              root-directory listing and first-level file names/sizes inside
+              candidate SLUS-20515 folders. The first 24 bytes of a file can
+              be shown as a local, raw hex prefix for format research.
             </p>
           </div>
           <div>
             <strong class="text-foreground">Not decoded yet</strong>
             <p class="mt-1 text-muted-foreground">
               DotR card copies, Chest, active duel deck, Deck Leader rank,
-              completed story path, or reincarnation counter. Those require
-              a separately verified DotR-specific save payload parser.
+              completed story path, or reincarnation counter. A documented
+              RAM SaveData layout does not prove the on-disk format is identical.
             </p>
           </div>
         </div>
