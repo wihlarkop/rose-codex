@@ -148,7 +148,7 @@ test('invalid file FAT chains are not presented as verified changes', () => {
   view.setUint32(44 * 1024 + 4, 1500, true);
   view.setUint32(9 * 1024 + 16, 0x80000004, true); // self loop
   const after = before.slice();
-  after[45 * 1024 + 10] ^= 1;
+  after[45 * 1024 + 10] = (after[45 * 1024 + 10] ?? 0) ^ 1;
   const diff = compareDotrMemoryCards(before, after);
   expect(diff.files.find(file => file.path.endsWith('SAVE.DAT'))?.status).toBe('unreadable');
   expect(diff.files.find(file => file.path.endsWith('SAVE.DAT'))?.warning).toMatch(/cycle/i);
