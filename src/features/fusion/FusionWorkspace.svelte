@@ -541,12 +541,7 @@
           </div>
         {/if}
       </div>
-      <DuelStrategyAdvisor
-        {cards}
-        {discovery}
-        {occurrences}
-        onviewfusion={viewSuggestedResult}
-      />
+      <DuelStrategyAdvisor {cards} {discovery} {occurrences} onviewfusion={viewSuggestedResult} />
       {#if discovery.results.length > 1 && suggestedPlays.length}
         <section
           class="mb-5 rounded-lg border border-border bg-surface p-3"
