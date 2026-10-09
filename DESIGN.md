@@ -83,6 +83,12 @@ and optionally send a pair to Fusion. Long lists render in batches; special
 transformations remain visually and semantically separate from ordinary
 fusion. It never mutates deck or Collection storage.
 
+Deck Readiness is an expandable in-page panel within the active Deck Builder,
+not a duplicate route or a new deck editor. Native opponent/rank selectors and the
+shared CardPicker handle manual context. A compact checklist distinguishes rule
+failures from missing information and conditional pass; optional cost pressure
+lists are short and read-only. Deck-switching clears ephemeral context.
+
 Deck Leader Reference is a read-only searchable Monster lookup, with a
 shortlist of 17 named starter leaders, a concise art/details preview, the
 twelve ordered ranks and an explicitly qualified type ability research list.

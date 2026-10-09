@@ -83,6 +83,10 @@ untouched until explicit valid replacement. Storage errors allow in-tab editing
 and JSON export. The 40-card and three-copy guidance does not confirm legality:
 leader selection/rank and opponent cost are not modeled.
 
+## Deck Readiness & Campaign Budget
+
+The existing Deck Builder includes a collapsible, read-only deck readiness adviser. It checks exactly 40 cards and no more than three copies of the same main-deck card, and optionally compares canonical known Deck Cost against a selected reported campaign opponent (from Opponent Encyclopedia). The manual's strict lower-than threshold is used, excluding the separate Deck Leader. A chosen Monster Deck Leader requires explicit **user-verified rank >= 2LT** in their game save; merely selecting a starter leader never claims rank eligibility. Unknown card costs and unknown leader rank produce inconclusive results, while known violations fail. The adviser displays minimum DC reduction required and high-cost card candidates for manual revision, but never edits the deck or suggests false guaranteed replacements. No Deck Leader, rank, or opponent is persisted or added to deck schema v1. A conditional pass is not claimed as legal in the current game save. See [Deck Builder rules](docs/deck-builder.md).
+
 ## Naming & Starter Deck Simulator
 
 Deck Builder embeds an optional name-based starter explorer. The exact English
