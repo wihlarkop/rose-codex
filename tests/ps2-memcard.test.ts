@@ -83,7 +83,7 @@ test('handles per-page spare areas', () => {
   const result = inspectPs2MemoryCard(createCard(true));
   expect(result.spareBytesPerPage).toBe(16);
   expect(result.entries[0]?.possibleDotr).toBe(true);
-  expect(result.saveFolders[0]?.entries[0]?.prefixHex).toStartWith('44 4F 54 52');
+  expect(result.saveFolders[0]?.entries[0]?.prefixHex?.startsWith('44 4F 54 52')).toBe(true);
 });
 
 test('rejects wrong signatures and detects a circular FAT rather than inventing files', () => {
