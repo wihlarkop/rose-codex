@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import CardArtwork from '../../components/cards/CardArtwork.svelte';
-  import CardPicker from '../../components/cards/CardPicker.svelte';
-  import type { BrowserCard } from '../../lib/dotr/browser';
+  import CardArtwork from './cards/CardArtwork.svelte';
+  import CardPicker from './cards/CardPicker.svelte';
+  import type { BrowserCard } from '../lib/dotr/browser';
   import {
     REINCARNATION_DUELS,
     REINCARNATION_STORAGE_KEY,
@@ -10,7 +10,7 @@
     emptyReincarnationProgress,
     validateReincarnationProgress,
     type ReincarnationProgress,
-  } from '../../lib/dotr/reincarnation';
+  } from '../lib/dotr/reincarnation';
 
   let { cards }: { cards: BrowserCard[] } = $props();
 
