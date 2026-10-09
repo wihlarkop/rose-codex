@@ -5,11 +5,11 @@ Roses (PS2)**. Current status: **visual card library, Fusion Workspace, and Deck
 Open `/cards/` to browse/search the numbered library; select a card for its full
 game screen and metadata in place. `/fusion/` automatically discovers ordinary
 fusions and compatibility for distinct planning occurrences; `/decks/` manages
-browser-local decks with JSON backups. Naming,
-fusion reference, and reincarnation UIs remain future work.
+browser-local decks with JSON backups. The Reincarnation Guide at `/reincarnation/` includes card lookup and a separate manual
+five-duel tracker; it does not read PCSX2 saves or predict random rewards.
 
 Long-term direction: Card Browser, Visual Fusion Simulator, Fusion Reference,
-Naming / Starter Deck Simulator, Deck Tools, and Reincarnation Tools.
+Naming / Starter Deck Simulator, Deck Tools, and verified Reincarnation probability tools.
 
 ## Develop
 
