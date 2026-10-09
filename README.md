@@ -14,7 +14,9 @@ It is a single-guide reference, not a verified full deck or reward-drop database
 
 The `/saves/` PCSX2 Save Inspector reads a selected `.ps2` image locally in the
 browser: signature, capacity, filesystem geometry, and bounded top-level save
-folder names. It does not upload or edit files, and does not decode DotR inventory,
+folder names. For NTSC-U DotR candidate folders it also lists contained file names,
+file sizes, and optional 24-byte hex header previews for format research.
+It does not upload or edit files, and does not decode DotR inventory,
 Deck Leader rank or story progress. Folder cards and other save formats are not
 supported yet. See [memory card inspector](docs/pcsx2-save-tools.md).
 
