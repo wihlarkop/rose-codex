@@ -92,6 +92,15 @@ A starter preview links to the corresponding Leader card without modifying
 any browser deck data. The layout retains compact warm-neutral cards and
 collapses into a single column on narrow screens.
 
+Duel Strategy is a collapsed-by-default inline results-area disclosure
+rather than a new screen or a competing recommendation card. Its concise
+manual context inputs (known opposing Monster, position and contact-square
+terrain) use existing CardPicker and native selects. Ranked previews explain
+what the known ATK/DEF comparison can and cannot establish. Fusion options
+jump to existing detailed result cards rather than copying recipes or
+Summon actions. Unsafe/unverified terrain and unknown opposition have explicit
+unknown states. The planning state is ephemeral and never writes user decks.
+
 Historical acceptance is preserved in [Card Browser report](docs/card-browser-report.md).
 Current implementation is described in [UI Foundation report](docs/ui-foundation-report.md).
 
