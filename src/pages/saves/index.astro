@@ -1,0 +1,7 @@
+---
+import Shell from '../../layouts/Shell.astro';
+import Pcsx2SaveInspector from '../../components/Pcsx2SaveInspector.svelte';
+---
+<Shell title="PCSX2 Save Inspector" description="Inspect a local PS2 memory card read-only, without uploading or modifying your game save.">
+  <Pcsx2SaveInspector client:load />
+</Shell>
