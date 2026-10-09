@@ -62,6 +62,9 @@ PCSX2 Save Inspector uses the existing compact, warm-neutral page layout at
 communicates rejected formats and unreadable FAT chains. Recognized geometry
 and root folder names use small text grids and a clearly qualified possible
 DotR identifier; no character/card imagery is implied by filename matching.
+Candidate DotR directories expand to a short list of file names, sizes and
+opt-in, collapsed raw hex prefixes. The previews are clearly qualified as
+save research rather than decoded cards and may contain private save bytes.
 No file bytes are persisted, uploaded or written back to the input.
 
 Collection is a separate compact inventory surface: owned copy count,
