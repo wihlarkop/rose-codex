@@ -67,6 +67,16 @@ modeled by the current version-1 deck schema. The lists have limited source
 verification; #458 is flagged for manual review. See
 [Naming and starter research](naming.md) for the calculation and evidence.
 
+## Deck Readiness and campaign cost guidance
+
+The in-page **Deck Readiness · Campaign Budget** disclosure evaluates the currently selected deck in place. It is advisory and does **not** edit the saved deck. It shows exact 40-card and maximum-three-copy checks, the main-deck total (separating unknown costs), a separate optional Deck Leader selection, and an explicit **manual** rank confirmation. It can compare against one of the 20 reported story-mode opponents in [Opponent Encyclopedia](opponents.md); the comparison uses their community-reported DC, not an independently verified game-memory value. Both story paths and their distinct final boss variants are available.
+
+The game's original US PS2 manual requires the campaign main-deck cost to be **strictly below** the opponent. A 400-cost deck against an opponent at DC 400 therefore does not pass. Deck Leader cost is excluded, and no new leader is inserted into the main deck or JSON. If any cost is unknown, a positive budget result is inconclusive; if even the known total is at/above the opponent DC, the over-budget status is already established. The adviser shows a minimum required reduction for known DC (a *lower bound* when any cost is unknown), or exact headroom only when all costs are known. Up to five highest individual-cost card types are highlighted for manual consideration, with copy counts; this is **not** an automatic fusion or deck optimizer and does not presume interchangeable replacements.
+
+For rank eligibility, the user must select a Monster candidate and explicitly report whether it has earned at least 2LT rank in their **current save**. An unknown rank remains unconfirmed; an explicitly lower rank fails. Selecting a new leader resets that declaration. Card identity or starter-deck appearances never establish rank eligibility on their own. Readiness context is ephemeral and reset when switching decks or reloading—**no new browser storage**, no extra deck fields, no inventory writes. Even when all reported checks match, the UI shows *conditional* readiness rather than declaring game legality, because actual ownership, current save state and special restrictions are outside the app.
+
+Checks use the existing canonical card data and `src/lib/dotr/deck-readiness.ts`; two focused Bun tests cover the strict boundary, unknowns and copy/leader constraints. Manual acceptance: select a 40-card saved deck, test unknown/eligible leader rank, choose an opponent above/below/equal to the deck DC, introduce a fourth copy and remove it, include #671 with unknown cost, switch decks and check the context resets, then verify JSON/Collection/other workspaces remain unchanged.
+
 ## Construction rules
 
 The US PlayStation 2 instruction manual says a deck contains exactly 40 cards
@@ -79,8 +89,9 @@ the required 40 cards and a leader.
 
 Source: [Yu-Gi-Oh! The Duelists of the Roses (US PS2) instruction manual](https://www.videogamemanual.com/PS2/Yu-Gi-Oh%21%20The%20Duelists%20of%20the%20Roses%20%28USA%29.pdf).
 
-This workspace does not assign a Deck Leader, rank, or opponent, so its count,
-copy, and cost summaries are planning guidance rather than a legality check.
+The main deck JSON still does not **store** Deck Leader, rank, or opponent; these can
+now be entered ephemerally in the read-only Deck Readiness disclosure, and its
+comparison is qualified as a planning check rather than an in-game legality verdict.
 Deck cost totals report known card costs and separately count unknown costs;
 unknown values are never treated as zero. In particular, canonical card #671
 has no recorded deck cost.

@@ -75,6 +75,10 @@ planning capacity; they do not simulate game capacity or board legality.
 Previews never consume materials or infer failed-chain discards, equip bonuses,
 rituals, or random results. There are no manual pair or chain-building controls.
 
+Deck Builder includes a read-only Deck Readiness adviser: enter a Monster leader's
+manually checked rank, choose a reported story opponent, and compare count/copies
+and known Deck Cost without changing save data. Exact eligibility remains conditional.
+
 Deck Builder supports multiple decks, names, duplication/deletion, individual
 copies, count/composition and known-cost summaries. Versioned localStorage saves
 only IDs and names; JSON import validates the entire envelope before replacement.

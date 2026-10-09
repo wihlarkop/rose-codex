@@ -3,6 +3,7 @@
   import CardArtwork from '../../components/cards/CardArtwork.svelte';
   import CardFlipTile from '../../components/cards/CardFlipTile.svelte';
   import StarterDeckExplorer from './StarterDeckExplorer.svelte';
+  import DeckReadinessAdvisor from '../../components/DeckReadinessAdvisor.svelte';
   import { Button } from '../../components/ui/button';
   import { filterCards, type BrowserCard } from '../../lib/dotr/browser';
   import {
@@ -459,6 +460,10 @@
         {/if}
       </section>
 
+      {#key active.id}
+        <DeckReadinessAdvisor {cards} cardIds={active.cardIds} />
+      {/key}
+
       <p class="m-0 text-xs text-muted-foreground">
         Want to test draws and fusion sequences?
         <a class="text-link" href={'/simulate/?deck=' + encodeURIComponent(active.id)}>
@@ -626,9 +631,9 @@
       <details class="construction-note">
         <summary>About deck requirements</summary>
         <p>
-          This builder tracks the 40-card target, copies, and known card costs. Deck Leader, leader
-          rank, and opponent cost also affect game rules and are not fully represented here, so this
-          summary cannot confirm that a deck is legal.
+          Deck Readiness now checks card count, copy limits, a manually confirmed Deck Leader rank,
+          and a community-reported campaign opponent's Deck Cost. It cannot inspect your actual
+          PCSX2 save, ownership, or card effects, so the result remains conditional.
         </p>
       </details>
     </div>
