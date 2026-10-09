@@ -101,6 +101,13 @@ jump to existing detailed result cards rather than copying recipes or
 Summon actions. Unsafe/unverified terrain and unknown opposition have explicit
 unknown states. The planning state is ephemeral and never writes user decks.
 
+Opponent Encyclopedia is a two-column searchable reference with a scrollable encounter list
+and an in-place selected profile. The list is organized by the player's chosen Rose path;
+selected Deck Leader imagery and the canonical notable-card thumbnails reuse CardArtwork.
+The selected profile shows Deck Cost, terrains, authored preparation notes, source links,
+and an explicit unknown-reward caveat. No modal navigation, user storage, new imagery,
+or global state is introduced; narrow screens stack the list and details.
+
 Reincarnation Guide is a dedicated compact reference at `/reincarnation/`, with a
 shared CardPicker, one selected-artwork preview, and an adjacent manual duel tracker.
 The tracker visibly caps at five and requires a distinct explicit reset after use.
