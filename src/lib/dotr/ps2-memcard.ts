@@ -14,12 +14,32 @@ export const PS2_MEMCARD_RESEARCH = {
 export const MAX_MEMCARD_BYTES = 70 * 1024 * 1024;
 const MAGIC = 'Sony PS2 Memory Card Format ';
 const MAX_DIRECTORY_ENTRIES = 256;
+const MAX_DOTR_DIRECTORIES = 4;
+const MAX_DOTR_CHILDREN = 96;
+const MAX_PREFIX_BYTES = 24;
 
 export interface Ps2SaveEntry {
   name: string;
   type: 'directory' | 'file';
   length: number;
   possibleDotr: boolean;
+}
+/** Bounded, unmodified PS2 filesystem metadata. No DotR field is decoded. */
+export interface Ps2NestedEntry {
+  name: string;
+  type: 'directory' | 'file';
+  length: number;
+  /** First 24 unmodified bytes, from the file's first data cluster only. */
+  prefixHex: string | null;
+  warning: string | null;
+}
+export interface Ps2SaveFolder {
+  name: string;
+  declaredEntries: number;
+  scannedEntries: number;
+  truncated: boolean;
+  entries: Ps2NestedEntry[];
+  warning: string | null;
 }
 export interface Ps2ImageInspection {
   version: string;
@@ -33,6 +53,8 @@ export interface Ps2ImageInspection {
   scannedEntries: number;
   truncated: boolean;
   entries: Ps2SaveEntry[];
+  /** Only root directories matching the NTSC-U name pattern are inspected. */
+  saveFolders: Ps2SaveFolder[];
   warning: string | null;
 }
 
@@ -109,6 +131,7 @@ export function inspectPs2MemoryCard(bytes: Uint8Array): Ps2ImageInspection {
   };
 
   const entries: Ps2SaveEntry[] = [];
+  const matchingDirectories: Array<{ name: string; cluster: number; length: number }> = [];
   let rootDirectoryEntries = 0;
   let scannedEntries = 0;
   let truncated = false;
@@ -133,12 +156,17 @@ export function inspectPs2MemoryCard(bytes: Uint8Array): Ps2ImageInspection {
         const length = uint32(cluster, start + 4);
         const name = textBytes(cluster.subarray(start + 0x40, start + 0x60));
         if (scannedEntries >= 2 && (mode & 0x8000) !== 0 && name && name !== '.' && name !== '..') {
+          const isDir = (mode & 0x20) !== 0;
+          const possibleDotr = /SLUS[-_]?20515/i.test(name);
           entries.push({
             name,
-            type: (mode & 0x20) !== 0 ? 'directory' : 'file',
+            type: isDir ? 'directory' : 'file',
             length,
-            possibleDotr: /SLUS[-_]?20515/i.test(name),
+            possibleDotr,
           });
+          if (isDir && possibleDotr && matchingDirectories.length < MAX_DOTR_DIRECTORIES) {
+            matchingDirectories.push({ name, cluster: uint32(cluster, start + 0x10), length });
+          }
         }
         scannedEntries++;
       }
@@ -152,9 +180,73 @@ export function inspectPs2MemoryCard(bytes: Uint8Array): Ps2ImageInspection {
   } catch (error) {
     warning = error instanceof Error ? error.message : 'Could not inspect root directory.';
   }
+  // Inspect only identified DotR directories. All traversals have local limits,
+  // checked relative allocation indices and cycle guards; other save folders
+  // and their file bytes are never opened.
+  const saveFolders: Ps2SaveFolder[] = matchingDirectories.map(folder => {
+    const result: Ps2SaveFolder = {
+      name: folder.name,
+      declaredEntries: folder.length,
+      scannedEntries: 0,
+      truncated: folder.length > MAX_DOTR_CHILDREN,
+      entries: [],
+      warning: null,
+    };
+    try {
+      if (folder.length < 2) throw new Error('Directory has an invalid entry count.');
+      let relative = folder.cluster;
+      const seen = new Set<number>();
+      const limit = Math.min(folder.length, MAX_DOTR_CHILDREN);
+      while (result.scannedEntries < limit) {
+        if (!Number.isSafeInteger(relative) || relative < 0 || relative >= allocationEnd)
+          throw new Error('Directory points outside allocated memory-card space.');
+        if (seen.has(relative)) throw new Error('Circular directory FAT chain detected.');
+        seen.add(relative);
+        const block = readCluster(allocationOffset + relative);
+        for (let index = 0; index < clusterSize / 512 && result.scannedEntries < limit; index++) {
+          const offset = index * 512;
+          const mode = block[offset]! | block[offset + 1]! << 8;
+          const length = uint32(block, offset + 4);
+          const name = textBytes(block.subarray(offset + 0x40, offset + 0x60));
+          const active = (mode & 0x8000) !== 0;
+          const isDir = (mode & 0x20) !== 0;
+          const isFile = (mode & 0x10) !== 0;
+          if (result.scannedEntries >= 2 && active && name && name !== '.' && name !== '..'
+              && (isDir || isFile)) {
+            let prefixHex: string | null = null;
+            let childWarning: string | null = null;
+            if (isFile && length > 0) {
+              try {
+                const firstCluster = uint32(block, offset + 0x10);
+                if (firstCluster >= allocationEnd) throw new Error('File start cluster is outside allocatable space.');
+                const data = readCluster(allocationOffset + firstCluster);
+                prefixHex = Array.from(data.subarray(0, Math.min(length, MAX_PREFIX_BYTES)),
+                  byte => byte.toString(16).padStart(2, '0').toUpperCase()).join(' ');
+              } catch (problem) {
+                childWarning = problem instanceof Error ? problem.message : 'File preview not readable.';
+              }
+            }
+            result.entries.push({ name, type: isDir ? 'directory' : 'file',
+              length, prefixHex, warning: childWarning });
+          }
+          result.scannedEntries++;
+        }
+        if (result.scannedEntries < limit) {
+          const next = readFat(relative);
+          if (next === 0xffffffff || (next & 0x80000000) === 0)
+            throw new Error('Directory FAT chain ends before the reported entry count.');
+          relative = next & 0x7fffffff;
+        }
+      }
+    } catch (problem) {
+      result.warning = problem instanceof Error ? problem.message : 'Unable to inspect save directory.';
+    }
+    return result;
+  });
+
   return {
     version, rawSize: bytes.byteLength, logicalSize, pageSize, clusterSize,
     clusterCount, spareBytesPerPage, rootDirectoryEntries, scannedEntries,
-    truncated, entries, warning,
+    truncated, entries, saveFolders, warning,
   };
 }
