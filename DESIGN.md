@@ -65,6 +65,12 @@ DotR identifier; no character/card imagery is implied by filename matching.
 Candidate DotR directories expand to a short list of file names, sizes and
 opt-in, collapsed raw hex prefixes. The previews are clearly qualified as
 save research rather than decoded cards and may contain private save bytes.
+Save Comparison appears below the existing single-card inspector, not as a
+second app route. It has exactly two locally selected .ps2 snapshots and
+a deliberate Compare action; outputs are concise per-file status rows with
+expandable, bounded **offset-only** differences. Instructions encourage a
+one-change experiment and distinguish game state from ancillary checksums,
+timestamps and save counters. The report never shows raw byte content.
 No file bytes are persisted, uploaded or written back to the input.
 
 Collection is a separate compact inventory surface: owned copy count,

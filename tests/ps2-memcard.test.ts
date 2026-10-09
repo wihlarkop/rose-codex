@@ -1,5 +1,6 @@
 import { expect, test } from 'bun:test';
 import { inspectPs2MemoryCard } from '../src/lib/dotr/ps2-memcard';
+import { compareDotrMemoryCards } from '../src/lib/dotr/ps2-save-diff';
 
 function createCard(ecc = false, cycle = false, corruptChild = false): Uint8Array {
   const stride = ecc ? 528 : 512;
@@ -100,4 +101,55 @@ test('nested directory FAT cycles are bounded and produce a scoped warning', () 
   expect(result.saveFolders).toHaveLength(1);
   expect(result.saveFolders[0]?.warning).toMatch(/Circular/);
   expect(result.saveFolders[0]?.entries).toHaveLength(0);
+});
+
+test('controlled copies compare equal and report a single changed byte offset', () => {
+  const before = createCard();
+  const after = before.slice();
+  expect(compareDotrMemoryCards(before, after).files).toEqual([{
+    path: 'BASLUS-20515/SAVE.DAT',
+    status: 'unchanged',
+    beforeBytes: 12, afterBytes: 12,
+    changedBytes: 0, changedRanges: [], totalRanges: 0, warning: null,
+  }, {
+    path: 'BASLUS-20515/icon.sys',
+    status: 'unchanged',
+    beforeBytes: 0, afterBytes: 0,
+    changedBytes: 0, changedRanges: [], totalRanges: 0, warning: null,
+  }]);
+  after[45 * 1024 + 3] = 0x23;
+  const result = compareDotrMemoryCards(before, after);
+  expect(result.changedFiles).toBe(1);
+  const entry = result.files.find(file => file.path.endsWith('SAVE.DAT'));
+  expect(entry?.status).toBe('changed');
+  expect(entry?.changedBytes).toBe(1);
+  expect(entry?.changedRanges).toEqual([{ start: 3, endExclusive: 4 }]);
+  expect(before[45 * 1024 + 3]).toBe(0x52);
+});
+
+test('byte differences are computed across file FAT clusters, not raw card offsets', () => {
+  const before = createCard();
+  const view = new DataView(before.buffer);
+  view.setUint32(44 * 1024 + 4, 1500, true); // declared file length
+  view.setUint32(9 * 1024 + 16, 0x80000005, true); // file cluster 4 -> 5
+  view.setUint32(9 * 1024 + 20, 0xffffffff, true);
+  const after = before.slice();
+  after[46 * 1024 + 100] = 0xab; // file offset 1024 + 100
+  const result = compareDotrMemoryCards(before, after);
+  const entry = result.files.find(file => file.path.endsWith('SAVE.DAT'));
+  expect(entry?.status).toBe('changed');
+  expect(entry?.changedBytes).toBe(1);
+  expect(entry?.changedRanges).toEqual([{ start: 1124, endExclusive: 1125 }]);
+});
+
+test('invalid file FAT chains are not presented as verified changes', () => {
+  const before = createCard();
+  const view = new DataView(before.buffer);
+  view.setUint32(44 * 1024 + 4, 1500, true);
+  view.setUint32(9 * 1024 + 16, 0x80000004, true); // self loop
+  const after = before.slice();
+  after[45 * 1024 + 10] = (after[45 * 1024 + 10] ?? 0) ^ 1;
+  const diff = compareDotrMemoryCards(before, after);
+  expect(diff.files.find(file => file.path.endsWith('SAVE.DAT'))?.status).toBe('unreadable');
+  expect(diff.files.find(file => file.path.endsWith('SAVE.DAT'))?.warning).toMatch(/cycle/i);
 });

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Pcsx2SaveComparison from './Pcsx2SaveComparison.svelte';
   import {
     inspectPs2MemoryCard,
     MAX_MEMCARD_BYTES,
@@ -341,4 +342,5 @@
       </section>
     </aside>
   </div>
+  <Pcsx2SaveComparison />
 </section>

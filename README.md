@@ -16,6 +16,9 @@ The `/saves/` PCSX2 Save Inspector reads a selected `.ps2` image locally in the
 browser: signature, capacity, filesystem geometry, and bounded top-level save
 folder names. For NTSC-U DotR candidate folders it also lists contained file names,
 file sizes, and optional 24-byte hex header previews for format research.
+A new local **Save Comparison** panel can compare before/after `.ps2` snapshots
+and report changed DotR save filenames, byte counts, and bounded changed
+file-relative offset ranges without revealing byte values.
 It does not upload or edit files, and does not decode DotR inventory,
 Deck Leader rank or story progress. Folder cards and other save formats are not
 supported yet. See [memory card inspector](docs/pcsx2-save-tools.md).
