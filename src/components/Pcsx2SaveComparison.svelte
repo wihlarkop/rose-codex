@@ -12,12 +12,14 @@
   function selectBefore(event: Event) {
     before = (event.currentTarget as HTMLInputElement).files?.[0] ?? null;
     serial++;
+    running = false;
     report = null;
     error = '';
   }
   function selectAfter(event: Event) {
     after = (event.currentTarget as HTMLInputElement).files?.[0] ?? null;
     serial++;
+    running = false;
     report = null;
     error = '';
   }
