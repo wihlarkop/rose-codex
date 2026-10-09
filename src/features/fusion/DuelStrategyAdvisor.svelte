@@ -27,7 +27,7 @@
   let opponentId = $state<number | null>(null);
   let position = $state<OpponentPosition>('unknown');
   let terrain = $state<DuelTerrain>('Normal');
-  const opponent = $derived(opponentId === null ? null : byId.get(opponentId) ?? null);
+  const opponent = $derived(opponentId === null ? null : (byId.get(opponentId) ?? null));
   const comparison = $derived(
     suggestDuelPlays(occurrences, discovery, byId, {
       opponentCardId: opponentId,
@@ -53,8 +53,8 @@
     Duel Strategy · Compare your cards against an opponent
   </summary>
   <p class="mb-3 mt-2 text-xs leading-relaxed text-muted-foreground">
-    Optional battle planning using the cards already entered in Hand/Summoning Area.
-    Check the opponent and the terrain at the intended battle square. Rankings show
+    Optional battle planning using the cards already entered in Hand/Summoning Area. Check the
+    opponent and the terrain at the intended battle square. Rankings show
     <strong>stat comparisons, not guaranteed legal or winning plays</strong>.
   </p>
 
@@ -75,7 +75,12 @@
       {#if opponent}
         <div class="opponent-card mt-2">
           <div class="w-12 shrink-0 overflow-hidden rounded-sm">
-            <CardArtwork image={opponent.image} name={opponent.name} cardId={opponent.id} decorative />
+            <CardArtwork
+              image={opponent.image}
+              name={opponent.name}
+              cardId={opponent.id}
+              decorative
+            />
           </div>
           <div class="min-w-0">
             <strong>{opponent.name}</strong>
@@ -104,8 +109,8 @@
 
   {#if specialTerrain}
     <p class="warning-note my-3">
-      {terrain} has special mechanics. This advisor does not simplify it to a
-      +500/−500 modifier; battle outcomes are unknown.
+      {terrain} has special mechanics. This advisor does not simplify it to a +500/−500 modifier; battle
+      outcomes are unknown.
     </p>
   {:else if !knownOpponent}
     <p class="note my-3">
@@ -121,7 +126,8 @@
   </div>
   {#if !discovery.complete}
     <p class="mt-2 text-xs text-warning">
-      Fusion discovery is partial. Additional recipes may exist, so this is not an exhaustive strategy ranking.
+      Fusion discovery is partial. Additional recipes may exist, so this is not an exhaustive
+      strategy ranking.
     </p>
   {/if}
   {#if comparison.length}
@@ -162,40 +168,86 @@
             {/if}
           </div>
           {#if play.source === 'fusion'}
-            <button class="control-button" type="button"
+            <button
+              class="control-button"
+              type="button"
               aria-label={'View fusion recipe for ' + card.name}
-              onclick={() => onviewfusion(play.cardId)}>View recipe →</button>
+              onclick={() => onviewfusion(play.cardId)}>View recipe →</button
+            >
           {/if}
         </li>
       {/each}
     </ol>
   {:else}
     <p class="my-3 text-sm text-muted-foreground">
-      Add Monster cards to Hand or Summoning Area to compare ordinary summons and
-      available fusion results.
+      Add Monster cards to Hand or Summoning Area to compare ordinary summons and available fusion
+      results.
     </p>
   {/if}
   <p class="mb-0 mt-3 text-xs leading-relaxed text-muted-foreground">
-    The board is not modeled: a card in Hand cannot attack immediately just because
-    its ATK is high. Range, summoning points, card movement, traps, equips, individual
-    monster effects, attributes, opponent hidden cards, and Deck Leader abilities may
-    change the outcome. A favorable stat difference is not a command to attack.
+    The board is not modeled: a card in Hand cannot attack immediately just because its ATK is high.
+    Range, summoning points, card movement, traps, equips, individual monster effects, attributes,
+    opponent hidden cards, and Deck Leader abilities may change the outcome. A favorable stat
+    difference is not a command to attack.
     <a class="text-link" href="/leaders/">Deck Leader reference →</a>
   </p>
 </details>
 
 <style>
-  .context-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .65rem; }
-  .context-control { display: grid; align-content: start; gap: .35rem; min-width: 0; }
-  .context-control:first-child { grid-row: span 2; }
-  .field-label { color: var(--muted-foreground); font-size: .75rem; font-weight: 650; }
-  .opponent-card { display: flex; gap: .5rem; align-items: center; }
-  .opponent-card div:last-child { display: grid; font-size: .75rem; }
-  .opponent-card span { color: var(--muted-foreground); }
-  .note { background: var(--elevated); border-radius: var(--radius); padding: .65rem; font-size: .75rem; color: var(--muted-foreground); }
-  .play-row { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; border: 1px solid var(--border); border-radius: var(--radius); padding: .65rem; min-width: 0; }
+  .context-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+  }
+  .context-control {
+    display: grid;
+    align-content: start;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+  .context-control:first-child {
+    grid-row: span 2;
+  }
+  .field-label {
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    font-weight: 650;
+  }
+  .opponent-card {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .opponent-card div:last-child {
+    display: grid;
+    font-size: 0.75rem;
+  }
+  .opponent-card span {
+    color: var(--muted-foreground);
+  }
+  .note {
+    background: var(--elevated);
+    border-radius: var(--radius);
+    padding: 0.65rem;
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+  }
+  .play-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.65rem;
+    min-width: 0;
+  }
   @media (max-width: 800px) {
-    .context-grid { grid-template-columns: minmax(0,1fr); }
-    .context-control:first-child { grid-row: auto; }
+    .context-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .context-control:first-child {
+      grid-row: auto;
+    }
   }
 </style>
