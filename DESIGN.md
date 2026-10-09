@@ -57,6 +57,13 @@ game mechanics remain outside presentation components. Images are local,
 lazy-loaded and dimensioned. Provenance and confidence are recorded in the image
 coverage documentation.
 
+PCSX2 Save Inspector uses the existing compact, warm-neutral page layout at
+`/saves/`. The in-browser file picker is the only input. A scoped alert
+communicates rejected formats and unreadable FAT chains. Recognized geometry
+and root folder names use small text grids and a clearly qualified possible
+DotR identifier; no character/card imagery is implied by filename matching.
+No file bytes are persisted, uploaded or written back to the input.
+
 Collection is a separate compact inventory surface: owned copy count,
 the selected duel deck and Reserve counts appear together. A visual card
 list provides explicit **To reserve** and **To deck** actions, and newly won

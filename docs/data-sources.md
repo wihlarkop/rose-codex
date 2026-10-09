@@ -110,3 +110,11 @@ stats, incomplete fusion tags, untranscribed effects, starter-list warning,
 reincarnation discrepancies and random-transformation pools remain explicit.
 Validation proves structure/reference integrity and reproduction; it does not
 prove every fact against the original PS2 game.
+
+## PS2 memory card research (2026-10-10)
+
+| Source | Use and caution |
+| --- | --- |
+| [PCSX2 official Memory Cards guide](https://pcsx2.net/docs/configuration/memcards/) | Confirms File Memory Cards are `.ps2` images (8/16/32/64 MB), distinguishes folder memory cards, and documents how to locate the configured `memcards` directory. Supports a read-only browser file picker and explicit refusal to parse other formats. |
+| [Ross Ridge PS2 filesystem documentation, distributed by PCSX2](https://github.com/PCSX2/pcsx2/blob/master/pcsx2/Reference/PS2-MemoryCardFileSystem.htm) | Public-domain technical description of superblock layout, physical page/spare structure, directory records and indirect FAT. First-party parser was written independently from the format description; no library code or game save files copied. |
+| [DotR community NTSC-U/C save resource](https://www.speedrun.com/yugiohdotr/resources/46vto) | Documents a PCSX2 `.ps2` image and an exported save named `SLUS-20515~.psu`. Folder-name matching is a heuristic for **potential** DotR saves only; region, save validity and game state have not been independently verified. |

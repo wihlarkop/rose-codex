@@ -23,6 +23,10 @@ Warm-neutral, compact, subtle and desktop-oriented. Default tiles preserve the g
 screen and flip in place to show metadata. Card imagery and readable names
 dominate the visual hierarchy; all workspace interactions stay on their route.
 
+## PCSX2 Save Inspector v1
+
+A new `/saves/` route accepts a local PCSX2 **File Memory Card** `.ps2` image via the browser File API and inspects its PS2 superblock, capacity, per-page spare/ECC layout and bounded root directory. A matching `SLUS-20515` name is labeled **possible** DotR save (NTSC-U/C), never proof of verified game data. The parser bounds file size (70 MiB), validates filesystem geometry, traverses FAT for root entries with a cycle guard, and reports a warning for damaged or incomplete directory metadata. The original file is never changed or uploaded, and the app does not download, persist or store save bytes. Folder-based PCSX2 cards, non-`.ps2` game-save containers, exported save payloads, and DotR gameplay fields (card ownership, deck, ranks, campaign progress, reincarnation) remain unsupported until independently verified. See [save inspector design and evidence](docs/pcsx2-save-tools.md).
+
 ## Fusion Workspace
 
 The reusable picker returns canonical IDs without owning navigation or game

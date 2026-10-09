@@ -12,6 +12,12 @@ The `/opponents/` Encyclopedia covers 20 reported story encounters across both R
 paths, linking selected enemy cards and Deck Leaders to canonical DotR card images.
 It is a single-guide reference, not a verified full deck or reward-drop database.
 
+The `/saves/` PCSX2 Save Inspector reads a selected `.ps2` image locally in the
+browser: signature, capacity, filesystem geometry, and bounded top-level save
+folder names. It does not upload or edit files, and does not decode DotR inventory,
+Deck Leader rank or story progress. Folder cards and other save formats are not
+supported yet. See [memory card inspector](docs/pcsx2-save-tools.md).
+
 Long-term direction: Card Browser, Visual Fusion Simulator, Fusion Reference,
 Naming / Starter Deck Simulator, Deck Tools, and verified Reincarnation probability tools.
 
