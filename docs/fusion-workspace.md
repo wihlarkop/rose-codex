@@ -58,6 +58,19 @@ table for the selected result, with Collection copy readiness and
 claim all multi-step reverse-chain paths. Deterministic power-up
 transformations are separate from ordinary fusions.
 
+## Conditional duel comparison
+
+The results area has an optional **Duel Strategy** panel. Enter a known
+face-up opponent Monster, its Attack/Defense position and a hypothetical
+battle-square terrain; it compares normal Hand/Field Monsters and known
+ordinary fusion results using verified +/-500 terrain modifiers and
+ATK-vs-ATK/DEF difference. Face-down cards, absent opponent details,
+unknown effects and special terrain mechanics cannot yield a predicted win.
+A ranked fusion row links to the **existing** detailed recipe/Summon action,
+not a duplicated operation. The panel does not claim to simulate board
+movement, available Summoning Points or card-specific effects. Full scope
+and source evidence are in [Duel Strategy Advisor](duel-strategy-advisor.md).
+
 ## Discovery contract
 
 `src/lib/dotr/fusion-discovery.ts` is pure TypeScript above the unchanged canonical
