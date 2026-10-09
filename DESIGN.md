@@ -114,6 +114,13 @@ The selected profile shows Deck Cost, terrains, authored preparation notes, sour
 and an explicit unknown-reward caveat. No modal navigation, user storage, new imagery,
 or global state is introduced; narrow screens stack the list and details.
 
+Reincarnation v2 adds an optional in-page source-qualified odds calculator, not a
+separate app or replacement for the manual tracker. Two rank selects explicitly
+allow unknown values; the top dozen model outcomes reuse local CardArtwork.
+A second CardPicker can inspect any desired reward probability (including the
+zero-in-model state). Sources, interpretation conflicts and the one-reward-only
+scope are adjacent to outputs rather than hidden behind a claim of exact odds.
+
 Reincarnation Guide is a dedicated compact reference at `/reincarnation/`, with a
 shared CardPicker, one selected-artwork preview, and an adjacent manual duel tracker.
 The tracker visibly caps at five and requires a distinct explicit reset after use.

@@ -5,8 +5,9 @@ Roses (PS2)**. Current status: **visual card library, Fusion Workspace, and Deck
 Open `/cards/` to browse/search the numbered library; select a card for its full
 game screen and metadata in place. `/fusion/` automatically discovers ordinary
 fusions and compatibility for distinct planning occurrences; `/decks/` manages
-browser-local decks with JSON backups. The Reincarnation Guide at `/reincarnation/` includes card lookup and a separate manual
-five-duel tracker; it does not read PCSX2 saves or predict random rewards.
+browser-local decks with JSON backups. The Reincarnation Guide at `/reincarnation/` includes card lookup, a separate manual
+five-duel tracker, and a community-sourced single-reward probability estimate with
+visible limitations. It does not read PCSX2 saves or predict the actual three cards.
 The `/opponents/` Encyclopedia covers 20 reported story encounters across both Rose
 paths, linking selected enemy cards and Deck Leaders to canonical DotR card images.
 It is a single-guide reference, not a verified full deck or reward-drop database.

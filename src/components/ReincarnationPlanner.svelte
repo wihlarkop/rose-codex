@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import CardArtwork from './cards/CardArtwork.svelte';
   import CardPicker from './cards/CardPicker.svelte';
+  import ReincarnationOdds from './ReincarnationOdds.svelte';
   import type { BrowserCard } from '../lib/dotr/browser';
   import {
     REINCARNATION_DUELS,
@@ -80,8 +81,8 @@
     <div>
       <h1 class="page-title">Reincarnation Guide</h1>
       <p class="page-description">
-        Plan which Chest card to sacrifice and manually track the next reincarnation opportunity.
-        No game-save connection or guessed reward probabilities.
+        Plan which Chest card to sacrifice, track the next opportunity manually, and
+        explore clearly labeled community-research probabilities. No PCSX2 save connection.
       </p>
     </div>
     <a href="/collection/" class="text-link text-sm">My Collection →</a>
@@ -140,6 +141,8 @@
           </div>
         {/if}
       </section>
+
+      <ReincarnationOdds {cards} input={selected} />
 
       <section class="rounded-lg border border-border bg-surface p-4" aria-label="How to reincarnate in-game">
         <h2 class="text-base font-semibold">How to reincarnate in-game</h2>
@@ -226,13 +229,13 @@
         <h2 class="text-base font-semibold">What can I get?</h2>
         <p class="mt-2 text-sm leading-relaxed">
           The game generates <strong>three random cards</strong> from the sacrificed card.
-          Deck Cost matters, but exact per-card probabilities and the eligible reward pool
-          are not yet reliable enough to display as a calculator.
+          Deck Cost matters. The optional calculator shows only a qualified
+          single-result estimate from published NTSC-U community research.
         </p>
         <p class="mt-2 text-xs leading-relaxed text-muted-foreground">
-          Community reverse-engineering reports disagree on how Deck Leader rank
-          and the high-cost range affect outcomes. This planner intentionally makes
-          no exact drop-rate or eligibility claims.
+          The original game code and actual three-card RNG have not been
+          verified by this project. Different references disagree about some
+          probability details; the estimates above are not guaranteed drops.
         </p>
         <a class="mt-3 inline-block text-xs text-link" target="_blank" rel="noreferrer"
           href="https://www.speedrun.com/yugiohdotr/forums/ch2hb">
