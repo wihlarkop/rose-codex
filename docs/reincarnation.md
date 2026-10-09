@@ -39,6 +39,14 @@ Validation should resolve every ID, reject duplicate eligibility IDs, enforce es
 - Resolve maximum rank versus sum and the high-range boundary using game-code evidence or controlled gameplay, with region/version recorded.
 - Verify the eligibility table independently and establish a permitted way to capture it.
 - Determine whether the three awards are independent, whether duplicates are possible, and what state advances RNG. The distribution description does not settle those questions.
-- Confirm availability counter semantics rather than turning a community description into a saved-game-state simulator.
+- The PS2 manual establishes five 1-player CPU duels per opportunity and forbids banking two opportunities after ten duels. A browser-only manual counter still cannot infer the actual save-state counter or which duels the player has completed.
 
 Reincarnation is feasible as a small static probability tool once these gaps are resolved. M0 establishes the research boundary and ID-based model; it does not claim verified probability coverage.
+
+## Reincarnation Guide & Planner v1 (2026-10-10)
+
+The original [PS2 game manual (archived scan)](https://www.videogamemanual.com/PS2/Yu-Gi-Oh%21%20The%20Duelists%20of%20the%20Roses%20%28USA%29.pdf), Build Deck Screen / Reincarnation instructions (printed page 19), specifies one reincarnation after every five 1-player CPU duels, **no banking two uses from ten duels**, and Chest → select sacrificial card → L3 → confirm Yes with X → three cards. The game, not Rose Codex, is the authoritative source of pending availability. The [Rolling_Stones community guide](https://gamefaqs.gamespot.com/ps2/589455-yu-gi-oh-the-duelists-of-the-roses/faqs/31810) also describes wins/losses and L3; contribution of particular surrender/duel modes has not been directly validated in Rose Codex. This resolves the core opportunity/cap rule but not the distribution/eligibility gaps above.
+
+The static `/reincarnation/` route now provides a canonical card preview by ID (including explicit unknown Deck Cost), gameplay instructions and source links, plus manual progress bounded to 0..5. Versioned storage `rose-codex.reincarnation.v1` contains only `{ schemaVersion: 1, duelsCompleted: number }`. It is independent of saved decks and Collection, and stores no card choice. Progress cannot grow above 5 without a deliberate reset, because extra duels cannot bank another use. Invalid saved values are not overwritten; edits from another tab are detected before persisting. All probability, actual game-counter synchronization, reward-eligibility decisions, inventory mutations and PCSX2 save integration remain outside v1.
+
+Acceptance: choose/search a card and inspect its art/cost, record five duels, confirm the cap and in-game caution, undo one count, record use to reset to zero, refresh and confirm persistence, and ensure Collection/decks are unaffected. Two focused pure-state tests cover the cap and stored-data validation; the standard repository checks remain authoritative.

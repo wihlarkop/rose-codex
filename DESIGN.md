@@ -101,6 +101,13 @@ jump to existing detailed result cards rather than copying recipes or
 Summon actions. Unsafe/unverified terrain and unknown opposition have explicit
 unknown states. The planning state is ephemeral and never writes user decks.
 
+Reincarnation Guide is a dedicated compact reference at `/reincarnation/`, with a
+shared CardPicker, one selected-artwork preview, and an adjacent manual duel tracker.
+The tracker visibly caps at five and requires a distinct explicit reset after use.
+A research note explains the absence of probabilities and false eligibility claims.
+The page uses the existing neutral/rose tokens without extra global state.
+Main navigation wraps when space is narrow so the eighth destination stays usable.
+
 Historical acceptance is preserved in [Card Browser report](docs/card-browser-report.md).
 Current implementation is described in [UI Foundation report](docs/ui-foundation-report.md).
 

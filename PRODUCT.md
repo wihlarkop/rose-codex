@@ -134,6 +134,12 @@ Simulator Hands can be opened in Fusion through a validated card-ID query.
 The full Fusion Workspace also shows suggestions for its current inputs.
 See [Deck Simulator](docs/deck-simulator.md).
 
+## Reincarnation Guide & Planner
+
+`/reincarnation/` is a read-only canonical card lookup with an explicitly manual five-duel tracker for the next reincarnation opportunity. The tracker is stored under its own versioned browser key and never reads or changes decks, Collection, or PCSX2 saves. Players record completed 1-player CPU duels, can undo an entry, and manually reset the counter after using reincarnation. The counter caps at five: the game grants only one pending opportunity at a time, not two from ten duels. Saved progress is validated; unexpected/corrupt data and cross-tab edits are not overwritten.
+
+The guide uses the original PS2 manual for controls (Chest → select a card → L3 → confirm) and the three-card exchange. Any selected card is only a **candidate preview**, not an assertion that it is owned, allowed, or present in the Chest. Because community probability formulas and eligible card sets remain unresolved, v1 does not estimate outcomes, simulate RNG, or claim exact drop rates. See [reincarnation research and v1 scope](docs/reincarnation.md).
+
 ## Evidence and open questions
 
 Canonical data covers 854 numbered records, IDs 000..853. Metadata is mostly
