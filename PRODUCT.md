@@ -134,6 +134,10 @@ Simulator Hands can be opened in Fusion through a validated card-ID query.
 The full Fusion Workspace also shows suggestions for its current inputs.
 See [Deck Simulator](docs/deck-simulator.md).
 
+## Opponent / Character Encyclopedia
+
+The static `/opponents/` route lets players choose their **joined** Red or White Rose path, search encounter names and locations, and inspect twenty reported fights (ten per path, counting the two route-specific Manawyddan endings). Each profile provides a reported Deck Leader with canonical DotR artwork, community-reported Deck Cost and terrains, three selected example deck cards by canonical ID, and short cautious battle-preparation notes. Deep links use `?opponent=<id>`; the reference does not save user state or update gameplay data. All profiles are authored from an identifiable 2012 GameFAQs walkthrough, not game binaries, and the app presents a single-source caveat. Card highlights are not complete opponent decks, effect transcriptions, guaranteed rewards, drop rates or automated strategy/legality conclusions. See [Opponent source and acceptance](docs/opponents.md).
+
 ## Reincarnation Guide & Planner
 
 `/reincarnation/` is a read-only canonical card lookup with an explicitly manual five-duel tracker for the next reincarnation opportunity. The tracker is stored under its own versioned browser key and never reads or changes decks, Collection, or PCSX2 saves. Players record completed 1-player CPU duels, can undo an entry, and manually reset the counter after using reincarnation. The counter caps at five: the game grants only one pending opportunity at a time, not two from ten duels. Saved progress is validated; unexpected/corrupt data and cross-tab edits are not overwritten.

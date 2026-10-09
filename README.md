@@ -7,6 +7,9 @@ game screen and metadata in place. `/fusion/` automatically discovers ordinary
 fusions and compatibility for distinct planning occurrences; `/decks/` manages
 browser-local decks with JSON backups. The Reincarnation Guide at `/reincarnation/` includes card lookup and a separate manual
 five-duel tracker; it does not read PCSX2 saves or predict random rewards.
+The `/opponents/` Encyclopedia covers 20 reported story encounters across both Rose
+paths, linking selected enemy cards and Deck Leaders to canonical DotR card images.
+It is a single-guide reference, not a verified full deck or reward-drop database.
 
 Long-term direction: Card Browser, Visual Fusion Simulator, Fusion Reference,
 Naming / Starter Deck Simulator, Deck Tools, and verified Reincarnation probability tools.
