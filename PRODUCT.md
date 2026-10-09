@@ -45,6 +45,22 @@ planning occurrences and adds one result in Summoning Area, with one-step Undo;
 automatic previews never modify the workspace. Board legality, failed-fusion
 discards, equip bonuses, rituals, and random results are not simulated. See [Fusion behavior](docs/fusion-workspace.md).
 
+## Conditional Duel Strategy Advisor
+
+Fusion Workspace offers an optional **Duel Strategy** context panel. Players
+can choose a visible opposing Monster, its Attack/Defense position and an
+assumed contact-square terrain. It compares ordinary Monsters already entered
+in Hand/Field with confirmed fusion results using known ATK/DEF and the
+documented +/-500 ordinary terrain type effects. Unknown enemy cards,
+face-down positions, unavailable stats and Toon/Crush/Labyrinth terrain are
+**unknown outcomes**, never treated as neutral or guaranteed wins.
+
+A compact five-option read-only ranking links fusion candidates to their
+existing detailed recipes. No duplicate Summon controls, save changes or
+new data dependencies. Advice is conditional on valid board movement,
+summoning points and card/effect legality, which remain unmodeled. See
+[Duel Strategy Advisor](docs/duel-strategy-advisor.md).
+
 ## Fusion Encyclopedia
 
 A separate **Recipes** route reverses the canonical 26,540-pair ordinary
