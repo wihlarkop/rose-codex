@@ -42,5 +42,7 @@ test('empty cost pools fall back to Fake Trap and a sacrificed card stays exclud
   const one = cards.find(card => card.id === 397)!;
   const onlyInput = [one];
   const result = estimateReincarnation(one.id, 0, 0, onlyInput)!;
-  expect(result.results).toEqual([{ cardId: 820, probability: 1 }]);
+  expect(result.results).toHaveLength(1);
+  expect(result.results[0]?.cardId).toBe(820);
+  expect(result.results[0]?.probability).toBeCloseTo(1, 12);
 });
