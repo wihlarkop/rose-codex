@@ -8,6 +8,7 @@
   import CardPicker from '../../components/cards/CardPicker.svelte';
   import CardArtwork from '../../components/cards/CardArtwork.svelte';
   import FusionResultCard from './FusionResultCard.svelte';
+  import DuelStrategyAdvisor from './DuelStrategyAdvisor.svelte';
   import { suggestFusionPlays } from '../../lib/dotr/fusion-advisor';
   import { parseHandLink } from '../../lib/dotr/deck-simulation';
   import {
@@ -540,6 +541,12 @@
           </div>
         {/if}
       </div>
+      <DuelStrategyAdvisor
+        {cards}
+        {discovery}
+        {occurrences}
+        onviewfusion={viewSuggestedResult}
+      />
       {#if discovery.results.length > 1 && suggestedPlays.length}
         <section
           class="mb-5 rounded-lg border border-border bg-surface p-3"
