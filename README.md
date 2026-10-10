@@ -20,6 +20,16 @@ verified power-up compatibility. It assumes cards unlocked, does not infer
 earned Deck Leader ranks or untranscribed card effects, and never claims a
 predicted win rate. Suggestions can be **reviewed and deliberately added**
 as a new deck in Deck Builder without replacing existing decks.
+M5-04 introduces the standalone **Tactical Duel Coach** at `/duel/`.
+Enter up to five Hand cards, a bounded manual Field snapshot, a visible
+enemy monster, observed position and hypothetical contact terrain. The coach
+reuses the existing canonical fusion discovery and stat-only Duel Advisor
+to rank **conditional** Field comparisons, potential fusion recipes, and
+Hand preparation. Neither observed game legality nor attack outcomes are
+asserted; no PCSX2 screen or memory access is attempted. Hand suggestions
+can also be transferred from Fusion Workspace via a read-only link.
+See [Tactical Duel Coach research](docs/tactical-duel-coach.md).
+
 M5-03 adds a deterministic strategy playbook inside each generated build with
 setup priorities, ordinary-terrain positioning, reported-monster comparisons,
 canonical compatible power-ups, and potential ordinary fusion pairs. These are
