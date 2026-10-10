@@ -130,3 +130,15 @@ Only Duel UI, Battle History presentation, navigation tests and UX specification
 5. Check keyboard focus, screen readers, dark/light/system appearance, and about 550px PCSX2 split-screen; run full CI and obtain local visual acceptance before merging.
 
 The global search reuses the canonical browser-card projection, existing filtering and CardPicker option presentation. UX-06 adds navigation/presentation only; neither global persistent state nor AI recognition is introduced.
+
+
+## UX-07 Integration & QA acceptance
+
+1. Navigation and legacy routes remain functional. Fusion Workbench/Recipes, Deck Workshop Build/Practice/Inventory and Duel Plan/History honor the URL and Back/Forward within each workspace.
+2. Fusion mode changes preserve live Hand, Field, Undo and confirmed recipe handoffs; invalid links remain non-destructive. Scrolling to a suggested result respects reduced-motion preferences.
+3. Battle History retains its existing local schema, but refuses a stale save/remove from another tab instead of silently overwriting fresh results. Corrupt/blocked storage stays protected.
+4. Global search, dialogs, filters and primary actions remain keyboard-accessible with visible focus, Escape cancellation and responsive pointer/touch targets.
+5. System/Light/Dark appearance and desktop, PCSX2 split-screen (~550px) and narrow mobile layouts must be visually accepted. Record actual measurements before making performance claims.
+6. Keep the complete browser smoke matrix and outcome notes in [UX-07 integration QA](ux07-integration-qa.md). Full repository CI and local user acceptance are required before merge.
+
+No new game mechanics, storage schema, backend or AI model are introduced by this phase.
