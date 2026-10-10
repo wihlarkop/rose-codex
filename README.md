@@ -66,9 +66,11 @@ do not consume cards or modify your saved deck.
 
 **Duel Companion** has two views:
 
-- **Plan Duel:** enter what you can actually see—your Hand/Field, a known enemy,
-  terrain, Summoning Points, and optional board positions—to get labeled,
-  conditional considerations.
+- **Plan Duel:** optionally choose a saved Deck Workshop deck to find your
+  cards quickly, then add only cards you actually see to the manual Hand/Field.
+  Full-catalog card search remains available. Enter a known enemy, terrain,
+  Summoning Points, and optional board positions for labeled, conditional
+  considerations. Choosing a deck never automatically loads all 40 cards.
 - **Battle History:** record completed real duels, outcomes, turns, and notes;
   review descriptive results or export a JSON backup.
 
