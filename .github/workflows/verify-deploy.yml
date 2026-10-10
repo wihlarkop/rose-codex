@@ -24,11 +24,6 @@ jobs:
         with:
           bun-version-file: .bun-version
       - run: bun ci
-      - name: Temporary formatting diff for Fusion Workspace
-        run: |
-          bun --bun oxfmt src/features/fusion/FusionWorkspace.svelte
-          git diff -- src/features/fusion/FusionWorkspace.svelte
-          git checkout -- src/features/fusion/FusionWorkspace.svelte
       - name: Lint first-party scripts and source
         run: bun run lint
       - name: Check scoped formatting

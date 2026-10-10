@@ -277,8 +277,9 @@
     </div>
     <div class="flex flex-wrap items-center gap-2">
       {#if hand.length}
-        <a href={'/duel/?hand=' + hand.map(item => item.cardId).join(',')}
-          class="control-button">Plan duel with this Hand →</a>
+        <a href={'/duel/?hand=' + hand.map((item) => item.cardId).join(',')} class="control-button"
+          >Plan duel with this Hand →</a
+        >
       {/if}
       <a href="/recipes/" class="control-button">Find recipes by result →</a>
       {#if previousFusionInputs}
