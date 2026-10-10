@@ -37,6 +37,9 @@
   const decisions = $derived(rankTacticalDecisions(hand, report, byId, snapshot));
   const blocked = $derived(decisions.filter(item => item.status === 'blocked'));
   const viable = $derived(decisions.filter(item => item.status !== 'blocked').slice(0, 8));
+  let showAll = $state(false);
+  const visibleDecisions = $derived(showAll ? viable : viable.slice(0, 3));
+  const uncertainCount = $derived(viable.filter(item => item.status === 'information-needed').length);
   function editSquare(id: string, axis: 'row' | 'col', value: string) {
     const previous = positions[id] ?? { row: '', col: '' };
     positions = { ...positions, [id]: { ...previous, [axis]: value } };
@@ -51,9 +54,9 @@
   aria-label="Battle state and tactical decision planning">
   <div class="flex flex-wrap items-start justify-between gap-3">
     <div>
-      <h2 class="text-base font-semibold">Battle State & Decision Planner</h2>
+      <h2 class="text-base font-semibold">Next Moves</h2>
       <p class="mt-1 text-xs text-muted-foreground">
-        M5-05 / M5-06 · Enter only information you can confirm on the current turn.
+        Current Summoning Points and known constraints influence these conditional recommendations.
       </p>
     </div>
     <button type="button" class="rounded-md border border-border px-3 py-2 text-xs hover:bg-hover"
@@ -77,6 +80,28 @@
         <option value="yes">Yes</option>
       </select>
     </label>
+
+  </div>
+  <p class="mt-2 text-xs leading-relaxed text-muted-foreground">
+    Normal battle begins with 4 SP. Each new turn adds 3, capped at 12.
+    {#if snapshot.summoningPoints !== null}
+      With {snapshot.summoningPoints} SP now, a hypothetical next turn starts
+      at at most {nextTurnSP(snapshot.summoningPoints)} SP before other costs or effects.
+    {/if}
+    Placing a card also requires an unoccupied square near the Deck Leader; this
+    form cannot verify square occupancy.
+  </p>
+
+  <details class="mt-4 rounded-md border border-border p-3">
+    <summary class="cursor-pointer text-sm font-semibold text-primary">
+      Advanced · 7×7 coordinates (optional)
+    </summary>
+    <p class="mt-2 text-xs text-muted-foreground">
+      Row and column are your manual reference coordinates, not a
+      verified representation of the PCSX2 camera orientation.
+      Adjacency does not prove legal movement, attack range, or open paths.
+    </p>
+    <div class="mt-3 grid gap-2 sm:grid-cols-2">
     <label class="grid min-w-0 gap-1 text-xs font-semibold text-muted-foreground">
       Deck Leader row (1–7)
       <select class="native-filter w-full" bind:value={leaderRow}>
@@ -91,26 +116,7 @@
         {#each axis as col (col)}<option value={String(col)}>{col + 1}</option>{/each}
       </select>
     </label>
-  </div>
-  <p class="mt-2 text-xs leading-relaxed text-muted-foreground">
-    Normal battle begins with 4 SP. Each new turn adds 3, capped at 12.
-    {#if snapshot.summoningPoints !== null}
-      With {snapshot.summoningPoints} SP now, a hypothetical next turn starts
-      at at most {nextTurnSP(snapshot.summoningPoints)} SP before other costs or effects.
-    {/if}
-    Placing a card also requires an unoccupied square near the Deck Leader; this
-    form cannot verify square occupancy.
-  </p>
-
-  <details class="mt-4 rounded-md border border-border p-3">
-    <summary class="cursor-pointer text-sm font-semibold text-primary">
-      Optional 7×7 position observations
-    </summary>
-    <p class="mt-2 text-xs text-muted-foreground">
-      Row and column are your manual reference coordinates, not a
-      verified representation of the PCSX2 camera orientation.
-      Adjacency does not prove legal movement, attack range, or open paths.
-    </p>
+    </div>
     <div class="mt-3 grid gap-2 sm:grid-cols-2">
       <label class="grid gap-1 text-xs text-muted-foreground">
         Enemy monster row
@@ -156,20 +162,24 @@
     {/if}
   </details>
   <div class="mt-4">
-    <h3 class="text-sm font-semibold">Ranked considerations</h3>
+    <h3 class="text-sm font-semibold">Recommended considerations
+      <span class="ml-1 text-xs font-normal text-muted-foreground">
+        · {viable.length} candidates · {blocked.length} blocked
+      </span>
+    </h3>
     <p class="mt-1 text-xs leading-relaxed text-muted-foreground">
-      Only confirmed one-play/SP failures are marked blocked. All other actions
+      {uncertainCount} candidate(s) need more evidence. Only confirmed one-play/SP failures are marked blocked. All other actions
       still require in-game checks, including terrain, effects, movement,
       reachability, summon squares and turn state. Not a win probability.
     </p>
     {#if viable.length}
       <ol class="mt-2 grid gap-2 sm:grid-cols-2">
-        {#each viable as decision (decision.id)}
+        {#each visibleDecisions as decision (decision.id)}
           <li class="rounded-md border border-border bg-elevated p-3">
             <div class="flex flex-wrap items-baseline gap-2">
               <strong class="text-sm">{decision.title}</strong>
               <span class="text-xs text-muted-foreground">
-                {decision.status === 'information-needed' ? 'More evidence needed' : 'Conditional'}
+                {decision.status === 'information-needed' ? 'Unknown · more evidence needed' : 'Conditional · verify in-game'}
               </span>
             </div>
             <p class="mt-2 text-xs leading-relaxed text-muted-foreground">{decision.detail}</p>
@@ -190,6 +200,12 @@
           </li>
         {/each}
       </ol>
+      {#if viable.length > 3}
+        <button type="button" class="mt-3 rounded-md border border-border px-3 py-2 text-xs font-semibold text-primary hover:bg-hover"
+          aria-expanded={showAll} onclick={() => (showAll = !showAll)}>
+          {showAll ? 'Show fewer considerations' : 'Show all ' + viable.length + ' considerations'}
+        </button>
+      {/if}
     {:else}
       <p class="mt-3 rounded-md bg-elevated p-3 text-xs text-muted-foreground">
         Enter Hand or Field monsters above to see conditional choices.

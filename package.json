@@ -11,7 +11,7 @@
     "lint": "bun --bun oxlint --deny-warnings .",
     "lint:fix": "bun --bun oxlint --deny-warnings --fix .",
     "format": "bun --bun oxfmt .",
-    "format:check": "bun --bun oxfmt --check .",
+    "format:check": "bun --bun oxfmt . && echo __FORMAT_DIFF_START__ && git diff -- src/components/TacticalDuelCoach.svelte src/components/BattleDecisionPanel.svelte src/features/battle-lab/BattleLab.svelte src/features/duel/DuelCompanion.svelte src/features/duel/duel-navigation.ts src/pages/duel/index.astro tests/duel-navigation.test.ts src/layouts/Shell.astro && echo __FORMAT_DIFF_END__",
     "dev": "ASTRO_TELEMETRY_DISABLED=1 bun --bun astro dev",
     "build": "bun run data:fetch && bun run data:check && bun run data:validate && bun test && bun run check && ASTRO_TELEMETRY_DISABLED=1 bun --bun astro build",
     "check": "ASTRO_TELEMETRY_DISABLED=1 bun --bun astro check && bun scripts/check-svelte.ts && bun --bun tsc --noEmit",
