@@ -23,6 +23,7 @@
   let note = $state('');
   let notice = $state('');
   let unsafeStorage = $state(false);
+  let staleStorage = $state(false);
   let storageError = $state('');
   let ready = $state(false);
   let savedSnapshot: string | null = null;
@@ -63,9 +64,15 @@
     }
     ready = true;
     function onStorage(event: StorageEvent) {
-      if ((event.key === BATTLE_LOG_KEY || event.key === null) && event.newValue !== savedSnapshot) {
+      if (
+        event.storageArea === localStorage &&
+        (event.key === BATTLE_LOG_KEY || event.key === null) &&
+        event.newValue !== savedSnapshot
+      ) {
         unsafeStorage = true;
-        notice = 'Battle History changed in another tab. Refresh before recording or removing results; no entries were overwritten.';
+        staleStorage = true;
+        notice =
+          'Battle History changed in another tab. Refresh before recording or removing results; no entries were overwritten.';
       }
     }
     window.addEventListener('storage', onStorage);
@@ -74,14 +81,17 @@
 
   function store(next: BattleLog[]): boolean {
     if (!ready || unsafeStorage) {
-      notice =
-        'Protected existing invalid data; no changes were written. Export or repair the stored data manually.';
+      notice = staleStorage
+        ? 'Battle History changed in another tab. Refresh before editing; no entries were overwritten.'
+        : 'Protected existing invalid data; no changes were written. Export or repair the stored data manually.';
       return false;
     }
     try {
       if (localStorage.getItem(BATTLE_LOG_KEY) !== savedSnapshot) {
         unsafeStorage = true;
-        notice = 'Battle History changed in another tab. Refresh before editing; your current records were not overwritten.';
+        staleStorage = true;
+        notice =
+          'Battle History changed in another tab. Refresh before editing; your current records were not overwritten.';
         return false;
       }
       const payload: BattleLogStore = { schemaVersion: 1, matches: next };
