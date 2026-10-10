@@ -82,9 +82,9 @@ export function generateSmartDeck(
   const monsterGoal = style === 'aggressive' ? 35 : style === 'defensive' ? 33 : 32;
   const equipGoal = 40 - monsterGoal;
   const limit = opponent.deckCost - 1;
-  const cheapMonster = Math.min(...monsters.map(card => card.deckCost!));
-  const cheapEquip = equips.length ? Math.min(...equips.map(card => card.deckCost!)) : cheapMonster;
-  if (!Number.isSafeInteger(limit) || limit < 40 * cheapMonster) return null;
+  const cheapestMonsters = monsters.toSorted((a, b) =>
+    a.deckCost! - b.deckCost! || a.id - b.id);
+  if (!Number.isSafeInteger(limit)) return null;
   const costWeight = Math.max(0.12, Math.min(0.85, 0.85 - (limit / 40 - 18) * 0.022));
   const evaluation = new Map(monsters.map(card =>
     [card.id, assessCardMatchup(card, opponent, byId, style)]));
@@ -112,6 +112,23 @@ export function generateSmartDeck(
     counts.set(card.id, (counts.get(card.id) ?? 0) + 1);
     if (card.kind === 'monster') chosenMonsters.push(card);
   };
+  /** Real lower bound for remaining slots, accounting for existing
+   * copies and the proposed next monster. This guarantees a valid all-monster
+   * completion path even if none of the optional power-ups fits. */
+  function cheapestCompletion(slots: number, nextId: number | null = null): number {
+    let needed = slots;
+    let minimum = 0;
+    for (const card of cheapestMonsters) {
+      if (!needed) break;
+      const available = Math.max(0, 3 - (counts.get(card.id) ?? 0)
+        - (card.id === nextId ? 1 : 0));
+      const copies = Math.min(needed, available);
+      needed -= copies;
+      minimum += copies * card.deckCost!;
+    }
+    return needed ? Infinity : minimum;
+  }
+  if (cheapestCompletion(40) > limit) return null;
   function monsterRating(card: Card): number {
     const mates = chosenMonsters.filter(other =>
       fusionPairs.has(Math.min(card.id, other.id) + ':' + Math.max(card.id, other.id))).length;
@@ -125,15 +142,21 @@ export function generateSmartDeck(
         || a.card.id - b.card.id)[0]?.card;
   }
   for (let slot = 0; slot < monsterGoal; slot++) {
-    const reserve = (monsterGoal - slot - 1) * cheapMonster + equipGoal * cheapEquip;
-    const chosen = cheapestMonster(reserve);
+    const remaining = 39 - slot;
+    const chosen = monsters
+      .filter(card => canPick(card)
+        && cost + card.deckCost! + cheapestCompletion(remaining, card.id) <= limit)
+      .map(card => ({ card, rating: monsterRating(card) }))
+      .sort((a, b) => b.rating - a.rating
+        || a.card.deckCost! - b.card.deckCost! || a.card.id - b.card.id)[0]?.card;
     if (!chosen) return null;
     pick(chosen);
   }
   for (let slot = 0; slot < equipGoal; slot++) {
     const remaining = equipGoal - slot - 1;
+    const reserve = cheapestCompletion(remaining);
     const options = equips
-      .filter(card => canPick(card) && cost + card.deckCost! + remaining * cheapEquip <= limit)
+      .filter(card => canPick(card) && cost + card.deckCost! + reserve <= limit)
       .map(card => ({ card, hosts: chosenMonsters.filter(monster =>
         monster.powerUpCardIds.includes(card.id)).length }))
       .filter(item => item.hosts > 0)
@@ -141,7 +164,7 @@ export function generateSmartDeck(
     if (options[0]) pick(options[0].card);
     else {
       // No invented effect/compatibility: fill with a known-stat monster instead.
-      const replacement = cheapestMonster(remaining * cheapMonster);
+      const replacement = cheapestMonster(reserve);
       if (!replacement) return null;
       pick(replacement);
     }
