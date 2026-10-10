@@ -7,7 +7,12 @@
   import type { Card, FusionData } from '../../lib/dotr/model';
   import { parseDuelView, duelViewPath, type DuelView } from './duel-navigation';
 
-  let { cards, canonicalCards, fusions, allowedCardIds }: {
+  let {
+    cards,
+    canonicalCards,
+    fusions,
+    allowedCardIds,
+  }: {
     cards: BrowserCard[];
     canonicalCards: Card[];
     fusions: FusionData;
@@ -49,10 +54,18 @@
   </div>
 
   <nav class="duel-modes" aria-label="Duel Companion modes">
-    <button type="button" class:current={view === 'plan'} aria-pressed={view === 'plan'}
-      onclick={() => selectView('plan')}>Plan Duel</button>
-    <button type="button" class:current={view === 'history'} aria-pressed={view === 'history'}
-      onclick={() => selectView('history')}>Battle History</button>
+    <button
+      type="button"
+      class:current={view === 'plan'}
+      aria-pressed={view === 'plan'}
+      onclick={() => selectView('plan')}>Plan Duel</button
+    >
+    <button
+      type="button"
+      class:current={view === 'history'}
+      aria-pressed={view === 'history'}
+      onclick={() => selectView('history')}>Battle History</button
+    >
   </nav>
 
   <!-- Keep the planner mounted: switching to history must not discard a live duel. -->
@@ -67,17 +80,81 @@
 </section>
 
 <style>
-  .duel-companion { min-width:0; }
-  .duel-heading { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-bottom:1rem; }
-  .duel-identity { display:flex; align-items:center; gap:.85rem; min-width:0; }
-  .duel-symbol { display:grid; place-items:center; flex-shrink:0; height:42px; width:42px; border-radius:10px; background:var(--selected); color:var(--primary); }
-  .duel-heading h1 { margin:0; font-size:1.55rem; letter-spacing:-.025em; line-height:1.3; }
-  .duel-heading p { margin:.25rem 0 0; color:var(--muted-foreground); font-size:.84rem; }
-  .deck-link { color:var(--primary); font-weight:650; font-size:.82rem; text-decoration:none; }
-  .deck-link:hover { text-decoration:underline; }
-  .duel-modes { display:flex; flex-wrap:wrap; gap:.45rem; border-bottom:1px solid var(--border); padding-bottom:.55rem; margin-bottom:1.25rem; }
-  .duel-modes button { border:1px solid transparent; border-radius:7px; background:transparent; color:var(--muted-foreground); font-size:.875rem; font-weight:650; padding:.55rem 1.05rem; }
-  .duel-modes button.current { border-color:var(--border); background:var(--selected); color:var(--primary); }
-  .duel-modes button:hover:not(.current) { color:var(--foreground); background:var(--hover); }
-  .duel-planner[hidden], .duel-history[hidden] { display:none; }
+  .duel-companion {
+    min-width: 0;
+  }
+  .duel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .duel-identity {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    min-width: 0;
+  }
+  .duel-symbol {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    height: 42px;
+    width: 42px;
+    border-radius: 10px;
+    background: var(--selected);
+    color: var(--primary);
+  }
+  .duel-heading h1 {
+    margin: 0;
+    font-size: 1.55rem;
+    letter-spacing: -0.025em;
+    line-height: 1.3;
+  }
+  .duel-heading p {
+    margin: 0.25rem 0 0;
+    color: var(--muted-foreground);
+    font-size: 0.84rem;
+  }
+  .deck-link {
+    color: var(--primary);
+    font-weight: 650;
+    font-size: 0.82rem;
+    text-decoration: none;
+  }
+  .deck-link:hover {
+    text-decoration: underline;
+  }
+  .duel-modes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.55rem;
+    margin-bottom: 1.25rem;
+  }
+  .duel-modes button {
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    font-weight: 650;
+    padding: 0.55rem 1.05rem;
+  }
+  .duel-modes button.current {
+    border-color: var(--border);
+    background: var(--selected);
+    color: var(--primary);
+  }
+  .duel-modes button:hover:not(.current) {
+    color: var(--foreground);
+    background: var(--hover);
+  }
+  .duel-planner[hidden],
+  .duel-history[hidden] {
+    display: none;
+  }
 </style>
