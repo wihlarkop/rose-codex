@@ -10,6 +10,7 @@
   import FusionResultCard from './FusionResultCard.svelte';
   import FusionEncyclopedia from './FusionEncyclopedia.svelte';
   import { createRecipeHand } from './recipe-handoff';
+  import { fusionViewPath, parseFusionView, type FusionView } from './fusion-navigation';
   import DuelStrategyAdvisor from './DuelStrategyAdvisor.svelte';
   import { suggestFusionPlays } from '../../lib/dotr/fusion-advisor';
   import { parseHandLink } from '../../lib/dotr/deck-simulation';
@@ -84,38 +85,44 @@
     }
   }
   onMount(() => {
-    if (new URLSearchParams(window.location.search).get('mode') === 'recipes') {
-      mode = 'recipes';
-      recipesActivated = true;
+    function onHistoryChange() {
+      mode = parseFusionView(window.location.search);
+      if (mode === 'recipes') recipesActivated = true;
     }
+    onHistoryChange();
+    window.addEventListener('popstate', onHistoryChange);
     loadSavedDecks();
     const linkedHand = parseHandLink(window.location.search, new Set(cardById.keys()));
-    if (linkedHand === null) return;
-    if (!linkedHand.length) {
-      actionNotice = 'Invalid Hand link. Choose cards manually or return to Deck Simulator.';
-      return;
+    if (linkedHand !== null) {
+      if (!linkedHand.length) {
+        actionNotice = 'Invalid Hand link. Choose cards manually or return to Deck Simulator.';
+      } else {
+        occurrences = linkedHand.map((cardId) => ({
+          instanceId: crypto.randomUUID(),
+          cardId,
+          zone: 'hand' as const,
+        }));
+        const source = new URLSearchParams(window.location.search).get('from');
+        const origin =
+          source === 'simulator'
+            ? 'Deck Simulator'
+            : source === 'recipes'
+              ? 'Fusion Encyclopedia'
+              : 'a shared Hand link';
+        actionNotice =
+          linkedHand.length +
+          ' cards loaded from ' +
+          origin +
+          '. Your saved decks and Collection remain unchanged.';
+      }
     }
-    occurrences = linkedHand.map((cardId) => ({
-      instanceId: crypto.randomUUID(),
-      cardId,
-      zone: 'hand' as const,
-    }));
-    const source = new URLSearchParams(window.location.search).get('from');
-    const origin =
-      source === 'simulator'
-        ? 'Deck Simulator'
-        : source === 'recipes'
-          ? 'Fusion Encyclopedia'
-          : 'a shared Hand link';
-    actionNotice =
-      linkedHand.length +
-      ' cards loaded from ' +
-      origin +
-      '. Your saved decks and Collection remain unchanged.';
+    return () => window.removeEventListener('popstate', onHistoryChange);
   });
-  function chooseMode(next: 'workbench' | 'recipes') {
+  function chooseMode(next: FusionView) {
+    if (next === mode) return;
     mode = next;
     if (next === 'recipes') recipesActivated = true;
+    window.history.pushState(null, '', fusionViewPath(next, window.location.search));
   }
   function applyRecipeMaterials(next: FusionOccurrence[]) {
     resetUndo();
@@ -123,13 +130,13 @@
     actionNotice =
       next.length +
       ' recipe material cards loaded into Hand. Planner only; no saved deck or Collection changes.';
-    mode = 'workbench';
+    chooseMode('workbench');
   }
   async function loadRecipeMaterials(materials: readonly number[]) {
     const next = createRecipeHand(materials, cardById, () => crypto.randomUUID());
     if (!next) {
       actionNotice = 'Recipe materials could not be validated; your planner remains unchanged.';
-      mode = 'workbench';
+      chooseMode('workbench');
       return;
     }
     if (!occurrences.length) {
@@ -253,7 +260,10 @@
     filter = '';
     await tick();
     const target = document.getElementById('fusion-result-' + resultCardId);
-    target?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    target?.scrollIntoView({
+      block: 'center',
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    });
     target?.focus({ preventScroll: true });
   }
   function resetUndo() {
