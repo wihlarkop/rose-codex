@@ -544,13 +544,18 @@
 
       <p class="m-0 text-xs text-muted-foreground">
         Want to test draws and fusion sequences?
-        <a class="text-link" href={embedded ? '/decks/?mode=practice&deck=' + encodeURIComponent(active.id) : '/simulate/?deck=' + encodeURIComponent(active.id)}
+        <a
+          class="text-link"
+          href={embedded
+            ? '/decks/?mode=practice&deck=' + encodeURIComponent(active.id)
+            : '/simulate/?deck=' + encodeURIComponent(active.id)}
           onclick={(event) => {
             if (embedded && onopenpractice) {
               event.preventDefault();
               onopenpractice(active.id);
             }
-          }}>
+          }}
+        >
           Try this deck in Simulator
         </a>
         (practice only; your saved cards will not change).
@@ -566,13 +571,16 @@
 
       <p class="m-0 text-xs text-muted-foreground">
         Won a new card after a duel?
-        <a class="text-link" href={embedded ? '/decks/?mode=inventory' : '/collection/'}
+        <a
+          class="text-link"
+          href={embedded ? '/decks/?mode=inventory' : '/collection/'}
           onclick={(event) => {
             if (embedded && onopeninventory) {
               event.preventDefault();
               onopeninventory();
             }
-          }}>Add it to My Collection</a>
+          }}>Add it to My Collection</a
+        >
         first, then move it from reserve into your 40-card deck.
       </p>
 

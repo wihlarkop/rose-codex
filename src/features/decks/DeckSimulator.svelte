@@ -156,7 +156,11 @@
     <div class="flex flex-wrap items-end gap-3">
       <label class="min-w-0 flex-1 text-xs font-semibold">
         Saved deck
-        <select class="native-filter mt-1 block w-full" bind:value={selectedDeckId} onchange={() => onactivedeckchange?.(selectedDeckId)}>
+        <select
+          class="native-filter mt-1 block w-full"
+          bind:value={selectedDeckId}
+          onchange={() => onactivedeckchange?.(selectedDeckId)}
+        >
           {#each decks as deck (deck.id)}
             <option value={deck.id}>{deck.name} · {deck.cardIds.length}/40</option>
           {/each}

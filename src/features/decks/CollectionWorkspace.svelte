@@ -12,7 +12,12 @@
     type CollectionEnvelope,
   } from './collection';
 
-  let { cards, embedded = false, preferredDeckId = '', onactivedeckchange }: {
+  let {
+    cards,
+    embedded = false,
+    preferredDeckId = '',
+    onactivedeckchange,
+  }: {
     cards: BrowserCard[];
     embedded?: boolean;
     preferredDeckId?: string;
@@ -238,7 +243,11 @@
     <div class="surface section-box">
       <div class="deck-heading">
         <label for="collection-deck">Selected deck for duel</label>
-        <select id="collection-deck" bind:value={activeId} onchange={() => onactivedeckchange?.(activeId)}>
+        <select
+          id="collection-deck"
+          bind:value={activeId}
+          onchange={() => onactivedeckchange?.(activeId)}
+        >
           {#each decks as deck (deck.id)}
             <option value={deck.id}>{deck.name} · {deck.cardIds.length}/40</option>
           {/each}
