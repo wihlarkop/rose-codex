@@ -119,3 +119,14 @@ UX-03 scopes the Fusion UI and navigation only. It does not reinterpret fusion r
 8. CI: lint, strict formatting, canonical data checks, Bun tests, Astro/Svelte/TypeScript check and production build. Local visual acceptance before merge.
 
 Only Duel UI, Battle History presentation, navigation tests and UX specification change in this phase. No deterministic battle-state logic is modified.
+
+
+## UX-06 Reference and global card search acceptance
+
+1. Open the global Ctrl/Cmd+K search from Home, Cards, Duel and Reference. Typing a partial name such as "blue eye" lists at most six canonical card matches with existing artwork, title, kind and ID; an image without an available asset uses the project's fallback.
+2. ArrowUp/ArrowDown change the active suggestion and Enter opens the exact ID-filtered Card Library. Pointer selection behaves the same way; Escape closes the native dialog. "View all results" preserves the typed phrase with URL-safe encoding, including cases where no card matches.
+3. On the Weevil opponent deep link, follow contextual links to the selected Deck Leader, the Deck Coach, Duel Companion and notable cards in Card Library. Opponent selection must pass canonical IDs/known slugs rather than display names.
+4. Confirm all existing Reference routes remain available through the Reference navigation: Opponents, Deck Leaders, Reincarnation and read-only PCSX2 Save Tools. Do not change game facts, storage schema, save inspection, tactical mechanics or original handoff URLs.
+5. Check keyboard focus, screen readers, dark/light/system appearance, and about 550px PCSX2 split-screen; run full CI and obtain local visual acceptance before merging.
+
+The global search reuses the canonical browser-card projection, existing filtering and CardPicker option presentation. UX-06 adds navigation/presentation only; neither global persistent state nor AI recognition is introduced.
