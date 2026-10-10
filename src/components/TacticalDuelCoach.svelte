@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import CardArtwork from './cards/CardArtwork.svelte';
+  import BattleDecisionPanel from './BattleDecisionPanel.svelte';
   import CardPicker from './cards/CardPicker.svelte';
   import type { BrowserCard } from '../lib/dotr/browser';
   import { DUEL_TERRAINS, type DuelTerrain, type OpponentPosition } from '../lib/dotr/duel-advisor';
@@ -92,8 +93,8 @@
   <div class="rounded-md border border-border bg-surface px-4 py-3 text-xs leading-relaxed text-muted-foreground">
     <strong class="text-foreground">Manual, read-only tactical planner.</strong>
     This is not an automatic screen reader or a complete DotR battle simulator.
-    It does not know which monster can reach an enemy, Summoning Points, turn
-    order, hidden traps, card effects or Deck Leader abilities. A positive ATK
+    Battle State inputs can rule out certain SP/card-play options, but the coach
+    cannot confirm reachability, hidden traps, effects or Deck Leader abilities. A positive ATK
     comparison is never proof of a legal attack or victory.
   </div>
 
@@ -322,4 +323,5 @@
       </p>
     </section>
   </div>
+  <BattleDecisionPanel {cards} {hand} {field} {report} />
 </section>

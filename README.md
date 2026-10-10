@@ -20,6 +20,19 @@ verified power-up compatibility. It assumes cards unlocked, does not infer
 earned Deck Leader ranks or untranscribed card effects, and never claims a
 predicted win rate. Suggestions can be **reviewed and deliberately added**
 as a new deck in Deck Builder without replacing existing decks.
+M5-05/M5-06 add **manual Battle State & ranked decisions** inside
+`/duel/`: current SP, whether a card was already played this turn,
+optional Deck Leader coordinates and optional 7x7 field/enemy coordinates.
+Known impossible SP/one-card-per-turn cases are marked blocked; all
+remaining moves are explicitly conditional. There is no automatic pathfinding,
+game memory access or actual combat execution.
+M5-07 adds an optional **Optimize this deck (v2)** action to `/coach/`,
+with deterministic bounded swap search and *proxy fitness* comparison,
+never a measured win-rate claim. M5-08 adds `/lab/`, a local-only
+Battle Lab for wins, losses, turns and notes, with JSON backup. See
+[Battle intelligence scope](docs/m5-battle-intelligence.md).
+
+
 M5-04 introduces the standalone **Tactical Duel Coach** at `/duel/`.
 Enter up to five Hand cards, a bounded manual Field snapshot, a visible
 enemy monster, observed position and hypothetical contact terrain. The coach

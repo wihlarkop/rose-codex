@@ -56,6 +56,18 @@ distinguish Field stat checks from speculative Hand preparation
 and possible fusions. No simulated game board, screen capture,
 agent chat, or fake turn/SP indicators.
 
+M5-05/M5-06 extend existing /duel/ with a separate Battle State
+decision panel below the current tactical results. Explicitly
+distinguish blocked SP/card-play cases from conditional planning
+and from missing information; optional board coordinates remain
+bounded reference inputs, never a simulated board. M5-07 adds a
+single optional deck refinement action with proxy-score caveat
+inside /coach/. M5-08 uses a self-contained /lab/ page for
+manual observed win/loss notes and simple unobtrusive numerical
+summaries. The requested comprehensive UI/UX simplification
+comes *after* M5 milestones; avoid a cross-app redesign here.
+
+
 The homepage opens directly into the functional Card Library; `/cards/` remains
 an equivalent library route. The shell exposes Cards, Fusion, and Decks with
 the current destination marked. Navigation wraps on narrow screens.

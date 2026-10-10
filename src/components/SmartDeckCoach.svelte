@@ -7,6 +7,7 @@
   import { OPPONENTS, opponentById, type RosePath } from '../lib/dotr/opponents';
   import { generateSmartDeck, assessCardMatchup, type DeckStyle, type SmartDeck } from '../lib/dotr/smart-deck';
   import { smartDeckLink } from '../lib/dotr/smart-deck-link';
+  import { optimizeSuggestedDeck, type DeckOptimization } from '../lib/dotr/deck-optimizer';
   import { buildStrategyPlaybook } from '../lib/dotr/deck-strategy';
 
   let { cards, images, fusions }: {
@@ -18,6 +19,8 @@
   let opponentId = $state('weevil');
   let style = $state<DeckStyle>('balanced');
   let suggestion = $state<SmartDeck | null>(null);
+  let originalSuggestion = $state<SmartDeck | null>(null);
+  let optimization = $state<DeckOptimization | null>(null);
   let error = $state('');
   const filteredOpponents = $derived(OPPONENTS.filter(entry =>
     rosePath === 'all' || entry.path === rosePath));
@@ -57,6 +60,15 @@
       return;
     }
     suggestion = result;
+    originalSuggestion = result;
+    optimization = null;
+  }
+  function improveDeck() {
+    const selected = opponentById(opponentId);
+    if (!originalSuggestion || !selected) return;
+    const result = optimizeSuggestedDeck(originalSuggestion, cards, selected, fusions);
+    suggestion = result.deck;
+    optimization = result;
   }
   onMount(() => {
     const requested = new URLSearchParams(window.location.search).get('opponent');
@@ -174,11 +186,24 @@
               Reproducible rule-based suggestion · Generated for reported campaign matchup
             </p>
           </div>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="rounded-md border border-border px-3 py-2 text-xs font-semibold hover:bg-hover"
+              onclick={improveDeck} disabled={optimization !== null}>
+              {optimization === null ? 'Optimize this deck (v2)' : 'Optimized'}
+            </button>
           <a class="rounded-md bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground"
             href={smartDeckLink(suggestion)}>
             Review in Deck Builder →
           </a>
+          </div>
         </div>
+        {#if optimization}
+          <p class="mt-3 rounded-md border border-border bg-elevated p-3 text-xs" role="status">
+            M5-07: {optimization.replacements} local-search swaps. Heuristic score:
+            {optimization.baselineScore.toFixed(2)} → {optimization.optimizedScore.toFixed(2)}.
+            This is NOT a measured win-rate improvement. Deck Cost and copy limits remain enforced.
+          </p>
+        {/if}
         <dl class="mt-4 grid grid-cols-3 gap-3 rounded-md bg-elevated p-3 text-sm">
           <div>
             <dt class="text-xs text-muted-foreground">Main cards</dt>
