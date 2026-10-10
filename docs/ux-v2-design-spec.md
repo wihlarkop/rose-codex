@@ -42,7 +42,7 @@ A compact, keyboard-accessible Duelists of the Roses gaming companion that works
 ## Roadmap
 
 1. **UX-01 Foundation** — dedicated homepage, top-level + contextual navigation, Reference Hub, browser/system theme, global search, initial design-system tokens. Legacy feature routes remain separate. **This PR's scope.**
-2. **UX-02 Cards** — adaptive compact toolbar, grid density, flip card and focus regression, ownership indicator only if genuine collection data can be safely read.
+2. **UX-02 Cards** — adaptive compact toolbar, grid density, flip card and focus regression, ownership indicator only if genuine collection data can be safely read. **Stacked PR scope following UX-01; no merge until local acceptance.**
 3. **UX-03 Fusion** — two-panel Workbench and Find Recipes connected as one coherent task flow; preserve recipe search, chains, repeated occurrences, warnings and Undo.
 4. **UX-04 Decks** — Build/Practice/Inventory integrated views; Generate/Optimize as explicit proposal within Build. Preserve stale-data protections and backups, copy limits, strict cost notices and existing URLs.
 5. **UX-05 Duel** — compact battle-state editor and unified evidence-labeled next-move list, optional screenshot/advanced coordinates, separate History view.
@@ -65,3 +65,16 @@ Changes ship in bounded PRs; tests and local acceptance before merge. UX-01 must
 ## Not yet in UX-01
 
 Adaptive Cards toolbar, merging Deck Builder/Coach/Inventory into a single Svelte island, Fusion two-mode state handoff, compact tactical layout and migration to unified Duel input are all **later phases**, not already implemented just because category links exist.
+
+
+## UX-02 Cards acceptance · stacked after UX-01
+
+1. Open \`/cards/\` near the top: search, Kind, Monster Type, Attribute and Reset are all visible, accessible and preserve existing semantics.
+2. Scroll down several rows: toolbar sticks at viewport top, collapses to a compact Search + Filters trigger, and frees vertical space. Test desktop and a ~550px split-screen browser; no cards or keyboard focus should be hidden.
+3. In compact mode, open Filters, change a filter, check filtered result count and badge count, then close via button, Escape and outside click. Active filter values must survive collapse/expand, including scroll back up.
+4. Global search and homepage search must still open \`/cards/?q=\` with correct name/ID filtering. Quick Lookup continues to locate and flip its card. Normal in-grid flip state, keyboard Enter/Space and the 854-card data set stay intact.
+5. With **valid, explicitly saved Collection** data, positive owned-copy counts display on card fronts; zero recorded copies do not get a positive badge. With **no Collection** or **invalid storage**, badges are omitted without changing or repairing data. When another tab changes the Collection, the displayed copies refresh via storage event.
+6. Check first render (no unexpected sticky popup), scroll up/down, no IntersectionObserver support fallback, keyboard focus, reduced-motion setting, system light/dark theme and mobile width.
+7. Run repository CI: lint, scoped format, canonical data checks, Bun tests, Svelte/TS checks and production static build.
+
+UX-02 only changes Card Library presentation and its read-only Collection display. It does not implement Deck Workshop's Inventory merger or alter saved-card data.
