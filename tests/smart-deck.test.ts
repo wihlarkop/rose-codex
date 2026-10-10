@@ -46,7 +46,7 @@ test('proposals are validated before manual Deck Builder acceptance', async () =
   const opponent = OPPONENTS[0]!;
   const deck = generateSmartDeck(data.cards, opponent, 'balanced', data.fusions)!;
   const uri = smartDeckLink(deck);
-  expect(uri).toStartWith('/decks/?suggest=');
+  expect(uri.startsWith('/decks/?suggest=')).toBe(true);
   const parsed = parseSmartDeckLink(uri.split('?')[1]!, data.cards);
   expect(parsed?.cardIds).toEqual(deck.cardIds);
   expect(parsed?.opponentId).toBe(opponent.id);
