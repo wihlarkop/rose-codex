@@ -8,6 +8,8 @@
   import CardPicker from '../../components/cards/CardPicker.svelte';
   import CardArtwork from '../../components/cards/CardArtwork.svelte';
   import FusionResultCard from './FusionResultCard.svelte';
+  import FusionEncyclopedia from './FusionEncyclopedia.svelte';
+  import { createRecipeHand } from './recipe-handoff';
   import DuelStrategyAdvisor from './DuelStrategyAdvisor.svelte';
   import { suggestFusionPlays } from '../../lib/dotr/fusion-advisor';
   import { parseHandLink } from '../../lib/dotr/deck-simulation';
@@ -79,6 +81,10 @@
     }
   }
   onMount(() => {
+    if (new URLSearchParams(window.location.search).get('mode') === 'recipes') {
+      mode = 'recipes';
+      recipesActivated = true;
+    }
     loadSavedDecks();
     const linkedHand = parseHandLink(window.location.search, new Set(cardById.keys()));
     if (linkedHand === null) return;
@@ -104,6 +110,23 @@
       origin +
       '. Your saved decks and Collection remain unchanged.';
   });
+  function chooseMode(next: 'workbench' | 'recipes') {
+    mode = next;
+    if (next === 'recipes') recipesActivated = true;
+  }
+  function loadRecipeMaterials(materials: readonly number[]) {
+    const next = createRecipeHand(materials, cardById, () => crypto.randomUUID());
+    if (!next) {
+      actionNotice = 'Recipe materials could not be validated; your planner remains unchanged.';
+      mode = 'workbench';
+      return;
+    }
+    if (occurrences.length && !window.confirm('Replace the current planner Hand and Summoning Area with the selected recipe materials? Saved decks and Collection are not affected.')) return;
+    resetUndo();
+    occurrences = next;
+    actionNotice = materials.length + ' recipe material cards loaded into Hand. Planner only; no saved deck or Collection changes.';
+    mode = 'workbench';
+  }
   function addDeckOccurrence(cardId: number, zone: FusionZone) {
     const allowed = deckCardCounts.get(cardId) ?? 0;
     const alreadyUsed = occurrences.filter((entry) => entry.cardId === cardId).length;
@@ -115,6 +138,9 @@
     }
     add(cardId, zone);
   }
+  let mode = $state<'workbench' | 'recipes'>('workbench');
+  let recipesActivated = $state(false);
+  let insertZone = $state<FusionZone>('hand');
   let sort = $state('atk');
   let filter = $state('');
   const discovery = $derived(discover(occurrences));
@@ -268,9 +294,14 @@
 </script>
 
 <section aria-label="Fusion workspace">
+  <nav class="fusion-modes" aria-label="Fusion workspace views">
+    <button type="button" class:active={mode === 'workbench'} aria-pressed={mode === 'workbench'} onclick={() => chooseMode('workbench')}>Workbench</button>
+    <button type="button" class:active={mode === 'recipes'} aria-pressed={mode === 'recipes'} onclick={() => chooseMode('recipes')}>Find Recipes</button>
+  </nav>
+  <div hidden={mode !== 'workbench'} class="fusion-workbench-view">
   <header class="mb-6 flex flex-wrap items-start justify-between gap-3">
     <div>
-      <h1 class="m-0 text-2xl font-semibold tracking-tight">Fusion Workspace</h1>
+      <h1 class="m-0 text-2xl font-semibold tracking-tight">Fusion Workbench</h1>
       <p class="mb-0 mt-1 text-sm text-muted-foreground">
         Enter your available cards. Fusions and compatibility update automatically.
       </p>
@@ -281,7 +312,6 @@
           >Plan duel with this Hand →</a
         >
       {/if}
-      <a href="/recipes/" class="control-button">Find recipes by result →</a>
       {#if previousFusionInputs}
         <button type="button" class="control-button" onclick={undoFusion}>Undo last fusion</button>
       {/if}
@@ -302,6 +332,112 @@
 
   <div class="grid items-start gap-6 xl:grid-cols-[minmax(20rem,.8fr)_minmax(0,1.2fr)]">
     <section aria-label="Available cards" class="min-w-0">
+      <div class="mb-4 rounded-lg border border-border bg-surface p-3" aria-label="Add cards to fusion planner">
+        <h2 class="m-0 mb-2 text-sm font-semibold">Add a card</h2>
+        <div class="flex flex-wrap items-end gap-2">
+          <label class="min-w-32 flex-1 text-xs text-muted-foreground">
+            Destination
+            <select class="native-filter mt-1 block w-full" bind:value={insertZone}>
+              <option value="hand">Hand</option>
+              <option value="summoning">Summoning Area</option>
+            </select>
+          </label>
+          <CardPicker {cards} label="Find and add a card" onselect={(cardId) => add(cardId, insertZone)} />
+        </div>
+      </div>
+      <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-1">
+        {#each [{ zone: 'hand' as FusionZone, title: 'Hand', entries: hand }, { zone: 'summoning' as FusionZone, title: 'Summoning Area', entries: summoning }] as group (group.zone)}
+          <section
+            class="min-w-0 rounded-lg border border-border bg-surface p-3"
+            aria-labelledby={'zone-' + group.zone}
+          >
+            <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <h2 id={'zone-' + group.zone} class="m-0 text-base font-semibold">
+                {group.title}
+                <span class="number ml-1 text-sm font-normal text-muted-foreground"
+                  >{group.entries.length}</span
+                >
+              </h2>
+            </div>
+            {#if group.entries.length}
+              <ol class="m-0 grid list-none gap-3 p-0">
+                {#each group.entries as entry (entry.instanceId)}
+                  {@const card = cardById.get(entry.cardId)!}
+                  {@const match = compatibility.get(entry.instanceId)!}
+                  {@const indicator = status[match.ordinary]}
+                  {@const StatusIcon = indicator.icon}
+                  <li
+                    class="min-w-0 border-t border-border pt-3"
+                    aria-label={labels.get(entry.instanceId) + ': ' + card.name}
+                  >
+                    <div class="flex min-w-0 items-start gap-3">
+                      <div class="w-12 shrink-0 overflow-hidden rounded-sm">
+                        <CardArtwork
+                          image={card.image}
+                          name={card.name}
+                          cardId={card.id}
+                          decorative
+                        />
+                      </div>
+                      <div class="min-w-0 flex-1">
+                        <p class="m-0 break-words text-sm font-semibold">{card.name}</p>
+                        <p class="mb-1 mt-0 text-xs text-muted-foreground">
+                          #{String(card.id).padStart(3, '0')} · {labels.get(entry.instanceId)}
+                        </p>
+                        <p
+                          class={'m-0 flex items-start gap-1.5 text-xs leading-relaxed ' +
+                            indicator.class}
+                        >
+                          <StatusIcon
+                            class="mt-0.5 size-3.5 shrink-0"
+                            aria-hidden="true"
+                          />{indicator.label}
+                        </p>
+                        {#if match.special}<p
+                            class="mb-0 mt-1 flex items-start gap-1.5 text-xs text-warning"
+                          >
+                            <Sparkles class="size-3.5 shrink-0" aria-hidden="true" />Special
+                            combination available
+                          </p>{/if}
+                      </div>
+                    </div>
+                    <div class="mt-2 flex flex-wrap justify-end gap-2">
+                      <button
+                        class="control-button"
+                        aria-label={'Move ' +
+                          labels.get(entry.instanceId) +
+                          ', ' +
+                          card.name +
+                          ' to ' +
+                          (group.zone === 'hand' ? 'Summoning Area' : 'Hand')}
+                        onclick={() =>
+                          move(entry.instanceId, group.zone === 'hand' ? 'summoning' : 'hand')}
+                        >{group.zone === 'hand' ? 'To Summoning Area' : 'To Hand'}</button
+                      >
+                      <button
+                        class="control-button"
+                        aria-label={'Duplicate ' + labels.get(entry.instanceId) + ', ' + card.name}
+                        onclick={() => add(card.id, group.zone)}>Copy</button
+                      >
+                      <button
+                        class="control-button"
+                        aria-label={'Remove ' + labels.get(entry.instanceId) + ', ' + card.name}
+                        onclick={() => remove(entry.instanceId)}>Remove</button
+                      >
+                    </div>
+                  </li>
+                {/each}
+              </ol>
+            {:else}
+              <p class="my-4 text-sm text-muted-foreground">
+                {group.zone === 'hand'
+                  ? 'Add the cards in your hand to find what they can produce.'
+                  : 'Add cards already on your field to explore field-assisted combinations.'}
+              </p>
+            {/if}
+          </section>
+        {/each}
+      </div>
       <details class="mb-5 min-w-0 rounded-lg border border-border bg-surface p-3">
         <summary class="cursor-pointer text-sm font-semibold text-primary"
           >Choose cards from a saved deck</summary
@@ -385,104 +521,6 @@
           </p>
         {/if}
       </details>
-      <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-1">
-        {#each [{ zone: 'hand' as FusionZone, title: 'Hand', entries: hand }, { zone: 'summoning' as FusionZone, title: 'Summoning Area', entries: summoning }] as group (group.zone)}
-          <section
-            class="min-w-0 rounded-lg border border-border bg-surface p-3"
-            aria-labelledby={'zone-' + group.zone}
-          >
-            <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
-              <h2 id={'zone-' + group.zone} class="m-0 text-base font-semibold">
-                {group.title}
-                <span class="number ml-1 text-sm font-normal text-muted-foreground"
-                  >{group.entries.length}</span
-                >
-              </h2>
-              <CardPicker
-                {cards}
-                label={'Add to ' + group.title}
-                onselect={(cardId) => add(cardId, group.zone)}
-              />
-            </div>
-            {#if group.entries.length}
-              <ol class="m-0 grid list-none gap-3 p-0">
-                {#each group.entries as entry (entry.instanceId)}
-                  {@const card = cardById.get(entry.cardId)!}
-                  {@const match = compatibility.get(entry.instanceId)!}
-                  {@const indicator = status[match.ordinary]}
-                  {@const StatusIcon = indicator.icon}
-                  <li
-                    class="min-w-0 border-t border-border pt-3"
-                    aria-label={labels.get(entry.instanceId) + ': ' + card.name}
-                  >
-                    <div class="flex min-w-0 items-start gap-3">
-                      <div class="w-16 shrink-0 overflow-hidden rounded-sm">
-                        <CardArtwork
-                          image={card.image}
-                          name={card.name}
-                          cardId={card.id}
-                          decorative
-                        />
-                      </div>
-                      <div class="min-w-0 flex-1">
-                        <p class="m-0 break-words text-sm font-semibold">{card.name}</p>
-                        <p class="mb-1 mt-0 text-xs text-muted-foreground">
-                          #{String(card.id).padStart(3, '0')} · {labels.get(entry.instanceId)}
-                        </p>
-                        <p
-                          class={'m-0 flex items-start gap-1.5 text-xs leading-relaxed ' +
-                            indicator.class}
-                        >
-                          <StatusIcon
-                            class="mt-0.5 size-3.5 shrink-0"
-                            aria-hidden="true"
-                          />{indicator.label}
-                        </p>
-                        {#if match.special}<p
-                            class="mb-0 mt-1 flex items-start gap-1.5 text-xs text-warning"
-                          >
-                            <Sparkles class="size-3.5 shrink-0" aria-hidden="true" />Special
-                            combination available
-                          </p>{/if}
-                      </div>
-                    </div>
-                    <div class="mt-2 flex flex-wrap justify-end gap-2">
-                      <button
-                        class="control-button"
-                        aria-label={'Move ' +
-                          labels.get(entry.instanceId) +
-                          ', ' +
-                          card.name +
-                          ' to ' +
-                          (group.zone === 'hand' ? 'Summoning Area' : 'Hand')}
-                        onclick={() =>
-                          move(entry.instanceId, group.zone === 'hand' ? 'summoning' : 'hand')}
-                        >{group.zone === 'hand' ? 'To Summoning Area' : 'To Hand'}</button
-                      >
-                      <button
-                        class="control-button"
-                        aria-label={'Duplicate ' + labels.get(entry.instanceId) + ', ' + card.name}
-                        onclick={() => add(card.id, group.zone)}>Copy</button
-                      >
-                      <button
-                        class="control-button"
-                        aria-label={'Remove ' + labels.get(entry.instanceId) + ', ' + card.name}
-                        onclick={() => remove(entry.instanceId)}>Remove</button
-                      >
-                    </div>
-                  </li>
-                {/each}
-              </ol>
-            {:else}
-              <p class="my-4 text-sm text-muted-foreground">
-                {group.zone === 'hand'
-                  ? 'Add the cards in your hand to find what they can produce.'
-                  : 'Add cards already on your field to explore field-assisted combinations.'}
-              </p>
-            {/if}
-          </section>
-        {/each}
-      </div>
       <p class="mb-2 mt-4 text-xs leading-relaxed text-muted-foreground">
         Unlimited inputs for planning; this is not an in-game five-card hand simulation. Copies are
         separate. Fusion previews do not consume cards; choosing "Summon result" applies a recipe to
@@ -659,9 +697,21 @@
       {/if}
     </section>
   </div>
+  </div>
+  {#if recipesActivated}
+    <div hidden={mode !== 'recipes'} class="fusion-recipe-view">
+      <FusionEncyclopedia {cards} {fusionData} ontrymaterials={loadRecipeMaterials} />
+    </div>
+  {/if}
 </section>
 
 <style>
+  .fusion-modes { display:flex; flex-wrap:wrap; gap:.35rem; margin-bottom:1.25rem; border-bottom:1px solid var(--border); padding-bottom:.4rem; }
+  .fusion-modes button { padding:.65rem 1rem; border-radius:7px; border:1px solid transparent; background:transparent; color:var(--muted-foreground); font-size:.875rem; font-weight:650; }
+  .fusion-modes button.active { background:var(--selected); border-color:var(--border); color:var(--primary); }
+  .fusion-modes button:hover:not(.active) { background:var(--hover); color:var(--foreground); }
+  .fusion-workbench-view[hidden], .fusion-recipe-view[hidden] { display:none; }
+
   :global(.control-button) {
     min-height: 32px;
     border: 1px solid var(--border);
