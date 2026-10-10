@@ -46,6 +46,16 @@ about unknown Summoning Points and card effects remain discoverable in
 an expandable "Important uncertainties" section. Do not disturb
 existing Deck Builder acceptance behavior.
 
+M5-04 adds a standalone /duel/ route rather than overloading the
+existing Fusion Workspace advisor. Its two-column layout keeps
+manual Hand/Field/known-enemy controls on the left, with clearly
+labelled conditional next-step considerations on the right. Use
+existing card thumbnails and CardPicker, brief caution notes,
+and the established subtle warm-neutral styling. Labels must
+distinguish Field stat checks from speculative Hand preparation
+and possible fusions. No simulated game board, screen capture,
+agent chat, or fake turn/SP indicators.
+
 The homepage opens directly into the functional Card Library; `/cards/` remains
 an equivalent library route. The shell exposes Cards, Fusion, and Decks with
 the current destination marked. Navigation wraps on narrow screens.

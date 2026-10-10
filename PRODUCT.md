@@ -57,6 +57,28 @@ existing records until accepted. Existing deck JSON/storage schema remains
 unchanged. No backend, AI model, third-party data lookup or PCSX2 access.
 See `docs/smart-deck-coach.md`.
 
+## M5-04 · Manual Tactical Duel Coach
+
+The standalone static `/duel/` route accepts manually entered Hand
+(max five planning entries) and Field (bounded eight planning entries)
+occurrences, an optional campaign opponent context, a separately identified
+face-up enemy Monster, its observed Attack/Defense/Unknown position, and
+the hypothetical contact-square terrain. It **does not inspect PCSX2**.
+Using existing `createFusionDiscovery` and `suggestDuelPlays` outputs,
+a small pure `evaluateTacticalDuel` layer classifies conditional
+Field comparisons (not an assured legal attack), canonical ordinary
+fusion possibilities (not a guaranteed valid summon), and Hand
+preparation (never an immediate attack). It preserves stat-only
+uncertainty for hidden/unknown opponent positions and special
+Crush/Toon/Labyrinth terrain. No result claims Summoning Points,
+movement, adjacency, trap, board, effect, or victory knowledge.
+
+The planner is ephemeral, writes nothing to storage, and does not
+modify existing generated decks, the Fusion Workspace, or game saves.
+It offers a handoff from Fusion Workspace's current Hand cards to
+`/duel/?hand=` using the existing bounded link reader. No LLM or
+new dependencies. See `docs/tactical-duel-coach.md`.
+
 ## M5-03 · Deterministic Strategy Playbook
 
 The existing `/coach/` result now includes a read-only, derived **How to play

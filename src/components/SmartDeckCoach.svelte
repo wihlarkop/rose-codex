@@ -78,7 +78,10 @@
         Duelists of the Roses cards. No model API or game-memory access needed.
       </p>
     </div>
-    <a class="text-link text-sm" href="/opponents/">Opponent Encyclopedia →</a>
+    <div class="flex flex-wrap gap-3">
+      <a class="text-link text-sm" href="/duel/">Tactical Duel Coach →</a>
+      <a class="text-link text-sm" href="/opponents/">Opponent Encyclopedia →</a>
+    </div>
   </header>
 
   <div class="rounded-md border border-border bg-surface px-4 py-3 text-xs leading-relaxed text-muted-foreground">
