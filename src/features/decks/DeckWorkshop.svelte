@@ -44,6 +44,8 @@
     practiceVisited = mode === 'practice';
     if (mode === 'practice') practiceActivation++;
     function onHistoryChange() {
+      const requestedDeck = new URLSearchParams(window.location.search).get('deck');
+      if (requestedDeck) activeDeckId = requestedDeck;
       mode = parseDeckWorkshopMode(window.location.search);
       if (mode === 'practice') {
         practiceVisited = true;
@@ -62,7 +64,9 @@
         practiceVisited = true;
         practiceActivation++;
       }
-      window.history.pushState(null, '', deckWorkshopPath(next, window.location.search));
+      const params = new URLSearchParams(window.location.search);
+      if (activeDeckId) params.set('deck', activeDeckId);
+      window.history.pushState(null, '', deckWorkshopPath(next, params.toString()));
     }
     generatorOpen = false;
     feedback = '';
