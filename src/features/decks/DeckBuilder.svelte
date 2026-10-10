@@ -26,11 +26,19 @@
     embedded = false,
     proposedDeck = null,
     onproposalhandled,
+    preferredDeckId = '',
+    onactivedeckchange,
+    onopenpractice,
+    onopeninventory,
   }: {
     cards: BrowserCard[];
     embedded?: boolean;
     proposedDeck?: PendingCoachDeck | null;
     onproposalhandled?: () => void;
+    preferredDeckId?: string;
+    onactivedeckchange?: (id: string) => void;
+    onopenpractice?: (id: string) => void;
+    onopeninventory?: () => void;
   } = $props();
   const cardById = $derived(new Map(cards.map((card) => [card.id, card])));
   const allowedIds = $derived(new Set(cardById.keys()));
@@ -141,7 +149,8 @@
       saveStatus = 'Not saved · browser storage unavailable.';
       storageWarning = 'Editing works in this tab. Export JSON to keep a copy of your changes.';
     }
-    activeId = decks[0]?.id ?? '';
+    activeId = decks.find((deck) => deck.id === preferredDeckId)?.id ?? decks[0]?.id ?? '';
+    if (activeId) onactivedeckchange?.(activeId);
     ready = true;
     if (proposedDeck) {
       pendingCoachDeck = proposedDeck;
@@ -188,6 +197,7 @@
     decks = [...decks, deck];
     occurrenceIds = { ...occurrenceIds, [deck.id]: [] };
     activeId = deck.id;
+    onactivedeckchange?.(activeId);
     inspectedCardId = null;
     save();
   }
@@ -224,6 +234,7 @@
       [deck.id]: deck.cardIds.map(() => crypto.randomUUID()),
     };
     activeId = deck.id;
+    onactivedeckchange?.(activeId);
     inspectedCardId = null;
     const saved = save();
     notice = saved
@@ -249,6 +260,7 @@
     decks = [...decks, copy];
     occurrenceIds = { ...occurrenceIds, [copy.id]: copy.cardIds.map(() => crypto.randomUUID()) };
     activeId = copy.id;
+    onactivedeckchange?.(activeId);
     inspectedCardId = null;
     save();
   }
@@ -275,6 +287,7 @@
     decks = remaining;
     if (activeId === deckId) {
       activeId = remaining[0]!.id;
+      onactivedeckchange?.(activeId);
       inspectedCardId = null;
     }
     save();
@@ -364,6 +377,7 @@
     } else {
       decks = action.decks.decks.map((deck) => ({ ...deck, cardIds: [...deck.cardIds] }));
       activeId = decks[0]!.id;
+      onactivedeckchange?.(activeId);
       occurrenceIds = Object.fromEntries(
         decks.map((deck) => [deck.id, deck.cardIds.map(() => crypto.randomUUID())]),
       );
@@ -378,6 +392,7 @@
   }
   function selectDeck(id: string) {
     activeId = id;
+    onactivedeckchange?.(activeId);
     inspectedCardId = null;
     notice = '';
   }
@@ -529,7 +544,13 @@
 
       <p class="m-0 text-xs text-muted-foreground">
         Want to test draws and fusion sequences?
-        <a class="text-link" href={embedded ? '/decks/?mode=practice&deck=' + encodeURIComponent(active.id) : '/simulate/?deck=' + encodeURIComponent(active.id)}>
+        <a class="text-link" href={embedded ? '/decks/?mode=practice&deck=' + encodeURIComponent(active.id) : '/simulate/?deck=' + encodeURIComponent(active.id)}
+          onclick={(event) => {
+            if (embedded && onopenpractice) {
+              event.preventDefault();
+              onopenpractice(active.id);
+            }
+          }}>
           Try this deck in Simulator
         </a>
         (practice only; your saved cards will not change).
@@ -545,7 +566,13 @@
 
       <p class="m-0 text-xs text-muted-foreground">
         Won a new card after a duel?
-        <a class="text-link" href={embedded ? '/decks/?mode=inventory' : '/collection/'}>Add it to My Collection</a>
+        <a class="text-link" href={embedded ? '/decks/?mode=inventory' : '/collection/'}
+          onclick={(event) => {
+            if (embedded && onopeninventory) {
+              event.preventDefault();
+              onopeninventory();
+            }
+          }}>Add it to My Collection</a>
         first, then move it from reserve into your 40-card deck.
       </p>
 

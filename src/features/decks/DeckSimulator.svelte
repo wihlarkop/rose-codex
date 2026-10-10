@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, untrack } from 'svelte';
   import CardArtwork from '../../components/cards/CardArtwork.svelte';
   import FusionAdvisor from '../fusion/FusionAdvisor.svelte';
   import { DECK_STORAGE_KEY, validateDeckEnvelope, type DeckRecord } from '../decks/model';
@@ -19,11 +19,17 @@
     canonicalCards,
     fusionData,
     embedded = false,
+    preferredDeckId = '',
+    workshopActivation = 0,
+    onactivedeckchange,
   }: {
     cards: BrowserCard[];
     canonicalCards: Card[];
     fusionData: FusionData;
     embedded?: boolean;
+    preferredDeckId?: string;
+    workshopActivation?: number;
+    onactivedeckchange?: (id: string) => void;
   } = $props();
 
   function createIslandData() {
@@ -79,8 +85,21 @@
 
   onMount(() => {
     refreshDecks();
-    const requested = new URLSearchParams(window.location.search).get('deck');
+    const requested = preferredDeckId || new URLSearchParams(window.location.search).get('deck');
     if (requested && decks.some((deck) => deck.id === requested)) selectedDeckId = requested;
+  });
+
+  // Practice stays mounted between Workshop modes; refresh stored deck names and
+  // selection upon activation without resetting the in-memory practice session.
+  $effect(() => {
+    const activation = workshopActivation;
+    if (activation > 0 && ready) {
+      untrack(() => {
+        refreshDecks();
+        if (preferredDeckId && decks.some((deck) => deck.id === preferredDeckId))
+          selectedDeckId = preferredDeckId;
+      });
+    }
   });
 
   function start() {
@@ -137,7 +156,7 @@
     <div class="flex flex-wrap items-end gap-3">
       <label class="min-w-0 flex-1 text-xs font-semibold">
         Saved deck
-        <select class="native-filter mt-1 block w-full" bind:value={selectedDeckId}>
+        <select class="native-filter mt-1 block w-full" bind:value={selectedDeckId} onchange={() => onactivedeckchange?.(selectedDeckId)}>
           {#each decks as deck (deck.id)}
             <option value={deck.id}>{deck.name} · {deck.cardIds.length}/40</option>
           {/each}

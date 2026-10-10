@@ -22,14 +22,21 @@
   let generatorOpen = $state(false);
   let proposal = $state<PendingCoachDeck | null>(null);
   let practiceVisited = $state(false);
+  let practiceActivation = $state(0);
+  let activeDeckId = $state('');
   let feedback = $state('');
 
   onMount(() => {
     mode = parseDeckWorkshopMode(window.location.search);
+    activeDeckId = new URLSearchParams(window.location.search).get('deck') ?? '';
     practiceVisited = mode === 'practice';
+    if (mode === 'practice') practiceActivation++;
     function onHistoryChange() {
       mode = parseDeckWorkshopMode(window.location.search);
-      if (mode === 'practice') practiceVisited = true;
+      if (mode === 'practice') {
+        practiceVisited = true;
+        practiceActivation++;
+      }
       generatorOpen = false;
     }
     window.addEventListener('popstate', onHistoryChange);
@@ -39,7 +46,10 @@
   function changeMode(next: DeckWorkshopMode) {
     if (next !== mode) {
       mode = next;
-      if (next === 'practice') practiceVisited = true;
+      if (next === 'practice') {
+        practiceVisited = true;
+        practiceActivation++;
+      }
       window.history.pushState(null, '', deckWorkshopPath(next, window.location.search));
     }
     generatorOpen = false;
@@ -91,16 +101,25 @@
     {#if generatorOpen}
       <SmartDeckCoach cards={canonicalCards} images={cards} fusions={fusionData} onpropose={reviewProposal} />
     {:else}
-      <DeckBuilder {cards} embedded proposedDeck={proposal} onproposalhandled={() => (proposal = null)} />
+      <DeckBuilder {cards} embedded proposedDeck={proposal} preferredDeckId={activeDeckId}
+        onactivedeckchange={(id) => (activeDeckId = id)} onproposalhandled={() => (proposal = null)}
+        onopenpractice={(id) => {
+          activeDeckId = id;
+          changeMode('practice');
+        }}
+        onopeninventory={() => changeMode('inventory')} />
     {/if}
   {/if}
   {#if practiceVisited}
     <div hidden={mode !== 'practice'} class="practice-region">
-      <DeckSimulator {cards} {canonicalCards} {fusionData} embedded />
+      <DeckSimulator {cards} {canonicalCards} {fusionData} embedded
+        preferredDeckId={activeDeckId} workshopActivation={practiceActivation}
+        onactivedeckchange={(id) => (activeDeckId = id)} />
     </div>
   {/if}
   {#if mode === 'inventory'}
-    <CollectionWorkspace {cards} embedded />
+    <CollectionWorkspace {cards} embedded preferredDeckId={activeDeckId}
+      onactivedeckchange={(id) => (activeDeckId = id)} />
   {/if}
 </section>
 <style>
