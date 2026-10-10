@@ -3,8 +3,13 @@
   import { DECK_STORAGE_KEY, validateDeckEnvelope, type DeckRecord } from '../decks/model';
   import { OPPONENTS, opponentById } from '../../lib/dotr/opponents';
   import {
-    BATTLE_LOG_KEY, MAX_BATTLE_LOGS, summarizeBattles, validateBattleLogs,
-    type BattleLog, type BattleOutcome, type BattleLogStore,
+    BATTLE_LOG_KEY,
+    MAX_BATTLE_LOGS,
+    summarizeBattles,
+    validateBattleLogs,
+    type BattleLog,
+    type BattleOutcome,
+    type BattleLogStore,
   } from './model';
 
   let { allowedCardIds }: { allowedCardIds: number[] } = $props();
@@ -20,12 +25,12 @@
   let storageError = $state('');
   let ready = $state(false);
   const summary = $derived(summarizeBattles(matches));
-  const selectedDeck = $derived(decks.find(deck => deck.id === chosenDeckId));
+  const selectedDeck = $derived(decks.find((deck) => deck.id === chosenDeckId));
   const byOpponent = $derived(
-    OPPONENTS.map(profile => ({
+    OPPONENTS.map((profile) => ({
       ...profile,
-      summary: summarizeBattles(matches.filter(match => match.opponentId === profile.id)),
-    })).filter(item => item.summary.battles > 0),
+      summary: summarizeBattles(matches.filter((match) => match.opponentId === profile.id)),
+    })).filter((item) => item.summary.battles > 0),
   );
 
   onMount(() => {
@@ -35,24 +40,27 @@
       decks = rawDecks ? validateDeckEnvelope(JSON.parse(rawDecks), allowed).decks : [];
       chosenDeckId = decks[0]?.id ?? '';
     } catch (error) {
-      storageError = 'Saved decks could not be loaded: '
-        + (error instanceof Error ? error.message : 'Unknown error');
+      storageError =
+        'Saved decks could not be loaded: ' +
+        (error instanceof Error ? error.message : 'Unknown error');
     }
     try {
       const saved = localStorage.getItem(BATTLE_LOG_KEY);
       matches = saved ? validateBattleLogs(JSON.parse(saved)).matches : [];
     } catch (error) {
       unsafeStorage = true;
-      storageError += (storageError ? ' ' : '')
-        + 'Battle logs were not overwritten because the stored data is invalid: '
-        + (error instanceof Error ? error.message : 'Unknown error');
+      storageError +=
+        (storageError ? ' ' : '') +
+        'Battle logs were not overwritten because the stored data is invalid: ' +
+        (error instanceof Error ? error.message : 'Unknown error');
     }
     ready = true;
   });
 
   function store(next: BattleLog[]): boolean {
     if (!ready || unsafeStorage) {
-      notice = 'Protected existing invalid data; no changes were written. Export or repair the stored data manually.';
+      notice =
+        'Protected existing invalid data; no changes were written. Export or repair the stored data manually.';
       return false;
     }
     try {
@@ -63,31 +71,42 @@
       notice = 'Battle Lab saved locally in this browser.';
       return true;
     } catch (error) {
-      notice = 'Could not save Battle Lab: '
-        + (error instanceof Error ? error.message : 'Browser storage unavailable');
+      notice =
+        'Could not save Battle Lab: ' +
+        (error instanceof Error ? error.message : 'Browser storage unavailable');
       return false;
     }
   }
   function addResult() {
-    if (!selectedDeck) { notice = 'Select a saved Deck Builder deck first.'; return; }
+    if (!selectedDeck) {
+      notice = 'Select a saved Deck Builder deck first.';
+      return;
+    }
     const turns = Number(turnsInput);
     if (!/^[0-9]{1,3}$/.test(turnsInput) || turns < 1 || turns > 999) {
-      notice = 'Turn count must be a whole number from 1 to 999.'; return;
+      notice = 'Turn count must be a whole number from 1 to 999.';
+      return;
     }
     if (matches.length >= MAX_BATTLE_LOGS) {
-      notice = 'Battle Lab holds at most 200 matches. Export a backup and remove older entries first.';
+      notice =
+        'Battle Lab holds at most 200 matches. Export a backup and remove older entries first.';
       return;
     }
     const next: BattleLog = {
-      id: crypto.randomUUID(), playedAt: new Date().toISOString(),
-      opponentId, deckId: selectedDeck.id, deckName: selectedDeck.name,
-      outcome, turns, note: note.trim().slice(0, 400),
+      id: crypto.randomUUID(),
+      playedAt: new Date().toISOString(),
+      opponentId,
+      deckId: selectedDeck.id,
+      deckName: selectedDeck.name,
+      outcome,
+      turns,
+      note: note.trim().slice(0, 400),
     };
     if (store([...matches, next])) note = '';
   }
   function removeResult(id: string) {
     if (!window.confirm('Remove this battle result from local Battle Lab?')) return;
-    store(matches.filter(row => row.id !== id));
+    store(matches.filter((row) => row.id !== id));
   }
   function exportLogs() {
     const payload: BattleLogStore = { schemaVersion: 1, matches };
@@ -96,12 +115,13 @@
     });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = 'rose-codex-battle-lab.json'; a.click();
+    a.href = url;
+    a.download = 'rose-codex-battle-lab.json';
+    a.click();
     URL.revokeObjectURL(url);
     notice = 'Battle Lab backup exported; this is not model training.';
   }
-  const percent = (value: number | null) =>
-    value === null ? '—' : (100 * value).toFixed(1) + '%';
+  const percent = (value: number | null) => (value === null ? '—' : (100 * value).toFixed(1) + '%');
 </script>
 
 <section aria-label="Battle Lab feedback">
@@ -109,17 +129,18 @@
     <div>
       <h1 class="page-title">Battle Lab · Real duel feedback</h1>
       <p class="page-description">
-        Record outcomes after playing in PCSX2. Compare observed match results
-        against your deck recommendations without inventing simulated victories.
+        Record outcomes after playing in PCSX2. Compare observed match results against your deck
+        recommendations without inventing simulated victories.
       </p>
     </div>
     <a href="/coach/" class="text-link text-sm">Smart Deck Coach →</a>
   </header>
-  <p class="rounded-md border border-border bg-surface p-3 text-xs leading-relaxed text-muted-foreground">
-    Saved only in this browser. Deck names are a snapshot at the time of
-    recording; editing/deleting a deck does not erase its historical results.
-    Observed win rates describe your recorded matches, not the true win
-    probability, model accuracy, or causal strength of a deck.
+  <p
+    class="rounded-md border border-border bg-surface p-3 text-xs leading-relaxed text-muted-foreground"
+  >
+    Saved only in this browser. Deck names are a snapshot at the time of recording; editing/deleting
+    a deck does not erase its historical results. Observed win rates describe your recorded matches,
+    not the true win probability, model accuracy, or causal strength of a deck.
   </p>
   {#if storageError}
     <p class="warning-note mt-3" role="alert">{storageError}</p>
@@ -160,17 +181,31 @@
         </label>
         <label class="grid gap-1 text-xs font-semibold text-muted-foreground">
           Number of turns (1–999)
-          <input class="native-filter w-full" type="number" min="1" max="999"
-            value={turnsInput} oninput={(event) => turnsInput = event.currentTarget.value} />
+          <input
+            class="native-filter w-full"
+            type="number"
+            min="1"
+            max="999"
+            value={turnsInput}
+            oninput={(event) => (turnsInput = event.currentTarget.value)}
+          />
         </label>
         <label class="grid gap-1 text-xs font-semibold text-muted-foreground">
           Notes (optional, max 400 characters)
-          <textarea class="native-filter w-full" rows="3" maxlength="400"
-            bind:value={note} placeholder="Key fusion, problem cards, unusual terrain…" />
+          <textarea
+            class="native-filter w-full"
+            rows="3"
+            maxlength="400"
+            bind:value={note}
+            placeholder="Key fusion, problem cards, unusual terrain…"
+          />
         </label>
-        <button type="button" disabled={!selectedDeck || unsafeStorage || !ready}
+        <button
+          type="button"
+          disabled={!selectedDeck || unsafeStorage || !ready}
           class="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
-          onclick={addResult}>Save battle result</button>
+          onclick={addResult}>Save battle result</button
+        >
       </div>
       {#if notice}<p class="mt-3 text-xs text-muted-foreground" role="status">{notice}</p>{/if}
     </section>
@@ -178,8 +213,11 @@
       <section class="rounded-lg border border-border bg-surface p-4">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <h2 class="text-base font-semibold">Observed results</h2>
-          <button type="button" class="rounded-md border border-border px-3 py-2 text-xs hover:bg-hover"
-            onclick={exportLogs}>Export JSON</button>
+          <button
+            type="button"
+            class="rounded-md border border-border px-3 py-2 text-xs hover:bg-hover"
+            onclick={exportLogs}>Export JSON</button
+          >
         </div>
         <dl class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div class="rounded-md bg-elevated p-3">
@@ -203,7 +241,9 @@
           <h3 class="mt-4 text-sm font-semibold">By opponent</h3>
           <ul class="mt-2 grid gap-1.5">
             {#each byOpponent as profile (profile.id)}
-              <li class="flex flex-wrap items-baseline justify-between gap-2 rounded-md bg-elevated px-3 py-2 text-xs">
+              <li
+                class="flex flex-wrap items-baseline justify-between gap-2 rounded-md bg-elevated px-3 py-2 text-xs"
+              >
                 <strong>{profile.name}</strong>
                 <span class="tabular-nums text-muted-foreground">
                   {profile.summary.wins}/{profile.summary.battles} wins ·
@@ -227,7 +267,11 @@
                     {opponentById(match.opponentId)?.name ?? match.opponentId}
                     · {match.outcome === 'win' ? 'Win' : 'Loss'}
                   </strong>
-                  <button type="button" class="text-xs text-link" onclick={() => removeResult(match.id)}>
+                  <button
+                    type="button"
+                    class="text-xs text-link"
+                    onclick={() => removeResult(match.id)}
+                  >
                     Remove
                   </button>
                 </div>

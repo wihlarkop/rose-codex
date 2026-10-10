@@ -24,11 +24,6 @@ jobs:
         with:
           bun-version-file: .bun-version
       - run: bun ci
-      - name: Temporary exact formatter delta for Battle Lab
-        run: |
-          bun --bun oxfmt src/features/battle-lab/BattleLab.svelte src/features/battle-lab/model.ts
-          git diff -- src/features/battle-lab/BattleLab.svelte src/features/battle-lab/model.ts
-          git checkout -- src/features/battle-lab/BattleLab.svelte src/features/battle-lab/model.ts
       - name: Lint first-party scripts and source
         run: bun run lint
       - name: Check scoped formatting
