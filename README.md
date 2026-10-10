@@ -1,193 +1,157 @@
 # Rose Codex
 
-A fast, static, browser-based companion for **Yu-Gi-Oh! The Duelists of the
-Roses (PS2)**. Current status: **visual card library, Fusion Workspace, and Deck Builder**.
-Open `/cards/` to browse/search the numbered library; select a card for its full
-game screen and metadata in place. `/fusion/` automatically discovers ordinary
-fusions and compatibility for distinct planning occurrences; `/decks/` manages
-browser-local decks with JSON backups. The Reincarnation Guide at `/reincarnation/` includes card lookup, a separate manual
-five-duel tracker, and a community-sourced single-reward probability estimate with
-visible limitations. It does not read PCSX2 saves or predict the actual three cards.
-The `/opponents/` Encyclopedia covers 20 reported story encounters across both Rose
-paths, linking selected enemy cards and Deck Leaders to canonical DotR card images.
-It is a single-guide reference, not a verified full deck or reward-drop database.
+**A companion for *Yu-Gi-Oh! The Duelists of the Roses* (PlayStation 2).**
 
-The **Smart Deck Coach** at `/coach/` combines deterministic, explained opponent
-matchup scoring (M5-01) with a 40-card, three-copy, strict-Deck-Cost deck
-generator (M5-02). Its cost search uses canonical ATK/DEF, ordinary terrain,
-selected reported opponent monsters, potential ordinary fusion links, and
-verified power-up compatibility. It assumes cards unlocked, does not infer
-earned Deck Leader ranks or untranscribed card effects, and never claims a
-predicted win rate. Suggestions can be **reviewed and deliberately added**
-as a new deck in Deck Builder without replacing existing decks.
-M5-09 adds an experimental **Screenshot Assistant** directly inside
-`/duel/`. You can load a local PCSX2 screenshot (PNG/JPG/WebP), drag
-or keyboard-edit a crop around one visible card, compare that crop
-against the same-origin canonical DotR artwork, and explicitly
-confirm one suggested card into Hand, Field or the visible enemy
-slot. Matching is a coarse pixel similarity heuristic, NOT
-recognition confidence, automatic board parsing or a trained
-model. A full 853-image comparison can transfer around 35 MiB
-from the same-origin static asset library. The screenshot is
-never uploaded, cached in app storage or sent to an API.
-See [M5-09 screenshot research](docs/m5-screenshot-assistant.md).
+Find the card on your screen, explore fusion recipes, build a deck, and plan your
+next duel without leaving your browser. Rose Codex is designed to be comfortable
+beside [PCSX2](https://pcsx2.net/) on a desktop or a smaller split-screen window.
 
-M5-05/M5-06 add **manual Battle State & ranked decisions** inside
-`/duel/`: current SP, whether a card was already played this turn,
-optional Deck Leader coordinates and optional 7x7 field/enemy coordinates.
-Known impossible SP/one-card-per-turn cases are marked blocked; all
-remaining moves are explicitly conditional. There is no automatic pathfinding,
-game memory access or actual combat execution.
-M5-07 adds an optional **Optimize this deck (v2)** action to `/coach/`,
-with deterministic bounded swap search and *proxy fitness* comparison,
-never a measured win-rate claim. M5-08 adds `/lab/`, a local-only
-Battle Lab for wins, losses, turns and notes, with JSON backup. See
-[Battle intelligence scope](docs/m5-battle-intelligence.md).
+**No account or game connection required.** It is a static, unofficial fan
+project—not a PS2 emulator, cheat tool, or automatic battle simulator.
 
+## Quick start
 
-M5-04 introduces the standalone **Tactical Duel Coach** at `/duel/`.
-Enter up to five Hand cards, a bounded manual Field snapshot, a visible
-enemy monster, observed position and hypothetical contact terrain. The coach
-reuses the existing canonical fusion discovery and stat-only Duel Advisor
-to rank **conditional** Field comparisons, potential fusion recipes, and
-Hand preparation. Neither observed game legality nor attack outcomes are
-asserted; no PCSX2 screen or memory access is attempted. Hand suggestions
-can also be transferred from Fusion Workspace via a read-only link.
-See [Tactical Duel Coach research](docs/tactical-duel-coach.md).
-
-M5-03 adds a deterministic strategy playbook inside each generated build with
-setup priorities, ordinary-terrain positioning, reported-monster comparisons,
-canonical compatible power-ups, and potential ordinary fusion pairs. These are
-conditional game-state-independent hints, not live PCSX2 tactical commands.
-See [Smart Deck Coach limitations](docs/smart-deck-coach.md).
-
-The `/saves/` PCSX2 Save Inspector reads a selected `.ps2` image locally in the
-browser: signature, capacity, filesystem geometry, and bounded top-level save
-folder names. For NTSC-U DotR candidate folders it also lists contained file names,
-file sizes, and optional 24-byte hex header previews for format research.
-A new local **Save Comparison** panel can compare before/after `.ps2` snapshots
-and report changed DotR save filenames, byte counts, and bounded changed
-file-relative offset ranges without revealing byte values.
-It does not upload or edit files, and does not decode DotR inventory,
-Deck Leader rank or story progress. Folder cards and other save formats are not
-supported yet. See [memory card inspector](docs/pcsx2-save-tools.md).
-
-Long-term direction: Card Browser, Visual Fusion Simulator, Fusion Reference,
-Naming / Starter Deck Simulator, Deck Tools, and verified Reincarnation probability tools.
-
-## UX v2 · In progress
-
-The approved [UX v2 design and phased feature-merging roadmap](docs/ux-v2-design-spec.md)
-targets a compact gaming companion rather than a CMS-style dashboard.
-UX-01 introduces a distinct `/` homepage with authentic DotR card artwork,
-first-visit and saved-deck CTAs, a global card search (Ctrl/Cmd+K),
-six grouped top-level navigation entries, a Reference landing page,
-and System / Dark / Light preferences.
-
-Existing feature routes remain functional under contextual navigation.
-Fusion, Deck Workshop and Duel integration, plus the Card Library adaptive
-scroll toolbar, are **later acceptance phases**, not completed in UX-01.
-
-## Develop
-
-Install **Bun 1.4.2**, as pinned in `.bun-version` and `package.json`.
+You need [Bun](https://bun.sh/) **1.4.2** (the version pinned by this repository).
 
 ```sh
+git clone https://github.com/wihlarkop/rose-codex.git
+cd rose-codex
 bun ci
 bun run dev
-bun run lint
-bun run format:check
-bun run data:validate
-bun test
-bun run check
-bun run build
 ```
 
-Astro 7.3.6 produces static assets in `dist/`. The card browser uses one Svelte 5
-interactive island per workspace. TypeScript 6.0.3 satisfies the integrations'
-current peer ranges (TypeScript 7 is not supported by these pinned checkers).
-Everything runs through Bun, including the installed Wrangler entry point.
+Open the local URL shown by Astro in your terminal. You can explore the library
+and planning tools without launching PCSX2.
 
-Oxlint and Oxfmt run through Bun too. `bun run lint:fix` applies safe lint fixes;
-`bun run format` writes scoped formatting. Existing application/data/test files
-are excluded from the initial formatting baseline to avoid a broad rewrite.
-Astro formatting is unsupported; framework/type checks remain required.
-See [tooling coverage and exclusions](docs/tooling.md).
+> The canonical game data and card images are committed to the repository.
+> The first full production build additionally checks reproducibility against
+> pinned external data sources; see [data sources and provenance](docs/data-sources.md).
 
-## UI foundation
+## Explore the app
 
-Tailwind CSS 4.3.3 uses the official Vite integration. Local shadcn-svelte Nova
-primitives are limited to Button, Input, Command and Popover (CLI 1.7.0; Bits UI
-2.18.0). Their MIT notice is retained in `src/components/ui/LICENSE.md`.
-Astro renders the shell without hydration; the library
-and quick lookup share one Svelte island and one canonical browser projection.
+The six main navigation sections organize the tools around what you want to do:
 
-Theme colors, radius and spacing live in `src/styles/global.css`. Change tokens
-there; `@theme inline` exposes them to Tailwind and shadcn. Use semantic surface,
-foreground, muted, primary, selected and ring tokens in custom components.
-See [interface guidance](DESIGN.md) and [UI report](docs/ui-foundation-report.md).
+| Section | What it does |
+| --- | --- |
+| **Home** (`/`) | Search for a card or jump back into a saved local deck. |
+| **Cards** (`/cards/`) | Browse **854 numbered DotR cards** with original-game artwork, filters, quick lookup, and in-place card details. |
+| **Fusion** (`/fusion/`) | Work with a manual Hand and Summoning Area, discover direct/chain results, or find recipes for a specific card. |
+| **Decks** (`/decks/`) | Build and save decks, generate and review suggestions, practice draws, and manage your Collection/Reserve. |
+| **Duel** (`/duel/`) | Record visible battle information, review **conditional** next-move considerations, and track actual results in Battle History. |
+| **Reference** (`/reference/`) | Look up opponents, Deck Leaders, reincarnation information, and read-only PCSX2 save tools. |
 
-`CardPicker` accepts `cards: BrowserCard[]`, `onselect(cardId: number)`, optional
-`label` and `selectedCardId`. It searches the full supplied catalog and shows the
-first 20 matches with an honest count. Command supplies combobox/listbox semantics
-and ArrowUp/ArrowDown/Enter; Popover supplies Escape and focus return. The callback
-returns only canonical identity. `CardQuickLookup` handles navigation separately;
-future tools can handle selection without copying picker behavior. Artwork,
-tiles, stats and suggestion rows are project-owned under `src/components/cards/`.
-Feature state stays within each workspace; there is no global store.
+### Find a card quickly
 
-## Planning workspaces
+Press **Ctrl+K** (or **Cmd+K** on macOS) from any section. Search by card name or
+DotR ID; pick a matching suggestion with the arrow keys and Enter, or choose
+**View all results** to open the filtered Card Library.
 
-Fusion automatically discovers ordinary direct results and sequential chains
-whenever cards are added, copied, removed, or moved between Hand and Summoning
-Area. Every occurrence shows compatibility from all found recipes. Result images,
-intermediates, materials, and expandable alternatives are grouped by final card;
-sorting/filtering do not affect compatibility. Deterministic special power-up
-pairs are separate. A 25,000-check budget and unsupported field/random mechanics
-produce visible partial status and undetermined negatives. Zones have unlimited
-planning capacity; they do not simulate game capacity or board legality.
-Previews never consume materials or infer failed-chain discards, equip bonuses,
-rituals, or random results. There are no manual pair or chain-building controls.
+The Card Library also has an adaptive toolbar for searching and filtering as you
+scroll. A card can be flipped in place to inspect its available metadata.
 
-Deck Builder includes a read-only Deck Readiness adviser: enter a Monster leader's
-manually checked rank, choose a reported story opponent, and compare count/copies
-and known Deck Cost without changing save data. Exact eligibility remains conditional.
+### Plan a fusion or deck
 
-Deck Builder supports multiple decks, names, duplication/deletion, individual
-copies, count/composition and known-cost summaries. Versioned localStorage saves
-only IDs and names; JSON import validates the entire envelope before replacement.
-Storage failures leave editing available and prompt users to export a backup.
-Count/copy guidance does not establish legality without a leader and opponent.
+In **Fusion**, add individual card occurrences to your Hand or Summoning Area.
+You can inspect possible ordinary fusion chains and alternatives, apply a
+planner-only fusion, and undo it. **Find Recipes** is part of the same workspace;
+a recipe can be brought into the Workbench with an explicit replacement
+confirmation when you already have cards entered.
 
-See [Fusion behavior](docs/fusion-workspace.md), [deck format and rules](docs/deck-builder.md),
-and [integration and acceptance evidence](docs/workspace-report.md).
+In **Deck Workshop**, use **Build**, **Practice**, or **Inventory** without
+navigating between separate tools. Generated or optimized builds are proposals:
+you must explicitly add a new deck before anything is saved. Practice draws
+do not consume cards or modify your saved deck.
 
+### Keep a manual duel companion beside PCSX2
 
-## Data
+**Duel Companion** has two views:
 
-The application may import **only `data/canonical/`**, never raw captures or
-development manifests. Card IDs are integers `0..853`; filenames use three-digit
-padding. Names are display/search values, never canonical relational keys.
+- **Plan Duel:** enter what you can actually see—your Hand/Field, a known enemy,
+  terrain, Summoning Points, and optional board positions—to get labeled,
+  conditional considerations.
+- **Battle History:** record completed real duels, outcomes, turns, and notes;
+  review descriptive results or export a JSON backup.
 
-The committed dataset contains 854 numbered library records, 26,540 ordinary
-fusion outcomes represented by 153 lossless ID-set predicates, 13 special
-power-up transformations, 16 starter choice groups and 17 forty-card starter
-lists. Image discovery maps all 854 IDs; a reviewed NA variant resolves 065,
-while 676's portrait variant is withheld for review. There are 853 local WebPs
-(35.20 MiB); 11 identities were visually verified and 842 remain probable.
-see [image coverage/pipeline](docs/card-images.md) and its acquisition report.
+The optional **Screenshot Assistant** can compare a manually cropped screenshot
+against local DotR artwork and suggest possible matches. It is experimental:
+you must confirm a candidate yourself. It is **not** automatic screen reading,
+model confidence, or reliable battle-state detection.
 
-Coverage is not blanket factual verification: most metadata and starter lists
-remain single-source. Two metadata samples were cross-checked. Fusion outcomes
-match a published extracted game table in full, but the two publications may
-share provenance. Effect text is intentionally untranscribed. ID 671 is a
-special library entry with unknown ordinary stats. Serpentine Princess's starter
-list needs review. See [schema and coverage](docs/card-schema.md),
-[provenance](docs/data-sources.md), [fusion model](docs/fusion-model.md),
-[naming](docs/naming.md), [reincarnation](docs/reincarnation.md), and
-[images](docs/card-images.md).
+## Reference and existing links
 
-Canonical JSON is generated and committed. To reproduce it:
+Open **Reference** (`/reference/`) for the four reference areas:
+
+- **Opponents** (`/opponents/`) — reported encounters and selected deck cards from a
+  community guide, with handoffs to Deck Leader, Deck Coach, and Duel tools.
+- **Deck Leaders** (`/leaders/`) — reported type abilities, rank concepts, and
+  clearly labeled gaps in verification.
+- **Reincarnation** (`/reincarnation/`) — card lookup, manual five-duel progress, and
+  limited community-research reward estimates.
+- **Save Tools** (`/saves/`) — inspect or compare copies of supported PCSX2 `.ps2`
+  File Memory Cards **locally and read-only**. This does not decode owned cards,
+  decks, Deck Leader ranks, or story progress.
+
+Older standalone URLs, including `/recipes/`, `/coach/`, `/simulate/`,
+`/collection/`, and `/lab/`, remain available for existing links.
+
+## Data, privacy, and limitations
+
+**What is saved?** Decks, Collection information, manually recorded Battle
+History, reincarnation progress, and appearance preferences use browser-local
+storage. Portable JSON export is available for the supported saved workflows.
+Use backups before clearing browser data or switching browsers/devices; there is
+no account-based sync.
+
+**What stays temporary?** Fusion planning inputs and screenshot/crop data are not
+uploaded to a server. Uploaded memory-card images are read in browser memory
+only, never written back to the original file or imported into your inventory.
+
+**What can the tools actually conclude?** Fusion results and deck/tactical
+recommendations use bounded deterministic logic and the documented game/community
+sources. Incomplete effects, hidden cards, movement legality, unknown rewards,
+unverified leader abilities, and real win probabilities are **not** inferred.
+Battle History reflects only the results you manually record.
+
+**Where does the artwork come from?** The repository contains **853 local WebP
+card images** mapped to the 854-card catalog; missing or uncertain imagery is
+shown honestly rather than substituted with unrelated artwork. Many source
+records are not independently verified. See [card images](docs/card-images.md)
+and [data sources](docs/data-sources.md) for coverage and provenance.
+
+There is **no backend, login, database, analytics, hosted AI inference, or PCSX2
+read/write integration** in the application. The website may load its committed
+static assets; it is not claimed to be an offline PWA.
+
+## For developers
+
+The app uses **Astro 7**, **Svelte 5**, **TypeScript 6**, **Tailwind CSS 4**, and
+**Bun 1.4.2**. Astro renders static pages, and interactive workspaces are
+hydrated as Svelte islands. Canonical DotR IDs—not display names—identify cards.
+
+| Path | Purpose |
+| --- | --- |
+| `src/pages/` and `src/layouts/` | Routes, static pages, and shared navigation |
+| `src/components/` and `src/features/` | Reusable UI and bounded feature workspaces |
+| `src/lib/dotr/` | Deterministic game logic, lookups, and validation |
+| `data/canonical/` | Committed, reproducible data consumed by the app |
+| `scripts/data/` and `scripts/images/` | Research-data and image pipelines |
+| `tests/` | Bun tests following existing repository conventions |
+
+### Checks
+
+```sh
+bun run lint           # Oxlint
+bun run format:check   # Oxfmt (scoped to the existing baseline)
+bun run data:validate  # Validate canonical records
+bun test               # Unit tests
+bun run check          # Astro, Svelte, and TypeScript checks
+bun run build          # Reproduce data, verify, then build static output
+```
+
+`bun run build` produces `dist/`. On a clean machine, the build's
+reproducibility step may need to fetch pinned source captures. Normal local
+development and tests work with committed canonical files. To regenerate or
+verify the source-backed data explicitly:
 
 ```sh
 bun run data:fetch
@@ -196,36 +160,33 @@ bun run data:validate
 bun run data:check
 ```
 
-`data:fetch` explicitly acquires two public source files at a pinned Git commit,
-checks their SHA-256 digests, and caches them in ignored `data/raw/`. It does not
-execute third-party code. `data:build` reads JSON literals and image manifests, normalizes factual
-fields, validates the whole dataset, then writes deterministic JSON. Do not
-mass-edit generated files; change first-party import decisions/manifests instead.
-`data:check` regenerates in memory and compares exact bytes, failing on stale or
-missing files. It needs the verified raw captures, while ordinary dev and tests
-use committed canonical data and need no source-network access. Image acquisition
-is separate and never runs in normal CI/build; see the explicit commands in the
-image documentation. Public game screenshot redistribution rights remain unresolved.
-Production build
-also checks reproduction: its first run needs acquisition, and later builds can
-use verified cached captures offline.
+Do not edit generated canonical JSON directly. Review source decisions and
+manifests instead. For formatter scope and project conventions, see
+[tooling](docs/tooling.md) and [interface guidance](DESIGN.md).
 
-## Verification and deployment
+### Deployment
 
-`bun run build` checks reproduction, validates data, runs `bun test`, performs Astro/TypeScript checks,
-checks Svelte islands when any exist, then builds. GitHub Actions runs on PRs and
-pushes to main, uses SHA-pinned actions, installs with `bun ci`, reproduces data,
-and runs every required check. Production deployment is a later step in that
-same job and can run only on a successful push-to-main verification.
+Production output is static and configured for **Cloudflare Workers Static
+Assets**—no SSR adapter or application Worker logic is required.
+GitHub Actions runs the checks on pull requests and the main branch;
+deployment requires the Cloudflare credentials described in
+[deployment setup](docs/deployment.md). No public deployment URL is assumed.
 
-Cloudflare Workers Static Assets hosts `dist/`, with no Astro adapter, SSR,
-application Worker, database, authentication, service worker, or runtime secrets.
-Set repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` for CD.
-Until then, CI reports deployment as **not executed**. For an authenticated local
-deployment, run `bun run deploy`; for a non-deploying config probe, run
-`bun run wrangler deploy --dry-run` after building.
+## Documentation
 
-`dotr.wihlarkop.com` is deferred. First deploy and verify the workers.dev site,
-then inspect the intended account and DNS before attaching the domain. See
-[deployment setup](docs/deployment.md). Tool telemetry is disabled; the application
-contains no analytics.
+- [UX v2 design, navigation, and phased acceptance](docs/ux-v2-design-spec.md)
+- [UX-07 integration and browser QA checklist](docs/ux07-integration-qa.md)
+- [Fusion Workspace behavior](docs/fusion-workspace.md)
+- [Deck Builder data and safety rules](docs/deck-builder.md)
+- [Smart Deck Coach scope and limitations](docs/smart-deck-coach.md)
+- [Screenshot Assistant research](docs/m5-screenshot-assistant.md)
+- [Read-only PCSX2 Save Tools](docs/pcsx2-save-tools.md)
+- [Canonical data provenance](docs/data-sources.md)
+- [Card image coverage and acquisition](docs/card-images.md)
+
+---
+
+*Rose Codex is an independent, unofficial fan companion and is not affiliated
+with or endorsed by Konami or the makers of PCSX2. Game names and artwork belong
+to their respective rights holders. Image reuse/redistribution rights have not
+been fully established; see the linked provenance documentation.*
