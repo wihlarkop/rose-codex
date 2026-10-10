@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { BrowserCard } from '../../lib/dotr/browser';
   import CardArtwork from './CardArtwork.svelte';
-  let { card, id, flipped = $bindable(false), onflip }: { card: BrowserCard; id?: string; flipped?: boolean; onflip?: ((cardId: number, next: boolean) => void) | undefined } = $props();
+  let { card, id, flipped = $bindable(false), onflip, ownedCopies = null }: { card: BrowserCard; id?: string; flipped?: boolean; onflip?: ((cardId: number, next: boolean) => void) | undefined; ownedCopies?: number | null } = $props();
   const cardNumber = $derived(String(card.id).padStart(3, '0'));
   const kindLabel = $derived(card.kind === 'monster' ? 'Monster' : card.kind === 'magic' ? 'Magic' : card.kind === 'trap' ? 'Trap' : 'Ritual');
   const typeLabel = $derived(card.kind === 'monster' ? card.monsterType : card.kind === 'magic' ? (card.magicClass === 'power-up' ? 'Power-up' : card.magicClass === 'normal' ? 'Normal' : null) : card.kind === 'trap' ? (card.trapRange === 'full' ? 'Full range' : card.trapRange === 'limited' ? 'Limited range' : null) : null);
@@ -9,12 +9,13 @@
   function handleKeydown(event: KeyboardEvent) { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggle(); } }
 </script>
 <div id={id ?? 'library-card-' + cardNumber} role="button" tabindex="0" aria-pressed={flipped}
-  aria-label={flipped ? 'Show image for ' + card.name + ', card ' + cardNumber : 'Show metadata for ' + card.name + ', card ' + cardNumber}
+  aria-label={(flipped ? 'Show image for ' + card.name + ', card ' + cardNumber : 'Show metadata for ' + card.name + ', card ' + cardNumber) + (ownedCopies !== null && ownedCopies > 0 ? ', ' + ownedCopies + ' owned' : '')}
   class="card-tile group rounded-[10px] border border-border bg-surface text-foreground transition-[transform,border-color,background-color,box-shadow] duration-150 hover:-translate-y-px hover:border-primary hover:bg-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
   onclick={toggle} onkeydown={handleKeydown}>
   <div class="flip-scene" class:flipped>
     <div class="flip-rotor">
       <div class="flip-face flip-front" aria-hidden={flipped} inert={flipped}>
+        {#if ownedCopies !== null && ownedCopies > 0}<span class="owned-mark">Owned ×{ownedCopies}</span>{/if}
         <CardArtwork image={card.image} name={card.name} cardId={card.id} decorative />
         <h2 class="m-0 break-words px-3 py-3 text-[.9375rem] leading-[1.3] font-semibold tracking-[-.015em] text-foreground group-hover:text-primary">{card.name}</h2>
       </div>
@@ -45,6 +46,7 @@
   .flip-scene.flipped .flip-rotor { transform: rotateY(180deg); }
   .flip-face { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; }
   .flip-front { display: flex; flex-direction: column; }
+  .owned-mark { position: absolute; top: .5rem; right: .5rem; z-index: 2; border: 1px solid var(--border); border-radius: 5px; padding: .15rem .4rem; background: var(--surface); color: var(--primary); box-shadow: 0 1px 4px #0003; font-size: .69rem; font-weight: 750; }
   .flip-front :global(.card-artwork) { flex: 1; min-height: 0; aspect-ratio: auto; }
   .flip-front h2 { min-height: 2.9rem; }
   .flip-back { transform: rotateY(180deg); }
