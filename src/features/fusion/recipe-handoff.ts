@@ -7,10 +7,13 @@ export function createRecipeHand(
   allowedCards: ReadonlyMap<number, unknown>,
   newId: () => string,
 ): FusionOccurrence[] | null {
-  if (materials.length < 2 || !materials.every(id => Number.isInteger(id) && allowedCards.has(id)))
+  if (
+    materials.length < 2 ||
+    !materials.every((id) => Number.isInteger(id) && allowedCards.has(id))
+  )
     return null;
 
-  return materials.map(cardId => ({
+  return materials.map((cardId) => ({
     instanceId: newId(),
     cardId,
     zone: 'hand' as const,

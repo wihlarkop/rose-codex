@@ -7,7 +7,15 @@
   import { handLink } from '../../lib/dotr/deck-simulation';
   import { COLLECTION_STORAGE_KEY, validateCollection } from '../decks/collection';
 
-  let { cards, fusionData, ontrymaterials }: { cards: BrowserCard[]; fusionData: FusionData; ontrymaterials?: (materials: readonly number[]) => void } = $props();
+  let {
+    cards,
+    fusionData,
+    ontrymaterials,
+  }: {
+    cards: BrowserCard[];
+    fusionData: FusionData;
+    ontrymaterials?: (materials: readonly number[]) => void;
+  } = $props();
 
   const byId = $derived(new Map(cards.map((card) => [card.id, card])));
   const encyclopedia = $derived(buildFusionEncyclopedia(fusionData));
@@ -119,7 +127,8 @@
         against the copies you own, then try a pair in Fusion Workspace.
       </p>
     </div>
-    {#if !ontrymaterials}<a class="text-link text-sm" href="/fusion/">Open Fusion Workbench →</a>{/if}
+    {#if !ontrymaterials}<a class="text-link text-sm" href="/fusion/">Open Fusion Workbench →</a
+      >{/if}
   </header>
 
   <div class="lookup-layout">
@@ -303,9 +312,16 @@
                         </span>
                       {/if}
                       {#if ontrymaterials}
-                        <button type="button" class="try-link" onclick={() => ontrymaterials?.(row.recipe.materials)}>Try in Workbench →</button>
+                        <button
+                          type="button"
+                          class="try-link"
+                          onclick={() => ontrymaterials?.(row.recipe.materials)}
+                          >Try in Workbench →</button
+                        >
                       {:else}
-                        <a class="try-link" href={handLink(row.recipe.materials, 'recipes')}>Try in Fusion →</a>
+                        <a class="try-link" href={handLink(row.recipe.materials, 'recipes')}
+                          >Try in Fusion →</a
+                        >
                       {/if}
                     </div>
                   </li>
@@ -351,9 +367,16 @@
                     {/if}
                   </span>
                   {#if ontrymaterials}
-                    <button type="button" class="try-link" onclick={() => ontrymaterials?.(recipe.materials)}>Check in Workbench →</button>
+                    <button
+                      type="button"
+                      class="try-link"
+                      onclick={() => ontrymaterials?.(recipe.materials)}
+                      >Check in Workbench →</button
+                    >
                   {:else}
-                    <a class="try-link" href={handLink(recipe.materials, 'recipes')}>Check in Fusion →</a>
+                    <a class="try-link" href={handLink(recipe.materials, 'recipes')}
+                      >Check in Fusion →</a
+                    >
                   {/if}
                 </li>
               {/each}
