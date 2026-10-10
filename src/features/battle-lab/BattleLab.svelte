@@ -25,6 +25,7 @@
   let unsafeStorage = $state(false);
   let storageError = $state('');
   let ready = $state(false);
+  let savedSnapshot: string | null = null;
   let pendingRemoveId = $state<string | null>(null);
   let removeDialog = $state<HTMLDialogElement | null>(null);
   let cancelRemoveButton = $state<HTMLButtonElement | null>(null);
@@ -52,6 +53,7 @@
     try {
       const saved = localStorage.getItem(BATTLE_LOG_KEY);
       matches = saved ? validateBattleLogs(JSON.parse(saved)).matches : [];
+      savedSnapshot = saved;
     } catch (error) {
       unsafeStorage = true;
       storageError +=
@@ -60,6 +62,14 @@
         (error instanceof Error ? error.message : 'Unknown error');
     }
     ready = true;
+    function onStorage(event: StorageEvent) {
+      if ((event.key === BATTLE_LOG_KEY || event.key === null) && event.newValue !== savedSnapshot) {
+        unsafeStorage = true;
+        notice = 'Battle History changed in another tab. Refresh before recording or removing results; no entries were overwritten.';
+      }
+    }
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
   });
 
   function store(next: BattleLog[]): boolean {
@@ -69,9 +79,16 @@
       return false;
     }
     try {
+      if (localStorage.getItem(BATTLE_LOG_KEY) !== savedSnapshot) {
+        unsafeStorage = true;
+        notice = 'Battle History changed in another tab. Refresh before editing; your current records were not overwritten.';
+        return false;
+      }
       const payload: BattleLogStore = { schemaVersion: 1, matches: next };
       validateBattleLogs(payload);
-      localStorage.setItem(BATTLE_LOG_KEY, JSON.stringify(payload));
+      const raw = JSON.stringify(payload);
+      localStorage.setItem(BATTLE_LOG_KEY, raw);
+      savedSnapshot = raw;
       matches = next;
       notice = 'Battle Lab saved locally in this browser.';
       return true;
@@ -159,7 +176,7 @@
   <p
     class="rounded-md border border-border bg-surface p-3 text-xs leading-relaxed text-muted-foreground"
   >
-    Saved only in this browser. Deck names are a snapshot at the time of recording; editing/deleting
+    Saved only in this browser. Other-tab changes require a refresh before further edits. Deck names are a snapshot at the time of recording; editing/deleting
     a deck does not erase its historical results. Observed win rates describe your recorded matches,
     not the true win probability, model accuracy, or causal strength of a deck.
   </p>
