@@ -407,10 +407,10 @@
         {pendingCoachDeck.name} · {pendingCoachDeck.cardIds.length} main cards
       </p>
       <p class="mt-2 text-xs text-muted-foreground">
-        This proposal came from Smart Deck Coach. It has been validated against
-        canonical card IDs, the three-copy limit and the opponent's reported
-        Deck Cost. No changes have been saved yet. Deck Leader rank and your
-        actual number of unlocked copies still require verification in PCSX2.
+        This proposal came from Smart Deck Coach. It has been validated against canonical card IDs,
+        the three-copy limit and the opponent's reported Deck Cost. No changes have been saved yet.
+        Deck Leader rank and your actual number of unlocked copies still require verification in
+        PCSX2.
       </p>
       <div class="mt-3 flex flex-wrap gap-2">
         <Button onclick={acceptCoachDeck}>Add as a new deck</Button>
@@ -419,9 +419,7 @@
     </section>
   {:else if invalidCoachLink}
     <section class="mb-4 rounded-lg border border-border bg-surface p-4" role="alert">
-      <p class="text-sm">
-        Invalid or unverified Smart Deck link. No deck was added or changed.
-      </p>
+      <p class="text-sm">Invalid or unverified Smart Deck link. No deck was added or changed.</p>
       <Button variant="outline" onclick={dismissCoachDeck}>Dismiss</Button>
     </section>
   {/if}
