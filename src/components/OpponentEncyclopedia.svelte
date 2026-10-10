@@ -174,10 +174,17 @@
                   </dd>
                 </div>
               </dl>
-              <a class="mt-4 inline-block text-xs text-link"
-                href={'/leaders/?card=' + selected.leaderCardId}>
-                View Deck Leader card reference →
-              </a>
+              <div class="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs">
+                <a class="text-link" href={'/leaders/?card=' + selected.leaderCardId}>
+                  View Deck Leader reference →
+                </a>
+                <a class="text-link" href={'/coach/?opponent=' + encodeURIComponent(selected.id)}>
+                  Prepare in Deck Coach →
+                </a>
+                <a class="text-link" href={'/duel/?opponent=' + encodeURIComponent(selected.id)}>
+                  Plan in Duel Companion →
+                </a>
+              </div>
             </div>
           </div>
         </section>
@@ -202,6 +209,10 @@
                       #{String(card.id).padStart(3, '0')} ·
                       {card.kind === 'monster' ? 'ATK ' + (card.atk ?? '?') + ' / DEF ' + (card.def ?? '?') : card.kind}
                     </p>
+                    <a class="mt-2 inline-block text-xs text-link"
+                      href={'/cards/?q=' + String(card.id).padStart(3, '0')}>
+                      View card in Library →
+                    </a>
                   </div>
                 </div>
               {:else}
