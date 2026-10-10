@@ -73,7 +73,12 @@ test('M5-06 renders conditional field choices; SP blocks only supported summon c
   );
   expect(actions.some(item => item.type === 'attack-check' && item.status === 'conditional')).toBe(true);
   expect(actions.find(item => item.id === 'summon:hand-blue-eyes')?.status).toBe('blocked');
-  expect(actions.some(item => item.type === 'hold')).toBe(true);
+  expect(actions.some(item => item.type === 'hold')).toBe(false);
+  const noSp = rankTacticalDecisions(
+    selected.filter(item => item.zone === 'hand'), comparison, byId,
+    { ...state, summoningPoints: 0 },
+  );
+  expect(noSp.some(item => item.type === 'hold')).toBe(true);
   const fieldOption = comparison.options.find(item => item.kind === 'field-comparison')!;
   expect(sourceFieldDistance(fieldOption, selected.filter(item => item.zone === 'summoning'), state))
     .toBe('neighbor');
