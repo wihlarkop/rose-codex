@@ -57,3 +57,42 @@ This is not a trained AI/LLM, game-memory reader, hidden-card predictor,
 full deterministic duel simulator, player-collection verifier or a
 battle-outcome guarantee. Future improvements should be driven by
 controlled actual PCSX2 feedback and verified game rules/effects.
+
+## M5-03 · Deterministic Strategy Playbook
+
+`src/lib/dotr/deck-strategy.ts` derives an evidence-limited plan from
+the *already generated* 40-card list and selected known opponent.
+No change is made to M5-01/M5-02 search weights, results or storage.
+
+The result includes three **conditional** tips: setup candidate
+(ATK- or DEF-biased for the selected style, summon legality
+unverified), an ordinary-terrain positioning reference, and a
+reported-monster response that clearly says **ATK vs ATK only**
+(on a named ordinary terrain, assuming both monsters are in
+attack position). In addition, a short table shows:
+- Best adjusted-ATK candidate on each known ordinary terrain.
+- Best stat-only comparison against each reported highlighted
+  opponent monster with a documented printed ATK.
+- Up to four power-up pairs verified with canonical
+  `powerUpCardIds` compatibility in the suggested deck.
+- Up to four ordinary fusion pairs verified using the exact
+  canonical fusion table and with an increase in the printed ATK
+  versus both listed materials.
+
+The plan does **not** infer Summoning Points, positions, movement,
+turn order, hidden information, effect timing or trap interactions,
+and never treats Crush/Toon/Labyrinth/unknown terrain as Normal.
+Its strongest ATK candidate is a reference, **not** an instruction
+to summon it immediately. The plan is stat-derived, not an
+empirical ranking of win rates. If a category has no verified
+candidate, the UI explains why rather than inventing one.
+
+Manual acceptance: generate Weevil, Seto and a special-terrain
+opponent; inspect the playbook for specific card names, readable
+known terrain and candidate pairings, and explicit unknowns.
+Switch styles and verify the plan changes without touching the
+saved decks. Open **Review in Deck Builder** and ensure explicit
+user confirmation still gates new saves. Tests cover 3 distinct
+opponents × 3 styles for determinism and canonical citations,
+unsupported terrain suppression, and rejected stale opponent/ID
+references. LLM is deliberately deferred.

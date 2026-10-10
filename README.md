@@ -20,6 +20,10 @@ verified power-up compatibility. It assumes cards unlocked, does not infer
 earned Deck Leader ranks or untranscribed card effects, and never claims a
 predicted win rate. Suggestions can be **reviewed and deliberately added**
 as a new deck in Deck Builder without replacing existing decks.
+M5-03 adds a deterministic strategy playbook inside each generated build with
+setup priorities, ordinary-terrain positioning, reported-monster comparisons,
+canonical compatible power-ups, and potential ordinary fusion pairs. These are
+conditional game-state-independent hints, not live PCSX2 tactical commands.
 See [Smart Deck Coach limitations](docs/smart-deck-coach.md).
 
 The `/saves/` PCSX2 Save Inspector reads a selected `.ps2` image locally in the

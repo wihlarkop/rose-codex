@@ -1,11 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import CardArtwork from './cards/CardArtwork.svelte';
+  import DeckStrategyPlaybook from './DeckStrategyPlaybook.svelte';
   import type { BrowserCard } from '../lib/dotr/browser';
   import type { Card, FusionData } from '../lib/dotr/model';
   import { OPPONENTS, opponentById, type RosePath } from '../lib/dotr/opponents';
   import { generateSmartDeck, assessCardMatchup, type DeckStyle, type SmartDeck } from '../lib/dotr/smart-deck';
   import { smartDeckLink } from '../lib/dotr/smart-deck-link';
+  import { buildStrategyPlaybook } from '../lib/dotr/deck-strategy';
 
   let { cards, images, fusions }: {
     cards: Card[]; images: BrowserCard[]; fusions: FusionData;
@@ -30,6 +32,8 @@
   })) ?? []);
   const monsterRows = $derived(rows.filter(row => row.card?.kind === 'monster'));
   const powerUps = $derived(rows.filter(row => row.card?.kind === 'magic'));
+  const playbook = $derived(suggestion && opponent
+    ? buildStrategyPlaybook(suggestion, opponent, cards, fusions) : null);
 
   function choosePath(event: Event) {
     rosePath = (event.currentTarget as HTMLSelectElement).value as RosePath | 'all';
@@ -231,6 +235,9 @@
               {/if}
             {/each}
           </ul>
+        {/if}
+        {#if playbook}
+          <DeckStrategyPlaybook {playbook} {images} />
         {/if}
         <div class="mt-4 rounded-md border border-border p-3">
           <h3 class="text-xs font-semibold">How to interpret this build</h3>

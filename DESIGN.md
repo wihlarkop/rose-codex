@@ -37,6 +37,15 @@ not auto-import: the receiving route exposes an explicit add/dismiss panel
 and never replaces the player's existing decks. No LLM, AI chat or speculative
 "win chance" visuals.
 
+M5-03 adds a compact "How to play this deck" playbook within the
+existing generated deck result, using three setup/terrain/threat paragraphs,
+bounded reported-threat and terrain comparison lists, and small canonical
+power-up and ordinary fusion highlights. Avoid a chat UI, extra route,
+probability visualization or claims about the unseen PCSX2 board; warnings
+about unknown Summoning Points and card effects remain discoverable in
+an expandable "Important uncertainties" section. Do not disturb
+existing Deck Builder acceptance behavior.
+
 The homepage opens directly into the functional Card Library; `/cards/` remains
 an equivalent library route. The shell exposes Cards, Fusion, and Decks with
 the current destination marked. Navigation wraps on narrow screens.

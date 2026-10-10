@@ -57,6 +57,26 @@ existing records until accepted. Existing deck JSON/storage schema remains
 unchanged. No backend, AI model, third-party data lookup or PCSX2 access.
 See `docs/smart-deck-coach.md`.
 
+## M5-03 · Deterministic Strategy Playbook
+
+The existing `/coach/` result now includes a read-only, derived **How to play
+this deck** section. `buildStrategyPlaybook` consumes the *same* generated
+40-card list, selected reported opponent, canonical cards and ordinary fusion
+data. It displays conditional setup/positioning/threat priorities, known
+ordinary-terrain adjusted ATK leaders, stat-only enemy monster comparisons,
+verified card-to-power-up compatibility and ATK-increasing ordinary fusion
+possibilities. Missing or special-only terrain produces an explicit
+not-enough-evidence state rather than invented neutral combat calculations.
+Every supporting card/recipe is verified against canonical IDs; no live
+hand, Summoning Points, movement, position, effects or hidden opponent
+cards are presumed.
+
+The playbook is recomputed only for a generated recommendation, leaves
+card selection and Deck Builder handoff unchanged, and has no storage,
+backend, LLM, PCSX2 access or additional dependencies. Its result is
+heuristic advice, *not* a guaranteed legal opening, outcome or complete
+deck strategy.
+
 ## Fusion Workspace
 
 The reusable picker returns canonical IDs without owning navigation or game
