@@ -21,7 +21,25 @@
     | { type: 'delete'; deckId: string; deckName: string; cardCount: number }
     | { type: 'import'; decks: DeckEnvelope };
 
-  let { cards }: { cards: BrowserCard[] } = $props();
+  let {
+    cards,
+    embedded = false,
+    proposedDeck = null,
+    onproposalhandled,
+    preferredDeckId = '',
+    onactivedeckchange,
+    onopenpractice,
+    onopeninventory,
+  }: {
+    cards: BrowserCard[];
+    embedded?: boolean;
+    proposedDeck?: PendingCoachDeck | null;
+    onproposalhandled?: () => void;
+    preferredDeckId?: string;
+    onactivedeckchange?: (id: string) => void;
+    onopenpractice?: (id: string) => void;
+    onopeninventory?: () => void;
+  } = $props();
   const cardById = $derived(new Map(cards.map((card) => [card.id, card])));
   const allowedIds = $derived(new Set(cardById.keys()));
   const costs = $derived(new Map(cards.map((card) => [card.id, card.deckCost])));
@@ -131,9 +149,12 @@
       saveStatus = 'Not saved · browser storage unavailable.';
       storageWarning = 'Editing works in this tab. Export JSON to keep a copy of your changes.';
     }
-    activeId = decks[0]?.id ?? '';
+    activeId = decks.find((deck) => deck.id === preferredDeckId)?.id ?? decks[0]?.id ?? '';
+    if (activeId) onactivedeckchange?.(activeId);
     ready = true;
-    if (new URLSearchParams(window.location.search).has('suggest')) {
+    if (proposedDeck) {
+      pendingCoachDeck = proposedDeck;
+    } else if (new URLSearchParams(window.location.search).has('suggest')) {
       const proposed = parseSmartDeckLink(window.location.search, cards);
       if (proposed) pendingCoachDeck = proposed;
       else invalidCoachLink = true;
@@ -176,6 +197,7 @@
     decks = [...decks, deck];
     occurrenceIds = { ...occurrenceIds, [deck.id]: [] };
     activeId = deck.id;
+    onactivedeckchange?.(activeId);
     inspectedCardId = null;
     save();
   }
@@ -185,12 +207,16 @@
     // Add a new record rather than replacing previous decks.
     createStarterDeck({ name: proposed.name, cardIds: proposed.cardIds });
     pendingCoachDeck = null;
-    history.replaceState(null, '', '/decks/');
+    onproposalhandled?.();
+    if (new URLSearchParams(window.location.search).has('suggest'))
+      history.replaceState(null, '', '/decks/');
   }
   function dismissCoachDeck() {
     pendingCoachDeck = null;
     invalidCoachLink = false;
-    history.replaceState(null, '', '/decks/');
+    onproposalhandled?.();
+    if (new URLSearchParams(window.location.search).has('suggest'))
+      history.replaceState(null, '', '/decks/');
   }
   function createStarterDeck(starter: { name: string; cardIds: number[] }) {
     if (starter.cardIds.length !== 40 || !starter.cardIds.every((id) => allowedIds.has(id))) {
@@ -208,6 +234,7 @@
       [deck.id]: deck.cardIds.map(() => crypto.randomUUID()),
     };
     activeId = deck.id;
+    onactivedeckchange?.(activeId);
     inspectedCardId = null;
     const saved = save();
     notice = saved
@@ -233,6 +260,7 @@
     decks = [...decks, copy];
     occurrenceIds = { ...occurrenceIds, [copy.id]: copy.cardIds.map(() => crypto.randomUUID()) };
     activeId = copy.id;
+    onactivedeckchange?.(activeId);
     inspectedCardId = null;
     save();
   }
@@ -259,6 +287,7 @@
     decks = remaining;
     if (activeId === deckId) {
       activeId = remaining[0]!.id;
+      onactivedeckchange?.(activeId);
       inspectedCardId = null;
     }
     save();
@@ -348,6 +377,7 @@
     } else {
       decks = action.decks.decks.map((deck) => ({ ...deck, cardIds: [...deck.cardIds] }));
       activeId = decks[0]!.id;
+      onactivedeckchange?.(activeId);
       occurrenceIds = Object.fromEntries(
         decks.map((deck) => [deck.id, deck.cardIds.map(() => crypto.randomUUID())]),
       );
@@ -362,6 +392,7 @@
   }
   function selectDeck(id: string) {
     activeId = id;
+    onactivedeckchange?.(activeId);
     inspectedCardId = null;
     notice = '';
   }
@@ -370,7 +401,7 @@
 <section class="workspace" aria-label="Deck builder">
   <header class="page-header">
     <div>
-      <h1 class="page-title">Deck builder</h1>
+      <h1 class="page-title">{embedded ? 'Build your deck' : 'Deck builder'}</h1>
       <p class="page-description">Build and manage your Duelists of the Roses decks.</p>
     </div>
     <div class="deck-selector">
@@ -513,7 +544,18 @@
 
       <p class="m-0 text-xs text-muted-foreground">
         Want to test draws and fusion sequences?
-        <a class="text-link" href={'/simulate/?deck=' + encodeURIComponent(active.id)}>
+        <a
+          class="text-link"
+          href={embedded
+            ? '/decks/?mode=practice&deck=' + encodeURIComponent(active.id)
+            : '/simulate/?deck=' + encodeURIComponent(active.id)}
+          onclick={(event) => {
+            if (embedded && onopenpractice) {
+              event.preventDefault();
+              onopenpractice(active.id);
+            }
+          }}
+        >
           Try this deck in Simulator
         </a>
         (practice only; your saved cards will not change).
@@ -529,7 +571,16 @@
 
       <p class="m-0 text-xs text-muted-foreground">
         Won a new card after a duel?
-        <a class="text-link" href="/collection/">Add it to My Collection</a>
+        <a
+          class="text-link"
+          href={embedded ? '/decks/?mode=inventory' : '/collection/'}
+          onclick={(event) => {
+            if (embedded && onopeninventory) {
+              event.preventDefault();
+              onopeninventory();
+            }
+          }}>Add it to My Collection</a
+        >
         first, then move it from reserve into your 40-card deck.
       </p>
 

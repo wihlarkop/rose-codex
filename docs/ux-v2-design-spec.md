@@ -44,7 +44,7 @@ A compact, keyboard-accessible Duelists of the Roses gaming companion that works
 1. **UX-01 Foundation** — dedicated homepage, top-level + contextual navigation, Reference Hub, browser/system theme, global search, initial design-system tokens. Legacy feature routes remain separate. **This PR's scope.**
 2. **UX-02 Cards** — adaptive compact toolbar, grid density, flip card and focus regression, ownership indicator only if genuine collection data can be safely read. **Stacked PR scope following UX-01; no merge until local acceptance.**
 3. **UX-03 Fusion** — two-panel Workbench and Find Recipes connected as one coherent task flow; preserve recipe search, chains, repeated occurrences, warnings and Undo. **Dedicated PR, acceptance required before merge.**
-4. **UX-04 Decks** — Build/Practice/Inventory integrated views; Generate/Optimize as explicit proposal within Build. Preserve stale-data protections and backups, copy limits, strict cost notices and existing URLs.
+4. **UX-04 Decks** — Build/Practice/Inventory integrated views; Generate/Optimize as explicit proposal within Build. Preserve stale-data protections and backups, copy limits, strict cost notices and existing URLs. **PR scope: unified /decks/ experience with modular existing feature islands; old feature URLs remain valid.**
 5. **UX-05 Duel** — compact battle-state editor and unified evidence-labeled next-move list, optional screenshot/advanced coordinates, separate History view.
 6. **UX-06 Reference** — improve contextual links/opponent-to-leader/coach handoffs and polish all Reference tools, no unrelated mechanic research.
 7. **UX-07 Integration/QA** — navigation/back-forward/deep links, browser storage regression, keyboard/mouse/touch, themes, split-screen, performance.
@@ -91,3 +91,17 @@ UX-02 only changes Card Library presentation and its read-only Collection displa
 8. CI: lint, format check, canonical data validation, Bun tests (including handoff duplicate/invalid scenarios), Svelte/TypeScript checks and production build.
 
 UX-03 scopes the Fusion UI and navigation only. It does not reinterpret fusion rules, persist planner state across page reloads, change card inventory, or implement Deck Workshop/Duel merging.
+
+
+## UX-04 Deck Workshop acceptance
+
+1. Visit `/decks/`. Confirm **Build**, **Practice**, **Inventory** buttons within one Deck Workshop and **Generate Deck** as an action in Build. The legacy `/coach/`, `/simulate/`, and `/collection/` routes must remain independent and usable.
+2. **Build**: create/select/rename/edit a deck, inspect and flip cards, check readiness/copy count/cost, and confirm it saves only through the existing Deck Builder flows.
+3. **Generate Deck**: select opponent/style, generate/optimize, then select **Review in Build**. The proposal must be validated by the existing Smart Deck link parser before display, and **no new saved deck** appears until the player explicitly clicks **Add as a new deck**. Confirm Dismiss is non-destructive. Legacy `/coach/?opponent=weevil` and its link to `/decks/?suggest=...` must remain supported.
+4. **Practice**: `/decks/?mode=practice` loads the existing five-card draw and Fusion Advisor against a saved 40-card deck. Sending a hand to Fusion still works. A practice draw does not write to saved decks or Collection; when switching to other modes and back, the mounted practice session remains until ended or shuffled again.
+5. **Inventory**: `/decks/?mode=inventory` loads Collection and Reserve. Positive ownership counts, transfers, exports, and the cross-tab stale-write protection must remain unchanged. Returning to Build remounts its editor from stored data rather than keeping a competing stale instance alive. Existing Collection's bootstrap estimation disclosure must not be presented as verified physical ownership.
+6. Check Back/Forward between modes with `?mode=` and deep links with a `?deck=` selection. URLs from /simulate and /collection must continue to resolve. Refresh after changing modes must open the right mode.
+7. Verify missing/corrupt local storage, disabled storage, saved deck conflict behavior, keyboard focus, screen-reader labels, dark/light/system themes, and ~550px PCSX2 split-screen.
+8. Run lint, formatting, Bun tests (including mode/URL parser), Svelte/TypeScript checks, canonical data check, and production static build. Local visual acceptance is required before merge.
+
+**Safety:** switching into Inventory unmounts the Build editor to avoid concurrent stale deck writes. Practice is mounted only when first visited and keeps its read-only session when hidden. This UX phase does not rewrite the deck/collection schemas or attempt a global reactive store.

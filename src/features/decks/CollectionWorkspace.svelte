@@ -12,7 +12,17 @@
     type CollectionEnvelope,
   } from './collection';
 
-  let { cards }: { cards: BrowserCard[] } = $props();
+  let {
+    cards,
+    embedded = false,
+    preferredDeckId = '',
+    onactivedeckchange,
+  }: {
+    cards: BrowserCard[];
+    embedded?: boolean;
+    preferredDeckId?: string;
+    onactivedeckchange?: (id: string) => void;
+  } = $props();
   const cardById = $derived(new Map(cards.map((card) => [card.id, card])));
   const allowedIds = $derived(new Set(cardById.keys()));
   let decks = $state<DeckRecord[]>([]);
@@ -82,7 +92,8 @@
       const rawDecks = localStorage.getItem(DECK_STORAGE_KEY);
       deckSnapshot = rawDecks ?? '';
       decks = rawDecks ? validateDeckEnvelope(JSON.parse(rawDecks), allowedIds).decks : [];
-      activeId = decks.at(-1)?.id ?? '';
+      activeId = decks.find((deck) => deck.id === preferredDeckId)?.id ?? decks.at(-1)?.id ?? '';
+      if (activeId) onactivedeckchange?.(activeId);
       collectionSnapshot = localStorage.getItem(COLLECTION_STORAGE_KEY);
       collection =
         collectionSnapshot === null
@@ -204,12 +215,12 @@
 <section aria-label="Card collection">
   <header class="page-header">
     <div>
-      <h1 class="page-title">My Collection</h1>
+      <h1 class="page-title">{embedded ? 'Collection & Reserve' : 'My Collection'}</h1>
       <p class="page-description">
         Track cards you own, choose 40 for a duel, and keep the rest in reserve.
       </p>
     </div>
-    <a href="/decks/" class="text-link text-sm">Edit deck details →</a>
+    {#if !embedded}<a href="/decks/" class="text-link text-sm">Edit deck details →</a>{/if}
   </header>
   {#if !ready}
     <p>Loading your saved decks and collection…</p>
@@ -232,7 +243,11 @@
     <div class="surface section-box">
       <div class="deck-heading">
         <label for="collection-deck">Selected deck for duel</label>
-        <select id="collection-deck" bind:value={activeId}>
+        <select
+          id="collection-deck"
+          bind:value={activeId}
+          onchange={() => onactivedeckchange?.(activeId)}
+        >
           {#each decks as deck (deck.id)}
             <option value={deck.id}>{deck.name} · {deck.cardIds.length}/40</option>
           {/each}
