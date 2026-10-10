@@ -9,7 +9,7 @@
 
   let { cards, onconfirm }: {
     cards: BrowserCard[];
-    onconfirm: (cardId: number, destination: 'hand' | 'summoning' | 'enemy') => void;
+    onconfirm: (cardId: number, destination: 'hand' | 'summoning' | 'enemy') => boolean;
   } = $props();
   interface Crop { left: number; top: number; width: number; height: number }
   const initialCrop = (): Crop => ({ left: 25, top: 20, width: 50, height: 60 });
@@ -58,6 +58,7 @@
     input.value = '';
     if (!file) return;
     clearScreenshot();
+    const requestId = serial;
     if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)
       || file.size < 1 || file.size > 15 * 1024 * 1024) {
       status = 'Choose a PNG, JPG, or WebP screenshot up to 15 MiB.';
@@ -65,6 +66,7 @@
     }
     try {
       const img = await createImageBitmap(file);
+      if (requestId !== serial) { img.close(); return; }
       if (img.width > 4096 || img.height > 4096 || img.width * img.height > 16_777_216) {
         img.close();
         status = 'Screenshot dimensions exceed the 4096×4096 pixel limit.';
@@ -75,6 +77,7 @@
       preview = currentUrl;
       status = 'Screenshot stays in this browser. Drag across the displayed image to select one visible card, then rank candidates.';
     } catch {
+      if (requestId !== serial) return;
       status = 'This image could not be decoded. Try a regular PCSX2 PNG screenshot.';
     }
   }
@@ -205,7 +208,10 @@
   function confirm(id: number) {
     const card = byId.get(id);
     if (!card || (destination === 'enemy' && card.kind !== 'monster')) return;
-    onconfirm(id, destination);
+    if (!onconfirm(id, destination)) {
+      status = 'Cannot add this card: the selected Hand or Field is full, or the destination is invalid.';
+      return;
+    }
     status = card.name + ' sent to '
       + (destination === 'enemy' ? 'visible enemy' : destination === 'hand' ? 'Hand' : 'your Field')
       + ' after your confirmation. The screenshot itself was not saved.';

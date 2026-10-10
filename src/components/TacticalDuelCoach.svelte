@@ -100,9 +100,16 @@
   </div>
 
   <ScreenshotAssistant {cards} onconfirm={(id, destination) => {
+    if (!byId.has(id)) return false;
     if (destination === 'enemy') {
-      if (byId.get(id)?.kind === 'monster') selectEnemy(id);
-    } else add(id, destination === 'hand' ? 'hand' : 'summoning');
+      if (byId.get(id)?.kind !== 'monster') return false;
+      selectEnemy(id);
+      return true;
+    }
+    if (destination === 'hand' && hand.length >= 5) return false;
+    if (destination === 'summoning' && field.length >= 8) return false;
+    add(id, destination === 'hand' ? 'hand' : 'summoning');
+    return true;
   }} />
 
   <div class="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(280px,0.9fr)_minmax(0,1.4fr)]">
