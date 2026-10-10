@@ -57,6 +57,30 @@ existing records until accepted. Existing deck JSON/storage schema remains
 unchanged. No backend, AI model, third-party data lookup or PCSX2 access.
 See `docs/smart-deck-coach.md`.
 
+## M5-09 · Screenshot Candidate Matcher (experimental)
+
+A collapsible Screenshot Assistant inside the existing /duel/
+route accepts an explicitly selected local screenshot, bounded
+to 15 MiB and 4096×4096 dimensions. The player chooses a
+single crop by pointer drag or editable 0–100 percentage fields.
+A fully local Canvas feature descriptor is compared against
+same-origin canonical DotR artwork URLs, optionally filtered by
+known card name or ID. At most five simultaneous reference
+fetches; scanning is cancelable, and individual decoded
+bitmaps are closed immediately after feature extraction.
+Results are bounded to the top 12 candidates and presented
+as relative visual similarity **not model confidence**.
+
+The player must explicitly Confirm a candidate into their
+manual Hand, Field or known visible enemy Monster, where the
+existing constraints and deterministic advisor are reused.
+No automatic card insertion, board inference, OCR, trained
+model, PCSX2 access, permanent screenshot storage or remote
+provider API. Unsupported/cropped/face-down/3D scenes can
+produce wrong ranks; screenshot-to-game-frame accuracy cannot
+be claimed until measured against real screenshots. See
+`docs/m5-screenshot-assistant.md`.
+
 ## M5-05/M5-06 · Manually reported Battle State and tactical decisions
 
 The existing /duel/ page now accepts manually entered 0–12 SP

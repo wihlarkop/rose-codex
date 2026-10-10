@@ -68,6 +68,16 @@ summaries. The requested comprehensive UI/UX simplification
 comes *after* M5 milestones; avoid a cross-app redesign here.
 
 
+M5-09 introduces a collapsible screenshot panel inside
+/duel/ rather than adding yet another main navigation page.
+Keep this optional for players who prefer manual card entry.
+One image, one crop, one explicit card confirmation. Display
+relative similarity without colorful "confidence" badges or
+unwarranted accuracy claims. Include keyboard-editable crop
+percentages as a pointer alternative and a cancel action
+during scanning. The subsequent whole-app UI/UX revamp
+remains a separate phase once M5 is accepted.
+
 The homepage opens directly into the functional Card Library; `/cards/` remains
 an equivalent library route. The shell exposes Cards, Fusion, and Decks with
 the current destination marked. Navigation wraps on narrow screens.

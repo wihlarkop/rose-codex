@@ -20,6 +20,18 @@ verified power-up compatibility. It assumes cards unlocked, does not infer
 earned Deck Leader ranks or untranscribed card effects, and never claims a
 predicted win rate. Suggestions can be **reviewed and deliberately added**
 as a new deck in Deck Builder without replacing existing decks.
+M5-09 adds an experimental **Screenshot Assistant** directly inside
+`/duel/`. You can load a local PCSX2 screenshot (PNG/JPG/WebP), drag
+or keyboard-edit a crop around one visible card, compare that crop
+against the same-origin canonical DotR artwork, and explicitly
+confirm one suggested card into Hand, Field or the visible enemy
+slot. Matching is a coarse pixel similarity heuristic, NOT
+recognition confidence, automatic board parsing or a trained
+model. A full 853-image comparison can transfer around 35 MiB
+from the same-origin static asset library. The screenshot is
+never uploaded, cached in app storage or sent to an API.
+See [M5-09 screenshot research](docs/m5-screenshot-assistant.md).
+
 M5-05/M5-06 add **manual Battle State & ranked decisions** inside
 `/duel/`: current SP, whether a card was already played this turn,
 optional Deck Leader coordinates and optional 7x7 field/enemy coordinates.

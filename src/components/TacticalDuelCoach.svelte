@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import CardArtwork from './cards/CardArtwork.svelte';
   import BattleDecisionPanel from './BattleDecisionPanel.svelte';
+  import ScreenshotAssistant from './ScreenshotAssistant.svelte';
   import CardPicker from './cards/CardPicker.svelte';
   import type { BrowserCard } from '../lib/dotr/browser';
   import { DUEL_TERRAINS, type DuelTerrain, type OpponentPosition } from '../lib/dotr/duel-advisor';
@@ -97,6 +98,19 @@
     cannot confirm reachability, hidden traps, effects or Deck Leader abilities. A positive ATK
     comparison is never proof of a legal attack or victory.
   </div>
+
+  <ScreenshotAssistant {cards} onconfirm={(id, destination) => {
+    if (!byId.has(id)) return false;
+    if (destination === 'enemy') {
+      if (byId.get(id)?.kind !== 'monster') return false;
+      selectEnemy(id);
+      return true;
+    }
+    if (destination === 'hand' && hand.length >= 5) return false;
+    if (destination === 'summoning' && field.length >= 8) return false;
+    add(id, destination === 'hand' ? 'hand' : 'summoning');
+    return true;
+  }} />
 
   <div class="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(280px,0.9fr)_minmax(0,1.4fr)]">
     <div class="grid min-w-0 gap-4">
