@@ -197,8 +197,7 @@
             rows="3"
             maxlength="400"
             bind:value={note}
-            placeholder="Key fusion, problem cards, unusual terrain…"
-          ></textarea>
+            placeholder="Key fusion, problem cards, unusual terrain…"></textarea>
         </label>
         <button
           type="button"
