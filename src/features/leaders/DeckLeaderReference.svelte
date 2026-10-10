@@ -171,8 +171,10 @@
               >. Card ATK/DEF shown here are ordinary card stats—not the Deck Leader's combat stats.
               A Deck Leader acts as your movable base on the board.
             </p>
-            <a class="text-link text-xs"
-              href={'/cards/?q=' + String(selected.id).padStart(3, '0')}>
+            <a
+              class="text-link text-xs"
+              href={'/cards/?q=' + String(selected.id).padStart(3, '0')}
+            >
               View this monster in Card Library →
             </a>
           </div>
