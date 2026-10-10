@@ -1,0 +1,11 @@
+---
+import Shell from '../../layouts/Shell.astro';
+import BattleLab from '../../features/battle-lab/BattleLab.svelte';
+import cards from '../../../data/canonical/cards.json';
+import type { Card } from '../../lib/dotr/model';
+
+const allowedCardIds = (cards as Card[]).map(card => card.id);
+---
+<Shell title="Battle Lab">
+  <BattleLab {allowedCardIds} client:load />
+</Shell>

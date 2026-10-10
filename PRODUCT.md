@@ -57,6 +57,49 @@ existing records until accepted. Existing deck JSON/storage schema remains
 unchanged. No backend, AI model, third-party data lookup or PCSX2 access.
 See `docs/smart-deck-coach.md`.
 
+## M5-05/M5-06 · Manually reported Battle State and tactical decisions
+
+The existing /duel/ page now accepts manually entered 0–12 SP
+(unknown remains valid), whether a card has already been played
+this turn, the optional Deck Leader board coordinate and optional
+7x7 coordinates for the visible enemy and player Field cards.
+The M5-05 pure model validates 4 start / +3 per turn / 12 cap,
+one card play per turn, monster Level SP cost, and 7x7 coordinate
+bounds. Only objectively impossible SP or already-used card-play
+scenarios are marked **blocked**; possible positions and
+summons always remain **conditional** due to unknown tile
+occupancy, movement restrictions, board state and card effects.
+
+M5-06 ranks provisional action categories (field combat stat checks,
+potential fusion, hand summon preparation, possibly holding SP)
+by explicit evidence, with no implied battle legality or
+win-probability estimate. Coordinates only offer
+adjacent/separated/unknown descriptions; no automatic pathfinding
+or false range guarantee. Existing M5-04 tactical options remain intact.
+
+## M5-07 · Optional deterministic deck refinement
+
+`optimizeSuggestedDeck` performs bounded swap-based local
+search on an already valid M5-02 suggestion, preserving exactly
+40 known cards, ≤3 copies, strict opponent Deck Cost and canonical
+equipment compatibility. The objective combines known stat/terrain
+scores, cost, diversity, fusion potential and a simple high-Level
+pressure proxy. It accepts only strictly improving swaps and
+does not claim the measured win rate improved. The prior
+generator and Deck Builder schema remain unchanged.
+
+## M5-08 · Battle Lab feedback
+
+`/lab/` stores self-reported PCSX2 outcomes, opponent,
+selected saved deck name/ID snapshot, turn count and optional
+notes in a separate bounded, validated browser-local JSON envelope.
+Read-only observed summary statistics are not a simulated
+win probability. Data can be exported to JSON, removed with
+confirmation and never silently overwritten if corrupt.
+No new backend, external model, screenshot inference or LLM.
+See `docs/m5-battle-intelligence.md`.
+
+
 ## M5-04 · Manual Tactical Duel Coach
 
 The standalone static `/duel/` route accepts manually entered Hand
