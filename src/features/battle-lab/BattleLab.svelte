@@ -186,7 +186,7 @@
   <p
     class="rounded-md border border-border bg-surface p-3 text-xs leading-relaxed text-muted-foreground"
   >
-    Saved only in this browser. Other-tab changes require a refresh before further edits. Deck names are a snapshot at the time of recording; editing/deleting
+    Saved only in this browser. Deck names are a snapshot at the time of recording; editing/deleting
     a deck does not erase its historical results. Observed win rates describe your recorded matches,
     not the true win probability, model accuracy, or causal strength of a deck.
   </p>
