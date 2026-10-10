@@ -122,6 +122,34 @@ There is **no backend, login, database, analytics, hosted AI inference, or PCSX2
 read/write integration** in the application. The website may load its committed
 static assets; it is not claimed to be an offline PWA.
 
+## Sources, artwork, and licenses
+
+Rose Codex combines original application code with community-sourced game
+facts, third-party game screenshots, and separately licensed UI components.
+**Provenance, factual verification, and permission to redistribute are
+different questions.**
+
+| Material | Attribution and reuse status |
+| --- | --- |
+| **Card/starter/fusion facts** | Selected numeric and categorical facts were researched from [Eenkin's DotR Fusion Simulator](https://github.com/Eenkin/dotr-fusion-simulator/tree/91613ec9851a7a75744c1f2c7e4b342514ba315f), supplemented by [GenericMadScientist's research](https://github.com/GenericMadScientist/DotR-Documentation) and other cited sources. The inspected Eenkin revision declares **no license**. This repository documents its factual extraction/reimplementation decisions; it does not claim permission to copy the upstream program or prose. |
+| **Opponent/reference facts** | Reported opponents and sample cards are attributed to [KeyBlade999's DotR walkthrough](https://gamefaqs.gamespot.com/ps2/589455-yu-gi-oh-the-duelists-of-the-roses/faqs/63791) and other cited community work. Reports are not independently verified complete CPU decks. |
+| **Card images** | **853 locally optimized WebP images** were derived from DotR game screenshots located using the [Yugipedia numbered gallery](https://yugipedia.com/wiki/Gallery_of_Yu-Gi-Oh!_The_Duelists_of_the_Roses_cards). Per-card source URLs, hashes, and review status are recorded in [the image manifest](data/manifests/image-assets.json) and [image review records](data/manifests/image-reviews.json). **The right to redistribute these game screenshots has not been established.** Yugipedia's wiki CC BY-SA terms do **not** automatically license Konami game imagery. |
+| **UI components** | Locally incorporated shadcn-svelte-derived primitives retain their separate [MIT license notice](src/components/ui/LICENSE.md). Dependencies are governed by their respective upstream licenses. |
+
+Detailed attribution, source revisions, reproducibility notes, and uncertainties
+are in [data-source/reuse decisions](docs/data-sources.md) and the
+[image rights and acquisition audit](docs/card-images.md). A public URL or
+successful download must not be interpreted as permission to reuse media.
+
+**There is currently no project-wide `LICENSE` file.** Do not assume the
+entire source tree, community research, or bundled artwork is MIT-licensed
+or freely redistributable. The third-party UI notice does not license
+the rest of this repository. Rose Codex is unofficial and not endorsed
+by Konami or the upstream research authors.
+
+The [post-UX-v2 roadmap](docs/roadmap.md) tracks further evidence work,
+image-rights review, and proposed feature priorities.
+
 ## For developers
 
 The app uses **Astro 7**, **Svelte 5**, **TypeScript 6**, **Tailwind CSS 4**, and
