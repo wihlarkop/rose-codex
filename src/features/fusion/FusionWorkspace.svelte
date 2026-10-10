@@ -40,6 +40,9 @@
   let occurrences = $state<FusionOccurrence[]>([]);
   let previousFusionInputs = $state<FusionOccurrence[] | null>(null);
   let actionNotice = $state('');
+  let replacementDialog = $state<HTMLDialogElement | null>(null);
+  let cancelReplacementButton = $state<HTMLButtonElement | null>(null);
+  let pendingRecipe = $state<FusionOccurrence[] | null>(null);
   let savedDecks = $state<DeckRecord[]>([]);
   let selectedDeckId = $state('');
   let deckSearch = $state('');
@@ -114,26 +117,38 @@
     mode = next;
     if (next === 'recipes') recipesActivated = true;
   }
-  function loadRecipeMaterials(materials: readonly number[]) {
+  function applyRecipeMaterials(next: FusionOccurrence[]) {
+    resetUndo();
+    occurrences = next;
+    actionNotice =
+      next.length +
+      ' recipe material cards loaded into Hand. Planner only; no saved deck or Collection changes.';
+    mode = 'workbench';
+  }
+  async function loadRecipeMaterials(materials: readonly number[]) {
     const next = createRecipeHand(materials, cardById, () => crypto.randomUUID());
     if (!next) {
       actionNotice = 'Recipe materials could not be validated; your planner remains unchanged.';
       mode = 'workbench';
       return;
     }
-    if (
-      occurrences.length &&
-      !window.confirm(
-        'Replace the current planner Hand and Summoning Area with the selected recipe materials? Saved decks and Collection are not affected.',
-      )
-    )
+    if (!occurrences.length) {
+      applyRecipeMaterials(next);
       return;
-    resetUndo();
-    occurrences = next;
-    actionNotice =
-      materials.length +
-      ' recipe material cards loaded into Hand. Planner only; no saved deck or Collection changes.';
-    mode = 'workbench';
+    }
+    pendingRecipe = next;
+    await tick();
+    replacementDialog?.showModal();
+    cancelReplacementButton?.focus();
+  }
+  function confirmRecipeReplacement() {
+    const next = pendingRecipe;
+    if (!next) return;
+    replacementDialog?.close();
+    applyRecipeMaterials(next);
+  }
+  function cancelRecipeReplacement() {
+    replacementDialog?.close();
   }
   function addDeckOccurrence(cardId: number, zone: FusionZone) {
     const allowed = deckCardCounts.get(cardId) ?? 0;
@@ -734,9 +749,193 @@
       <FusionEncyclopedia {cards} {fusionData} ontrymaterials={loadRecipeMaterials} />
     </div>
   {/if}
+  <dialog
+    bind:this={replacementDialog}
+    class="recipe-replace-dialog"
+    aria-labelledby="recipe-replace-title"
+    aria-describedby="recipe-replace-description"
+    onclose={() => (pendingRecipe = null)}
+  >
+    <div class="replace-dialog-inner">
+      <div class="replace-dialog-head">
+        <div class="replace-dialog-icon"><Sparkles class="size-5" aria-hidden="true" /></div>
+        <div>
+          <h2 id="recipe-replace-title">Replace your current cards?</h2>
+          <p id="recipe-replace-description">
+            Load this fusion recipe into Workbench and replace the current Hand and Summoning Area.
+          </p>
+        </div>
+      </div>
+      <div class="replace-dialog-preview">
+        <div class="replace-preview-row">
+          <span>Current planner</span>
+          <strong>{hand.length} Hand · {summoning.length} Field</strong>
+        </div>
+        <div class="replace-preview-divider" aria-hidden="true">↓</div>
+        <div class="replace-preview-row">
+          <span>Selected recipe</span>
+          <strong>{pendingRecipe?.length ?? 0} cards → Hand</strong>
+        </div>
+        {#if pendingRecipe}
+          <ul class="replace-materials" aria-label="Recipe materials">
+            {#each pendingRecipe as entry (entry.instanceId)}
+              <li>{cardById.get(entry.cardId)?.name ?? 'Unknown card'}</li>
+            {/each}
+          </ul>
+        {/if}
+      </div>
+      <p class="replace-dialog-note">
+        Only this temporary planner changes. Saved decks and Collection remain untouched.
+      </p>
+      <div class="replace-dialog-actions">
+        <button type="button" class="replace-cancel" bind:this={cancelReplacementButton}
+          onclick={cancelRecipeReplacement}>Cancel</button>
+        <button type="button" class="replace-confirm" onclick={confirmRecipeReplacement}
+          disabled={!pendingRecipe}>Replace Cards</button>
+      </div>
+    </div>
+  </dialog>
 </section>
 
 <style>
+  .recipe-replace-dialog {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    width: min(460px, calc(100% - 2rem));
+    max-height: min(85vh, 640px);
+    overflow: auto;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    color: var(--foreground);
+    box-shadow: 0 24px 70px #0008;
+  }
+  .recipe-replace-dialog::backdrop {
+    background: rgb(10 9 15 / 64%);
+  }
+  .replace-dialog-inner {
+    display: grid;
+    gap: 1.15rem;
+    padding: clamp(1.15rem, 3vw, 1.65rem);
+  }
+  .replace-dialog-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+  .replace-dialog-icon {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--selected);
+    color: var(--primary);
+  }
+  .replace-dialog-head h2 {
+    margin: 0;
+    font-size: 1.12rem;
+    line-height: 1.35;
+    font-weight: 700;
+  }
+  .replace-dialog-head p {
+    margin: 0.4rem 0 0;
+    color: var(--muted-foreground);
+    font-size: 0.84rem;
+    line-height: 1.55;
+  }
+  .replace-dialog-preview {
+    display: grid;
+    gap: 0.65rem;
+    padding: 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--elevated);
+  }
+  .replace-preview-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-size: 0.79rem;
+  }
+  .replace-preview-row span {
+    color: var(--muted-foreground);
+  }
+  .replace-preview-row strong {
+    font-weight: 700;
+  }
+  .replace-preview-divider {
+    color: var(--primary);
+    font-size: 0.85rem;
+    line-height: 1;
+    text-align: center;
+  }
+  .replace-materials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .replace-materials li {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background: var(--surface);
+    padding: 0.25rem 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .replace-dialog-note {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: 0.77rem;
+    line-height: 1.5;
+  }
+  .replace-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .replace-dialog-actions button {
+    min-height: 42px;
+    border-radius: 7px;
+    padding: 0.5rem 1rem;
+    font-size: 0.84rem;
+    font-weight: 650;
+  }
+  .replace-cancel {
+    border: 1px solid var(--border);
+    background: var(--elevated);
+    color: var(--foreground);
+  }
+  .replace-cancel:hover {
+    background: var(--hover);
+  }
+  .replace-confirm {
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+  .replace-confirm:hover:not(:disabled) {
+    filter: brightness(0.94);
+  }
+  .replace-confirm:disabled {
+    opacity: 0.5;
+  }
+  @media (max-width: 430px) {
+    .replace-dialog-actions button {
+      flex: 1;
+    }
+  }
   .fusion-modes {
     display: flex;
     flex-wrap: wrap;
