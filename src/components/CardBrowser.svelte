@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { tick } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import SearchIcon from '@lucide/svelte/icons/search';
   import XIcon from '@lucide/svelte/icons/x';
   import { Button } from './ui/button';
@@ -13,6 +13,10 @@
   let flippedIds = $state(new Set<number>());
   let quickLookupCardId = $state<number | null>(null);
   const results = $derived(filterCards(cards, { query, kind, monsterType, attribute }));
+  onMount(() => {
+    const incoming = new URLSearchParams(window.location.search).get('q');
+    if (incoming && incoming.trim() && incoming.length <= 80) query = incoming.trim();
+  });
   const monstersAllowed = $derived(!kind || kind === 'monster');
   const active = $derived(Boolean(query || kind || monsterType || attribute));
   function clear() { query = ''; kind = ''; monsterType = ''; attribute = ''; }

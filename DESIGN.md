@@ -78,9 +78,12 @@ percentages as a pointer alternative and a cancel action
 during scanning. The subsequent whole-app UI/UX revamp
 remains a separate phase once M5 is accepted.
 
-The homepage opens directly into the functional Card Library; `/cards/` remains
-an equivalent library route. The shell exposes Cards, Fusion, and Decks with
-the current destination marked. Navigation wraps on narrow screens.
+UX v2 decision record: [docs/ux-v2-design-spec.md](docs/ux-v2-design-spec.md).
+The homepage `/` is now a distinct Hybrid Gaming Companion landing page;
+the functional Card Library is `/cards/`. The shell groups legacy tool URLs
+under Home, Cards, Fusion, Decks, Duel and Reference, with contextual subnavigation.
+Narrow viewports use horizontal overflow without a CMS-style sidebar.
+The theme follows the system unless a Dark or Light override was selected.
 Content is capped at 1480px with 32px desktop gutters, then 24px on narrow
 desktops. The library uses 220px minimum tiles and 16px gaps, yielding a denser
 six-column grid at wide desktop sizes and larger cards as the viewport narrows.
