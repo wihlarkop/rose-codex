@@ -46,7 +46,7 @@
         battlefield terrain and selected cards to prepare for your next duel.
       </p>
     </div>
-    <a href="/fusion/" class="text-link text-sm">Fusion Workspace →</a>
+    <a href="/coach/" class="text-link text-sm">Smart Deck Coach →</a>
   </header>
 
   <div class="mb-4 rounded-md border border-border bg-surface px-4 py-3 text-xs leading-relaxed text-muted-foreground">

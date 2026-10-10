@@ -28,6 +28,15 @@ maps semantic colors and radii to those variables. Spacing follows the small
 quarter-rem scale. Prefer existing tokens and utilities over new literal colors.
 The custom `app-container` avoids Tailwind's responsive `container` utility.
 
+Smart Deck Coach at /coach/ follows the existing card, opponent and builder
+UI language: left-side opponent/path/style controls, right-side 40-card
+recommendation cards with small actual DotR artwork, canonical IDs, known
+stats, DC and brief evidence explanations. Keep the limits and unverified
+Deck Leader rank highly visible. The handoff to Deck Builder is a proposal,
+not auto-import: the receiving route exposes an explicit add/dismiss panel
+and never replaces the player's existing decks. No LLM, AI chat or speculative
+"win chance" visuals.
+
 The homepage opens directly into the functional Card Library; `/cards/` remains
 an equivalent library route. The shell exposes Cards, Fusion, and Decks with
 the current destination marked. Navigation wraps on narrow screens.

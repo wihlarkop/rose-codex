@@ -31,6 +31,32 @@ A new `/saves/` route accepts a local PCSX2 **File Memory Card** `.ps2` image vi
 
 The existing `/saves/` route adds an optional **controlled snapshot diff**: select a copied NTSC-U `.ps2` File Memory Card from before an in-game change and one from afterward. The independent filesystem reader follows bounded FAT chains for first-level files inside candidate `SLUS-20515` folders, then compares decoded **raw file bytes**, not raw memory-card positions or presumed DotR data fields. Results show filenames, added/removed/changed state, byte counts and at most sixteen contiguous change ranges by file-relative offset. No byte values are exposed in the diff, and unreadable/broken chains stay clearly marked unknown. Up to 2 MiB per file and 6 MiB total are read per image. The two file buffers are transient, and the app neither uploads, downloads, edits nor persists them. A controlled A/B experiment narrows research candidates but **does not identify card IDs, owned quantities, ranks or Deck Leader fields** or guarantee that only the intended field changed. See [Save inspector research](docs/pcsx2-save-tools.md).
 
+## M5-01/M5-02 · Opponent Smart Deck Coach
+
+The client-only `/coach/` page provides matchup-aware, repeatable, pure TypeScript
+heuristics across 20 community-reported campaign opponent profiles (including the
+distinct final bosses). Per-card scores use canonical ATK/DEF, known ordinary
+terrain modifiers, and **stat-only** comparisons against reported highlighted
+enemy monsters. They are not damage predictions, win probabilities or proofs
+of card-effect counters. Unknown terrain/card effects are not scored.
+
+The M5-02 generator constructs an exactly 40-card list (max 3 copies, all
+DC known, strictly below opponent DC) with budget-sensitive deterministic
+greedy ranking, bounded copy penalties, optional potential fusion pair
+tie-strengthening and compatible equip cards. Balanced/Aggressive/Defensive
+style variants change score weights and composition. Unknown effects,
+rituals and traps are intentionally omitted. Generated cards assume an
+all-unlocked game with adequate quantities; Deck Leader selection and
+actual 2LT-or-higher rank are NOT guaranteed. We never claim global
+optimization or fixed win rate.
+
+Users can transfer a proposal to Deck Builder via a bounded `/decks/?suggest=`
+link. The Deck Builder validates all card IDs, quantity limits and campaign
+DC before showing an explicit **Add as a new deck** step, without changing
+existing records until accepted. Existing deck JSON/storage schema remains
+unchanged. No backend, AI model, third-party data lookup or PCSX2 access.
+See `docs/smart-deck-coach.md`.
+
 ## Fusion Workspace
 
 The reusable picker returns canonical IDs without owning navigation or game
