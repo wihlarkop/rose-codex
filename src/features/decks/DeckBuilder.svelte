@@ -398,10 +398,14 @@
   {#if storageWarning}<p class="storage-warning" role="status">{storageWarning}</p>{/if}
   {#if notice}<p class="notice" role="status">{notice}</p>{/if}
   {#if pendingCoachDeck}
-    <section class="mb-4 rounded-lg border border-border bg-selected p-4"
-      aria-label="Review proposed Smart Deck">
+    <section
+      class="mb-4 rounded-lg border border-border bg-selected p-4"
+      aria-label="Review proposed Smart Deck"
+    >
       <h2 class="text-base font-semibold">Smart Deck Coach proposal</h2>
-      <p class="mt-1 text-sm">{pendingCoachDeck.name} · {pendingCoachDeck.cardIds.length} main cards</p>
+      <p class="mt-1 text-sm">
+        {pendingCoachDeck.name} · {pendingCoachDeck.cardIds.length} main cards
+      </p>
       <p class="mt-2 text-xs text-muted-foreground">
         This proposal came from Smart Deck Coach. It has been validated against
         canonical card IDs, the three-copy limit and the opponent's reported
@@ -415,7 +419,9 @@
     </section>
   {:else if invalidCoachLink}
     <section class="mb-4 rounded-lg border border-border bg-surface p-4" role="alert">
-      <p class="text-sm">Invalid or unverified Smart Deck link. No deck was added or changed.</p>
+      <p class="text-sm">
+        Invalid or unverified Smart Deck link. No deck was added or changed.
+      </p>
       <Button variant="outline" onclick={dismissCoachDeck}>Dismiss</Button>
     </section>
   {/if}
