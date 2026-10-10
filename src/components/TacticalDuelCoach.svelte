@@ -4,6 +4,7 @@
   import BattleDecisionPanel from './BattleDecisionPanel.svelte';
   import ScreenshotAssistant from './ScreenshotAssistant.svelte';
   import CardPicker from './cards/CardPicker.svelte';
+  import SavedDuelDeckCards from './SavedDuelDeckCards.svelte';
   import type { BrowserCard } from '../lib/dotr/browser';
   import { DUEL_TERRAINS, type DuelTerrain, type OpponentPosition } from '../lib/dotr/duel-advisor';
   import { parseHandLink } from '../lib/dotr/deck-simulation';
@@ -113,6 +114,13 @@
           You can add identical cards as separate occurrences. Hand is limited
           to five entries; Field is limited to eight entries in this planner.
         </p>
+        <SavedDuelDeckCards
+          {cards}
+          {occurrences}
+          handCount={hand.length}
+          fieldCount={field.length}
+          onadd={add}
+        />
         <div class="mt-3 grid gap-4">
           <div>
             <div class="flex flex-wrap items-center justify-between gap-2">
