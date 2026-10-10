@@ -43,7 +43,7 @@ A compact, keyboard-accessible Duelists of the Roses gaming companion that works
 
 1. **UX-01 Foundation** — dedicated homepage, top-level + contextual navigation, Reference Hub, browser/system theme, global search, initial design-system tokens. Legacy feature routes remain separate. **This PR's scope.**
 2. **UX-02 Cards** — adaptive compact toolbar, grid density, flip card and focus regression, ownership indicator only if genuine collection data can be safely read. **Stacked PR scope following UX-01; no merge until local acceptance.**
-3. **UX-03 Fusion** — two-panel Workbench and Find Recipes connected as one coherent task flow; preserve recipe search, chains, repeated occurrences, warnings and Undo.
+3. **UX-03 Fusion** — two-panel Workbench and Find Recipes connected as one coherent task flow; preserve recipe search, chains, repeated occurrences, warnings and Undo. **Dedicated PR, acceptance required before merge.**
 4. **UX-04 Decks** — Build/Practice/Inventory integrated views; Generate/Optimize as explicit proposal within Build. Preserve stale-data protections and backups, copy limits, strict cost notices and existing URLs.
 5. **UX-05 Duel** — compact battle-state editor and unified evidence-labeled next-move list, optional screenshot/advanced coordinates, separate History view.
 6. **UX-06 Reference** — improve contextual links/opponent-to-leader/coach handoffs and polish all Reference tools, no unrelated mechanic research.
@@ -78,3 +78,16 @@ Adaptive Cards toolbar, merging Deck Builder/Coach/Inventory into a single Svelt
 7. Run repository CI: lint, scoped format, canonical data checks, Bun tests, Svelte/TS checks and production static build.
 
 UX-02 only changes Card Library presentation and its read-only Collection display. It does not implement Deck Workshop's Inventory merger or alter saved-card data.
+
+## UX-03 Fusion acceptance
+
+1. Open `/fusion/`: **Workbench** and **Find Recipes** modes are available within one Fusion workspace; the left panel has a unified card picker with Hand/Field destination; the right panel shows live results.
+2. Enter repeated card instances into Hand and Field; check direct and chain results, suggested plays, partial result warnings, apply fusion and Undo. Search/filter and CardPicker must preserve existing semantics.
+3. Switch to **Find Recipes** while Hand/Field is populated; inspect a result and switch back to Workbench. The existing planner state and undo context must survive non-destructive mode switches.
+4. Click **Try in Workbench** from a recipe. With an empty planner, its exact material instances populate the Hand. With existing planner cards, accept or reject the explicit replacement confirmation; cancellation preserves input. This does not write saved deck or Collection data. The confirmation is a Rose Codex themed modal (not a native `window.confirm`), previewing current input counts and selected recipe cards. Cancel and Escape preserve all planner input and undo context; focus starts on Cancel and background content is inert while open.
+5. Switch back to Find Recipes: the in-workspace recipe selection should remain visible after its first opening. Compare ownership/missing materials against genuine Collection data and check both ordinary and special handoffs.
+6. Verify the legacy `/recipes/?card=024` page and its **Try in Fusion** links still work. Verify `/fusion/?hand=...`, simulator handoff, optional `/fusion/?mode=recipes&card=024` and normal Back/Forward navigation of URLs.
+7. Try desktop, ~550px PCSX2 split view and narrow mobile; all results/controls remain usable with keyboard, screen readers and dark/light/system appearance. No permanent sidebar.
+8. CI: lint, format check, canonical data validation, Bun tests (including handoff duplicate/invalid scenarios), Svelte/TypeScript checks and production build.
+
+UX-03 scopes the Fusion UI and navigation only. It does not reinterpret fusion rules, persist planner state across page reloads, change card inventory, or implement Deck Workshop/Duel merging.
