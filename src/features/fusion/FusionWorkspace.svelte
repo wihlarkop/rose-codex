@@ -788,10 +788,18 @@
         Only this temporary planner changes. Saved decks and Collection remain untouched.
       </p>
       <div class="replace-dialog-actions">
-        <button type="button" class="replace-cancel" bind:this={cancelReplacementButton}
-          onclick={cancelRecipeReplacement}>Cancel</button>
-        <button type="button" class="replace-confirm" onclick={confirmRecipeReplacement}
-          disabled={!pendingRecipe}>Replace Cards</button>
+        <button
+          type="button"
+          class="replace-cancel"
+          bind:this={cancelReplacementButton}
+          onclick={cancelRecipeReplacement}>Cancel</button
+        >
+        <button
+          type="button"
+          class="replace-confirm"
+          onclick={confirmRecipeReplacement}
+          disabled={!pendingRecipe}>Replace Cards</button
+        >
       </div>
     </div>
   </dialog>
