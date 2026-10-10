@@ -1,0 +1,36 @@
+---
+import Shell from '../../layouts/Shell.astro';
+const topics = [
+  { name: 'Opponents', label: 'Story encounters', description: 'Review reported enemy cards, paths, and preparation notes.', href: '/opponents/', number: '01' },
+  { name: 'Deck Leaders', label: 'Abilities and ranks', description: 'Explore reported type abilities and progression limitations.', href: '/leaders/', number: '02' },
+  { name: 'Reincarnation', label: 'Guide and planner', description: 'Look up candidate cards and track your manual five-duel progress.', href: '/reincarnation/', number: '03' },
+  { name: 'Save Tools', label: 'PCSX2 memory cards', description: 'Inspect a local memory-card file and compare snapshots, read-only.', href: '/saves/', number: '04' },
+];
+---
+<Shell title="Game Reference">
+  <section class="reference-home">
+    <header class="page-header"><div><h1 class="page-title">Game Reference</h1><p class="page-description">Explore opponents, Deck Leaders, gameplay systems and local PCSX2 save tools.</p></div></header>
+    <div class="reference-grid">
+      {topics.map(item => (
+        <a href={item.href} class="reference-topic">
+          <span class="topic-index">{item.number} / REFERENCE</span>
+          <h2>{item.name}</h2>
+          <p class="topic-label">{item.label}</p>
+          <p class="topic-description">{item.description}</p>
+          <span class="topic-arrow">Explore →</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</Shell>
+<style>
+  .reference-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
+  .reference-topic { display:flex; flex-direction:column; gap:.4rem; padding:clamp(1.25rem,3vw,2rem); border:1px solid var(--border); border-radius:10px; background:var(--surface); color:var(--foreground); text-decoration:none; min-width:0; }
+  .reference-topic:hover { border-color:var(--primary); }
+  .topic-index { font-size:.7rem; letter-spacing:.1em; font-weight:750; color:var(--primary); }
+  h2 { font-size:1.3rem; margin:.5rem 0 0; }
+  .topic-label { font-size:.9rem; font-weight:650; margin:0; }
+  .topic-description { color:var(--muted-foreground); font-size:.85rem; max-width:50ch; line-height:1.55; margin:0 0 .9rem; }
+  .topic-arrow { margin-top:auto; font-weight:700; font-size:.8rem; color:var(--primary); }
+  @media (max-width:640px) { .reference-grid { grid-template-columns:1fr; } }
+</style>

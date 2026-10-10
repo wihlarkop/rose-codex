@@ -1,12 +1,115 @@
 ---
 import Shell from '../layouts/Shell.astro';
-import CardBrowser from '../components/CardBrowser.svelte';
+import HomeContinue from '../components/home/HomeContinue.svelte';
 import cards from '../../data/canonical/cards.json';
-import images from '../../data/canonical/images.json';
-import { browserCards } from '../lib/dotr/browser';
-import type { Card, ImageRecord } from '../lib/dotr/model';
-const library = browserCards(cards as Card[], images as ImageRecord[]);
+const allowedCardIds = cards.map(card => card.id);
+const shortcuts = [
+  { title: 'Card Library', summary: 'Explore all 854 DotR cards', href: '/cards/', mark: '01', action: 'Explore Cards' },
+  { title: 'Fusion Workbench', summary: 'Discover combinations', href: '/fusion/', mark: '02', action: 'Find Fusions' },
+  { title: 'Deck Workshop', summary: 'Build and improve decks', href: '/decks/', mark: '03', action: 'Build Deck' },
+  { title: 'Duel Companion', summary: 'Plan your next move', href: '/duel/', mark: '04', action: 'Plan Duel' },
+];
 ---
-<Shell title="Card library">
-  <CardBrowser cards={library} client:load />
+<Shell title="Home" description="Rose Codex is a browser-based companion for Yu-Gi-Oh! The Duelists of the Roses. Find cards, explore fusions, build decks and plan duels.">
+  <div class="home-landing">
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="hero-copy">
+        <p class="eyebrow">YU-GI-OH! THE DUELISTS OF THE ROSES</p>
+        <h1 id="hero-heading">Master every duel.</h1>
+        <p class="hero-subtitle">Your cards. Your strategy. Your companion.</p>
+        <p class="hero-description">Recognize cards, discover fusions, build your deck and plan your next move—all in one place, alongside PCSX2.</p>
+        <form action="/cards/" method="get" role="search" class="hero-search">
+          <label for="home-search" class="sr-only">Search cards by name or ID</label>
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+          <input id="home-search" type="search" name="q" maxlength="80" placeholder="Search 854 cards by name or ID…" autocomplete="off"/>
+          <button type="submit">Find card <span aria-hidden="true">→</span></button>
+        </form>
+      </div>
+      <div class="art-stage" aria-label="Authentic game artwork for Red-Eyes Black Dragon, Dark Magician, and Blue-Eyes White Dragon">
+        <div class="art-orbit" aria-hidden="true"></div>
+        <a href="/cards/?q=007" class="hero-art hero-art-left" aria-label="Find Red-Eyes B. Dragon">
+          <img src="/cards/007.webp" alt="Red-Eyes B. Dragon from Duelists of the Roses" width="576" height="465" decoding="async" loading="lazy"/>
+          <span>Red-Eyes B. Dragon</span>
+        </a>
+        <a href="/cards/?q=060" class="hero-art hero-art-right" aria-label="Find Dark Magician">
+          <img src="/cards/060.webp" alt="Dark Magician from Duelists of the Roses" width="577" height="463" decoding="async" loading="lazy"/>
+          <span>Dark Magician</span>
+        </a>
+        <a href="/cards/?q=000" class="hero-art hero-art-front" aria-label="Find Blue-Eyes White Dragon">
+          <img src="/cards/000.webp" alt="Blue-Eyes White Dragon from Duelists of the Roses" width="579" height="462" decoding="async" loading="eager" fetchpriority="high"/>
+          <span>Blue-Eyes White Dragon</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="home-shortcuts" aria-labelledby="shortcut-heading">
+      <div class="section-heading"><div><h2 id="shortcut-heading">Jump into the game</h2><p>Choose what you want to do.</p></div></div>
+      <div class="shortcut-grid">
+        {shortcuts.map(item => (
+          <a class="shortcut" href={item.href}>
+            <span class="shortcut-mark" aria-hidden="true">{item.mark}</span>
+            <strong>{item.title}</strong>
+            <span class="shortcut-summary">{item.summary}</span>
+            <span class="shortcut-action">{item.action} <span aria-hidden="true">↗</span></span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="home-continue" aria-labelledby="continue-heading">
+      <div class="section-heading"><div><h2 id="continue-heading">Continue playing</h2><p>Saved on this browser, without an account.</p></div></div>
+      <HomeContinue {allowedCardIds} client:load />
+    </section>
+  </div>
 </Shell>
+<style>
+  .home-landing { display:grid; gap:2.25rem; }
+  .hero { position:relative; min-height:390px; display:grid; grid-template-columns:minmax(0,1.05fr) minmax(250px,.95fr); align-items:center; gap:1rem; overflow:hidden; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:clamp(1.5rem,4vw,3.5rem); }
+  .hero::before { position:absolute; content:""; inset:0; pointer-events:none; background:radial-gradient(ellipse at 80% 48%,var(--selected),transparent 58%); opacity:.75; }
+  .hero-copy { position:relative; z-index:2; min-width:0; }
+  .eyebrow { margin:0 0 1rem; font-size:.7rem; font-weight:800; letter-spacing:.14em; color:var(--primary); }
+  h1 { margin:0; max-width:12ch; line-height:1.07; letter-spacing:-.045em; font-size:clamp(2.25rem,4.4vw,4.25rem); font-weight:780; }
+  .hero-subtitle { margin:.85rem 0 .25rem; font-size:clamp(1rem,1.6vw,1.3rem); font-weight:620; }
+  .hero-description { margin:.35rem 0 1.5rem; font-size:.88rem; max-width:49ch; color:var(--muted-foreground); line-height:1.65; }
+  .hero-search { display:flex; align-items:center; gap:.75rem; min-height:52px; max-width:540px; padding:.35rem .45rem .35rem .9rem; background:var(--elevated); border:1px solid var(--border); border-radius:8px; color:var(--muted-foreground); }
+  .hero-search:focus-within { outline:2px solid var(--ring); outline-offset:2px; }
+  .hero-search input { min-width:0; flex:1; border:0; outline:0; background:transparent; color:var(--foreground); font-size:.88rem; }
+  .hero-search input:focus { outline:none; }
+  .hero-search button { flex-shrink:0; background:var(--primary); border:0; border-radius:6px; min-height:39px; padding:.3rem .75rem; color:var(--primary-foreground); font-weight:650; font-size:.78rem; }
+  .art-stage { position:relative; isolation:isolate; width:100%; min-height:300px; display:grid; place-items:center; }
+  .art-orbit { position:absolute; width:270px; height:270px; border:1px solid var(--border); border-radius:50%; opacity:.65; box-shadow:0 0 0 40px color-mix(in srgb,var(--primary) 5%,transparent); }
+  .hero-art { position:absolute; display:flex; flex-direction:column; gap:.35rem; text-decoration:none; width:clamp(150px,19vw,215px); padding:.45rem; background:var(--elevated); border:1px solid var(--border); border-radius:9px; box-shadow:0 15px 30px #0003; transition:translate .16s ease,box-shadow .16s ease; }
+  .hero-art:hover { translate:0 -6px; box-shadow:0 20px 32px #0005; }
+  .hero-art img { display:block; width:100%; height:auto; aspect-ratio:5/4; object-fit:contain; border-radius:4px; background:var(--artwork-background); }
+  .hero-art span { color:var(--foreground); font-size:.65rem; font-weight:750; padding:0 .2rem .15rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .hero-art-left { z-index:1; transform:translate(-48%,-4%) rotate(-13deg); }
+  .hero-art-right { z-index:2; transform:translate(48%,-4%) rotate(13deg); }
+  .hero-art-front { z-index:3; transform:translate(0,15%) rotate(-1deg); border-color:var(--primary); }
+  .section-heading { display:flex; justify-content:space-between; align-items:end; margin-bottom:1rem; }
+  .section-heading h2 { margin:0; font-size:1.12rem; letter-spacing:-.02em; }
+  .section-heading p { margin:.2rem 0 0; color:var(--muted-foreground); font-size:.8rem; }
+  .shortcut-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.85rem; }
+  .shortcut { min-width:0; display:flex; flex-direction:column; gap:.5rem; padding:1.15rem; border:1px solid var(--border); border-radius:10px; text-decoration:none; color:var(--foreground); background:var(--surface); transition:border-color .16s ease,transform .16s ease; }
+  .shortcut:hover { border-color:var(--primary); transform:translateY(-2px); }
+  .shortcut-mark { font-size:.73rem; font-weight:800; color:var(--primary); font-variant-numeric:tabular-nums; }
+  .shortcut strong { font-size:.95rem; }
+  .shortcut-summary { font-size:.8rem; color:var(--muted-foreground); }
+  .shortcut-action { margin-top:auto; padding-top:.45rem; font-size:.76rem; font-weight:700; color:var(--primary); }
+  @media (max-width:1000px) { .shortcut-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .hero { padding:1.5rem; } }
+  @media (max-width:760px) {
+    .hero { grid-template-columns:1fr; min-height:0; }
+    .art-stage { min-height:185px; }
+    .hero-art { width:145px; }
+    .art-orbit { width:175px; height:175px; }
+    .hero-copy h1 { max-width:none; }
+  }
+  @media (max-width:400px) {
+    .hero { padding:1rem; }
+    .hero-search { gap:.4rem; }
+    .hero-search button { font-size:0; width:38px; }
+    .hero-search button span { font-size:1rem; }
+    .hero-art { width:117px; }
+    .art-stage { min-height:160px; }
+  }
+  @media (prefers-reduced-motion:reduce) { .hero-art,.shortcut { transition:none; } }
+</style>

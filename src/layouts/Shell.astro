@@ -1,34 +1,71 @@
 ---
 import '../styles/global.css';
+import HeaderSearch from '../components/shell/HeaderSearch.svelte';
+import ThemeSwitcher from '../components/shell/ThemeSwitcher.svelte';
 interface Props { title: string; description?: string }
 const { title, description = 'Recognize and find cards from Yu-Gi-Oh! The Duelists of the Roses.' } = Astro.props;
+const pathname = Astro.url.pathname;
+const routes = [
+  { label: 'Home', href: '/', paths: ['/'] },
+  { label: 'Cards', href: '/cards/', paths: ['/cards/'] },
+  { label: 'Fusion', href: '/fusion/', paths: ['/fusion/', '/recipes/'] },
+  { label: 'Decks', href: '/decks/', paths: ['/decks/', '/coach/', '/simulate/', '/collection/'] },
+  { label: 'Duel', href: '/duel/', paths: ['/duel/', '/lab/'] },
+  { label: 'Reference', href: '/reference/', paths: ['/reference/', '/opponents/', '/leaders/', '/reincarnation/', '/saves/'] },
+] as const;
+const activeRoute = routes.find(route => route.paths.some(path =>
+  path === pathname || (path !== '/' && pathname.startsWith(path))));
+const children: Record<string, { label: string; href: string }[]> = {
+  Fusion: [{ label: 'Workbench', href: '/fusion/' }, { label: 'Find Recipes', href: '/recipes/' }],
+  Decks: [
+    { label: 'Build', href: '/decks/' }, { label: 'Generate', href: '/coach/' },
+    { label: 'Practice', href: '/simulate/' }, { label: 'Inventory', href: '/collection/' },
+  ],
+  Duel: [{ label: 'Plan Duel', href: '/duel/' }, { label: 'Battle History', href: '/lab/' }],
+  Reference: [
+    { label: 'Overview', href: '/reference/' }, { label: 'Opponents', href: '/opponents/' },
+    { label: 'Deck Leaders', href: '/leaders/' }, { label: 'Reincarnation', href: '/reincarnation/' },
+    { label: 'Save Tools', href: '/saves/' },
+  ],
+};
+const subroutes = activeRoute ? children[activeRoute.label] ?? [] : [];
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} /><title>{title} · Rose Codex</title>
+    <script is:inline>
+      try {
+        const preference = localStorage.getItem('rose-codex.theme.v1');
+        if (preference === 'dark' || preference === 'light')
+          document.documentElement.dataset.theme = preference;
+      } catch { /* Browser storage disabled: use system preference. */ }
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <header class="site-header"><div class="app-container header-inner">
-      <a class="brand" href="/"><svg class="brand-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 2 8 5v10l-8 5-8-5V7Z" stroke="currentColor" stroke-width="1.5"/><path d="m12 6 5 3v6l-5 3-5-3V9Zm0 4 2 1v2l-2 1-2-1v-2Z" stroke="currentColor" stroke-width="1.5"/></svg>Rose <span>Codex</span></a>
-      <nav class="site-nav" aria-label="Main navigation">
-        <a href="/cards/" aria-current={Astro.url.pathname === '/' || Astro.url.pathname.startsWith('/cards') ? 'page' : undefined}>Cards</a>
-        <a href="/fusion/" aria-current={Astro.url.pathname.startsWith('/fusion') ? 'page' : undefined}>Fusion</a>
-        <a href="/recipes/" aria-current={Astro.url.pathname.startsWith('/recipes') ? 'page' : undefined}>Recipes</a>
-        <a href="/decks/" aria-current={Astro.url.pathname.startsWith('/decks') ? 'page' : undefined}>Decks</a>
-        <a href="/coach/" aria-current={Astro.url.pathname.startsWith('/coach') ? 'page' : undefined}>Deck Coach</a>
-        <a href="/duel/" aria-current={Astro.url.pathname.startsWith('/duel') ? 'page' : undefined}>Duel Coach</a>
-        <a href="/lab/" aria-current={Astro.url.pathname.startsWith('/lab') ? 'page' : undefined}>Battle Lab</a>
-        <a href="/leaders/" aria-current={Astro.url.pathname.startsWith('/leaders') ? 'page' : undefined}>Leaders</a>
-        <a href="/reincarnation/" aria-current={Astro.url.pathname.startsWith('/reincarnation') ? 'page' : undefined}>Reincarnation</a>
-        <a href="/opponents/" aria-current={Astro.url.pathname.startsWith('/opponents') ? 'page' : undefined}>Opponents</a>
-        <a href="/saves/" aria-current={Astro.url.pathname.startsWith('/saves') ? 'page' : undefined}>Saves</a>
-        <a href="/simulate/" aria-current={Astro.url.pathname.startsWith('/simulate') ? 'page' : undefined}>Simulator</a>
-        <a href="/collection/" aria-current={Astro.url.pathname.startsWith('/collection') ? 'page' : undefined}>Collection</a>
-      </nav><span class="header-context">THE DUELISTS OF THE ROSES</span>
-    </div></header>
+    <header class="site-header">
+      <div class="app-container header-inner">
+        <a class="brand" href="/" aria-label="Rose Codex home">
+          <svg class="brand-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 2 8 5v10l-8 5-8-5V7Z" stroke="currentColor" stroke-width="1.5"/><path d="m12 6 5 3v6l-5 3-5-3V9Zm0 4 2 1v2l-2 1-2-1v-2Z" stroke="currentColor" stroke-width="1.5"/></svg>
+          Rose <span>Codex</span>
+        </a>
+        <div class="header-tools"><HeaderSearch client:load /><ThemeSwitcher client:load /></div>
+      </div>
+      <nav class="app-container site-nav" aria-label="Main navigation">
+        {routes.map(route => (
+          <a href={route.href} aria-current={activeRoute?.label === route.label ? 'page' : undefined}>{route.label}</a>
+        ))}
+      </nav>
+      {subroutes.length > 0 && (
+        <nav class="app-container sub-nav" aria-label={activeRoute ? activeRoute.label + ' tools' : 'Tools'}>
+          {subroutes.map(item => (
+            <a href={item.href} aria-current={pathname === item.href ? 'page' : undefined}>{item.label}</a>
+          ))}
+        </nav>
+      )}
+    </header>
     <main id="main" class="app-container site-main"><slot /></main>
     <footer class="site-footer"><div class="app-container">
       <span>Yu-Gi-Oh! The Duelists of the Roses · Unofficial companion</span>

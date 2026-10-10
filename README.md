@@ -75,6 +75,19 @@ supported yet. See [memory card inspector](docs/pcsx2-save-tools.md).
 Long-term direction: Card Browser, Visual Fusion Simulator, Fusion Reference,
 Naming / Starter Deck Simulator, Deck Tools, and verified Reincarnation probability tools.
 
+## UX v2 · In progress
+
+The approved [UX v2 design and phased feature-merging roadmap](docs/ux-v2-design-spec.md)
+targets a compact gaming companion rather than a CMS-style dashboard.
+UX-01 introduces a distinct `/` homepage with authentic DotR card artwork,
+first-visit and saved-deck CTAs, a global card search (Ctrl/Cmd+K),
+six grouped top-level navigation entries, a Reference landing page,
+and System / Dark / Light preferences.
+
+Existing feature routes remain functional under contextual navigation.
+Fusion, Deck Workshop and Duel integration, plus the Card Library adaptive
+scroll toolbar, are **later acceptance phases**, not completed in UX-01.
+
 ## Develop
 
 Install **Bun 1.4.2**, as pinned in `.bun-version` and `package.json`.
