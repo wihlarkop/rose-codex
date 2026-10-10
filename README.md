@@ -172,18 +172,6 @@ GitHub Actions runs the checks on pull requests and the main branch;
 deployment requires the Cloudflare credentials described in
 [deployment setup](docs/deployment.md). No public deployment URL is assumed.
 
-## Documentation
-
-- [UX v2 design, navigation, and phased acceptance](docs/ux-v2-design-spec.md)
-- [UX-07 integration and browser QA checklist](docs/ux07-integration-qa.md)
-- [Fusion Workspace behavior](docs/fusion-workspace.md)
-- [Deck Builder data and safety rules](docs/deck-builder.md)
-- [Smart Deck Coach scope and limitations](docs/smart-deck-coach.md)
-- [Screenshot Assistant research](docs/m5-screenshot-assistant.md)
-- [Read-only PCSX2 Save Tools](docs/pcsx2-save-tools.md)
-- [Canonical data provenance](docs/data-sources.md)
-- [Card image coverage and acquisition](docs/card-images.md)
-
 ---
 
 *Rose Codex is an independent, unofficial fan companion and is not affiliated
