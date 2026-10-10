@@ -45,7 +45,7 @@ A compact, keyboard-accessible Duelists of the Roses gaming companion that works
 2. **UX-02 Cards** — adaptive compact toolbar, grid density, flip card and focus regression, ownership indicator only if genuine collection data can be safely read. **Stacked PR scope following UX-01; no merge until local acceptance.**
 3. **UX-03 Fusion** — two-panel Workbench and Find Recipes connected as one coherent task flow; preserve recipe search, chains, repeated occurrences, warnings and Undo. **Dedicated PR, acceptance required before merge.**
 4. **UX-04 Decks** — Build/Practice/Inventory integrated views; Generate/Optimize as explicit proposal within Build. Preserve stale-data protections and backups, copy limits, strict cost notices and existing URLs. **PR scope: unified /decks/ experience with modular existing feature islands; old feature URLs remain valid.**
-5. **UX-05 Duel** — compact battle-state editor and unified evidence-labeled next-move list, optional screenshot/advanced coordinates, separate History view.
+5. **UX-05 Duel** — compact battle-state editor and unified evidence-labeled next-move list, optional screenshot/advanced coordinates, separate History view. **UX-05 PR: integrated Plan/History modes, compact decision-first presentation, and read-only battle constraints preserved.**
 6. **UX-06 Reference** — improve contextual links/opponent-to-leader/coach handoffs and polish all Reference tools, no unrelated mechanic research.
 7. **UX-07 Integration/QA** — navigation/back-forward/deep links, browser storage regression, keyboard/mouse/touch, themes, split-screen, performance.
 
@@ -105,3 +105,17 @@ UX-03 scopes the Fusion UI and navigation only. It does not reinterpret fusion r
 8. Run lint, formatting, Bun tests (including mode/URL parser), Svelte/TypeScript checks, canonical data check, and production static build. Local visual acceptance is required before merge.
 
 **Safety:** switching into Inventory unmounts the Build editor to avoid concurrent stale deck writes. Practice is mounted only when first visited and keeps its read-only session when hidden. This UX phase does not rewrite the deck/collection schemas or attempt a global reactive store.
+
+
+## UX-05 Duel Companion acceptance
+
+1. Open /duel/ and confirm one compact **Duel Companion** with **Plan Duel** and **Battle History** modes. Primary view shows Hand/Field/enemy/terrain on the left and **Next Moves** with Summoning Points and played-card context on the right on desktop. Narrow/split-screen stacks.
+2. Enter and remove repeated Hand and Field occurrences. Select enemy, attack/defense state and terrain; tactical results update. Validate original Hand limit (5), Field planning limit (8), explicit Clear all and independent Reset battle inputs.
+3. Check that rankings retain **Conditional · verify in-game**, **Unknown · more evidence needed**, and collapsible **Blocked** outcomes. Show all considerations, detailed tactical comparisons and full engine limitations remain accessible without false legality/win claims.
+4. Expand **Advanced · 7×7 coordinates**, enter leader/enemy/field positions, collapse/re-expand and confirm input is preserved. SP/played-card input remains visible. Optional Screenshot Assistant is a disclosure below the primary two-panel layout; confirm candidates manually and verify screenshots remain local and are not stored.
+5. Enter a Plan Duel state, navigate to **Battle History** then back; Plan inputs and ranking state remain unchanged. Record a real battle in History, export, then request removal. Check themed Cancel, Escape and Confirm; no changes on Cancel/Escape. Observed win rates are not predicted wins.
+6. Verify /duel/?mode=history on refresh, Back/Forward switches, /duel/?opponent=weevil, hand links from Practice, and legacy independent /lab/ page (including existing storage data). No storage key/schema migration, deck or Collection mutation, inference API or PCSX2 writes.
+7. Check System/Dark/Light, focus/keyboard/touch, desktop and ~550px PCSX2 split view; actions and evidence labels remain readable.
+8. CI: lint, strict formatting, canonical data checks, Bun tests, Astro/Svelte/TypeScript check and production build. Local visual acceptance before merge.
+
+Only Duel UI, Battle History presentation, navigation tests and UX specification change in this phase. No deterministic battle-state logic is modified.

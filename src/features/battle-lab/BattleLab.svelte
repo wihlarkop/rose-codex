@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import { DECK_STORAGE_KEY, validateDeckEnvelope, type DeckRecord } from '../decks/model';
   import { OPPONENTS, opponentById } from '../../lib/dotr/opponents';
   import {
@@ -12,7 +12,8 @@
     type BattleLogStore,
   } from './model';
 
-  let { allowedCardIds }: { allowedCardIds: number[] } = $props();
+  let { allowedCardIds, embedded = false }: { allowedCardIds: number[]; embedded?: boolean } =
+    $props();
   let matches = $state<BattleLog[]>([]);
   let decks = $state<DeckRecord[]>([]);
   let chosenDeckId = $state('');
@@ -24,6 +25,10 @@
   let unsafeStorage = $state(false);
   let storageError = $state('');
   let ready = $state(false);
+  let pendingRemoveId = $state<string | null>(null);
+  let removeDialog = $state<HTMLDialogElement | null>(null);
+  let cancelRemoveButton = $state<HTMLButtonElement | null>(null);
+  const removingMatch = $derived(matches.find((row) => row.id === pendingRemoveId));
   const summary = $derived(summarizeBattles(matches));
   const selectedDeck = $derived(decks.find((deck) => deck.id === chosenDeckId));
   const byOpponent = $derived(
@@ -104,8 +109,20 @@
     };
     if (store([...matches, next])) note = '';
   }
-  function removeResult(id: string) {
-    if (!window.confirm('Remove this battle result from local Battle Lab?')) return;
+  async function requestRemoveResult(id: string) {
+    if (!matches.some((row) => row.id === id)) return;
+    pendingRemoveId = id;
+    await tick();
+    removeDialog?.showModal();
+    cancelRemoveButton?.focus();
+  }
+  function cancelRemoveResult() {
+    removeDialog?.close();
+  }
+  function confirmRemoveResult() {
+    const id = pendingRemoveId;
+    if (!id) return;
+    removeDialog?.close();
     store(matches.filter((row) => row.id !== id));
   }
   function exportLogs() {
@@ -125,16 +142,20 @@
 </script>
 
 <section aria-label="Battle Lab feedback">
-  <header class="page-header">
-    <div>
-      <h1 class="page-title">Battle Lab · Real duel feedback</h1>
-      <p class="page-description">
-        Record outcomes after playing in PCSX2. Compare observed match results against your deck
-        recommendations without inventing simulated victories.
-      </p>
-    </div>
-    <a href="/coach/" class="text-link text-sm">Smart Deck Coach →</a>
-  </header>
+  {#if !embedded}
+    <header class="page-header">
+      <div>
+        <h1 class="page-title">Battle Lab · Real duel feedback</h1>
+        <p class="page-description">
+          Record outcomes after playing in PCSX2. Compare observed match results against your deck
+          recommendations without inventing simulated victories.
+        </p>
+      </div>
+      <a href="/coach/" class="text-link text-sm">Smart Deck Coach →</a>
+    </header>
+  {:else}
+    <h2 class="mb-3 text-lg font-semibold">Battle History</h2>
+  {/if}
   <p
     class="rounded-md border border-border bg-surface p-3 text-xs leading-relaxed text-muted-foreground"
   >
@@ -269,7 +290,7 @@
                   <button
                     type="button"
                     class="text-xs text-link"
-                    onclick={() => removeResult(match.id)}
+                    onclick={() => requestRemoveResult(match.id)}
                   >
                     Remove
                   </button>
@@ -291,4 +312,106 @@
       </section>
     </div>
   </div>
+  <dialog
+    bind:this={removeDialog}
+    class="battle-remove-dialog"
+    aria-labelledby="battle-remove-heading"
+    aria-describedby="battle-remove-description"
+    onclose={() => (pendingRemoveId = null)}
+  >
+    <div class="battle-modal-content">
+      <h2 id="battle-remove-heading">Remove this battle result?</h2>
+      <p id="battle-remove-description">
+        {removingMatch
+          ? (opponentById(removingMatch.opponentId)?.name ?? removingMatch.opponentId)
+          : 'Selected result'}
+        · {removingMatch?.outcome === 'win' ? 'Win' : 'Loss'}
+        · {removingMatch?.deckName ?? 'Unknown deck'}
+      </p>
+      <p>
+        Only this local Battle History entry will be deleted. Your saved decks and Collection will
+        not change.
+      </p>
+      <div class="battle-modal-actions">
+        <button
+          type="button"
+          class="battle-cancel"
+          bind:this={cancelRemoveButton}
+          onclick={cancelRemoveResult}>Cancel</button
+        >
+        <button
+          type="button"
+          class="battle-confirm"
+          disabled={!removingMatch}
+          onclick={confirmRemoveResult}>Remove Result</button
+        >
+      </div>
+    </div>
+  </dialog>
 </section>
+<style>
+  .battle-remove-dialog {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    padding: 0;
+    width: min(450px, calc(100% - 2rem));
+    max-height: 85vh;
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: var(--surface);
+    color: var(--foreground);
+    box-shadow: 0 24px 65px #0007;
+  }
+  .battle-remove-dialog::backdrop {
+    background: rgb(10 9 15 / 64%);
+  }
+  .battle-modal-content {
+    display: grid;
+    gap: 0.9rem;
+    padding: 1.4rem;
+  }
+  .battle-modal-content h2 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+  .battle-modal-content p {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--muted-foreground);
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+  }
+  .battle-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.35rem;
+  }
+  .battle-modal-actions button {
+    border-radius: 7px;
+    min-height: 42px;
+    padding: 0.5rem 1rem;
+    font-size: 0.84rem;
+    font-weight: 650;
+  }
+  .battle-cancel {
+    background: var(--elevated);
+    color: var(--foreground);
+    border: 1px solid var(--border);
+  }
+  .battle-cancel:hover {
+    background: var(--hover);
+  }
+  .battle-confirm {
+    background: var(--destructive);
+    color: var(--background);
+    border: 1px solid var(--destructive);
+  }
+  .battle-confirm:disabled {
+    opacity: 0.5;
+  }
+</style>

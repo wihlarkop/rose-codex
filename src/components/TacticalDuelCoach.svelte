@@ -12,8 +12,8 @@
   import { OPPONENTS, opponentById } from '../lib/dotr/opponents';
   import { evaluateTacticalDuel } from '../lib/dotr/tactical-duel';
 
-  let { cards, canonicalCards, fusions }: {
-    cards: BrowserCard[]; canonicalCards: Card[]; fusions: FusionData;
+  let { cards, canonicalCards, fusions, embedded = false }: {
+    cards: BrowserCard[]; canonicalCards: Card[]; fusions: FusionData; embedded?: boolean;
   } = $props();
   const byId = $derived(new Map(cards.map(card => [card.id, card])));
   const monsters = $derived(cards.filter(card => card.kind === 'monster'));
@@ -80,6 +80,7 @@
 </script>
 
 <section aria-label="Manual tactical duel coach">
+  {#if !embedded}
   <header class="page-header">
     <div>
       <h1 class="page-title">Tactical Duel Coach</h1>
@@ -90,30 +91,16 @@
     </div>
     <a href="/coach/" class="text-link text-sm">Smart Deck Coach →</a>
   </header>
+  {/if}
 
-  <div class="rounded-md border border-border bg-surface px-4 py-3 text-xs leading-relaxed text-muted-foreground">
-    <strong class="text-foreground">Manual, read-only tactical planner.</strong>
-    This is not an automatic screen reader or a complete DotR battle simulator.
-    Battle State inputs can rule out certain SP/card-play options, but the coach
-    cannot confirm reachability, hidden traps, effects or Deck Leader abilities. A positive ATK
-    comparison is never proof of a legal attack or victory.
-  </div>
+  <details class="duel-limits">
+    <summary>Manual planner · Read-only, conditional guidance</summary>
+    <p>This companion cannot confirm reachability, hidden traps, effects, Deck Leader abilities or a legal attack.
+       A positive ATK comparison does not prove a victory. Enter only information you can observe in PCSX2.</p>
+  </details>
 
-  <ScreenshotAssistant {cards} onconfirm={(id, destination) => {
-    if (!byId.has(id)) return false;
-    if (destination === 'enemy') {
-      if (byId.get(id)?.kind !== 'monster') return false;
-      selectEnemy(id);
-      return true;
-    }
-    if (destination === 'hand' && hand.length >= 5) return false;
-    if (destination === 'summoning' && field.length >= 8) return false;
-    add(id, destination === 'hand' ? 'hand' : 'summoning');
-    return true;
-  }} />
-
-  <div class="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(280px,0.9fr)_minmax(0,1.4fr)]">
-    <div class="grid min-w-0 gap-4">
+  <div class="duel-panels">
+    <div class="duel-inputs">
       <section class="rounded-lg border border-border bg-surface p-4" aria-label="Manual player cards">
         <div class="flex flex-wrap items-baseline justify-between gap-2">
           <h2 class="text-base font-semibold">Your cards</h2>
@@ -248,10 +235,13 @@
       </section>
     </div>
 
-    <section class="min-w-0 rounded-lg border border-border bg-surface p-4"
-      aria-label="Conditional tactical recommendations">
+    <div class="duel-results">
+      <BattleDecisionPanel {cards} {hand} {field} {report} />
+      <details class="duel-comparisons" aria-label="Detailed tactical comparisons">
+        <summary>More comparisons · {report.options.length} tactical options</summary>
+        <div class="comparison-body">
       <div class="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 class="text-base font-semibold">Possible next considerations</h2>
+        <h3 class="text-sm font-semibold">Field, fusion and Hand comparisons</h3>
         <span class="text-xs text-muted-foreground">
           {report.options.length} ranked · Read-only
         </span>
@@ -335,7 +325,34 @@
         <a class="text-link" href="/fusion/">Fusion Workspace →</a>.
         Nothing on this page writes your saved decks, Collection, or PCSX2 files.
       </p>
-    </section>
+        </div>
+      </details>
+    </div>
   </div>
-  <BattleDecisionPanel {cards} {hand} {field} {report} />
+  <ScreenshotAssistant {cards} onconfirm={(id, destination) => {
+    if (!byId.has(id)) return false;
+    if (destination === 'enemy') {
+      if (byId.get(id)?.kind !== 'monster') return false;
+      selectEnemy(id);
+      return true;
+    }
+    if (destination === 'hand' && hand.length >= 5) return false;
+    if (destination === 'summoning' && field.length >= 8) return false;
+    add(id, destination === 'hand' ? 'hand' : 'summoning');
+    return true;
+  }} />
 </section>
+
+<style>
+  .duel-panels { display:grid; grid-template-columns:minmax(0, .9fr) minmax(0, 1.4fr);
+    align-items:start; gap:1rem; margin-top:1rem; }
+  .duel-inputs, .duel-results { display:grid; min-width:0; gap:1rem; align-content:start; }
+  .duel-limits { border:1px solid var(--border); border-radius:7px; background:var(--surface);
+    padding:.7rem .95rem; color:var(--muted-foreground); }
+  .duel-limits summary { cursor:pointer; color:var(--foreground); font-size:.8rem; font-weight:650; }
+  .duel-limits p { margin:.55rem 0 0; font-size:.76rem; line-height:1.55; }
+  .duel-comparisons { border:1px solid var(--border); border-radius:9px; background:var(--surface); min-width:0; }
+  .duel-comparisons > summary { padding:1rem; font-size:.84rem; cursor:pointer; font-weight:650; color:var(--primary); }
+  .comparison-body { padding:0 1rem 1rem; }
+  @media(max-width:940px) { .duel-panels { grid-template-columns:minmax(0, 1fr); } }
+</style>

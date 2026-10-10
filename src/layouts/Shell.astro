@@ -16,7 +16,6 @@ const routes = [
 const activeRoute = routes.find(route => route.paths.some(path =>
   path === pathname || (path !== '/' && pathname.startsWith(path))));
 const children: Record<string, { label: string; href: string }[]> = {
-  Duel: [{ label: 'Plan Duel', href: '/duel/' }, { label: 'Battle History', href: '/lab/' }],
   Reference: [
     { label: 'Overview', href: '/reference/' }, { label: 'Opponents', href: '/opponents/' },
     { label: 'Deck Leaders', href: '/leaders/' }, { label: 'Reincarnation', href: '/reincarnation/' },
