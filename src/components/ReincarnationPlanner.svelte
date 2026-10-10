@@ -133,6 +133,10 @@
                   This library entry has no ordinary Deck Cost. No reward estimate is possible.
                 </p>
               {/if}
+              <a class="mt-3 inline-block text-xs text-link"
+                href={'/cards/?q=' + String(selected.id).padStart(3, '0')}>
+                View this card in Card Library →
+              </a>
             </div>
           </div>
         {:else}
