@@ -10,8 +10,8 @@
   let { cards, images, fusions }: {
     cards: Card[]; images: BrowserCard[]; fusions: FusionData;
   } = $props();
-  const byId = new Map(cards.map(card => [card.id, card]));
-  const imageById = new Map(images.map(card => [card.id, card]));
+  const byId = $derived(new Map(cards.map(card => [card.id, card])));
+  const imageById = $derived(new Map(images.map(card => [card.id, card])));
   let rosePath = $state<RosePath | 'all'>('all');
   let opponentId = $state('weevil');
   let style = $state<DeckStyle>('balanced');
