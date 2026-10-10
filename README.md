@@ -12,6 +12,16 @@ The `/opponents/` Encyclopedia covers 20 reported story encounters across both R
 paths, linking selected enemy cards and Deck Leaders to canonical DotR card images.
 It is a single-guide reference, not a verified full deck or reward-drop database.
 
+The **Smart Deck Coach** at `/coach/` combines deterministic, explained opponent
+matchup scoring (M5-01) with a 40-card, three-copy, strict-Deck-Cost deck
+generator (M5-02). Its cost search uses canonical ATK/DEF, ordinary terrain,
+selected reported opponent monsters, potential ordinary fusion links, and
+verified power-up compatibility. It assumes cards unlocked, does not infer
+earned Deck Leader ranks or untranscribed card effects, and never claims a
+predicted win rate. Suggestions can be **reviewed and deliberately added**
+as a new deck in Deck Builder without replacing existing decks.
+See [Smart Deck Coach limitations](docs/smart-deck-coach.md).
+
 The `/saves/` PCSX2 Save Inspector reads a selected `.ps2` image locally in the
 browser: signature, capacity, filesystem geometry, and bounded top-level save
 folder names. For NTSC-U DotR candidate folders it also lists contained file names,

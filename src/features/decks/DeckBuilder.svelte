@@ -4,6 +4,7 @@
   import CardFlipTile from '../../components/cards/CardFlipTile.svelte';
   import StarterDeckExplorer from './StarterDeckExplorer.svelte';
   import DeckReadinessAdvisor from '../../components/DeckReadinessAdvisor.svelte';
+  import { parseSmartDeckLink, type PendingCoachDeck } from '../../lib/dotr/smart-deck-link';
   import { Button } from '../../components/ui/button';
   import { filterCards, type BrowserCard } from '../../lib/dotr/browser';
   import {
@@ -36,6 +37,8 @@
   let storageBlocked = $state(false);
   let writeFailed = $state(false);
   let importText = $state('');
+  let pendingCoachDeck = $state<PendingCoachDeck | null>(null);
+  let invalidCoachLink = $state(false);
   let cardSearch = $state('');
   let selectedSearchIndex = $state(0);
   let inspectedCardId = $state<number | null>(null);
@@ -130,6 +133,11 @@
     }
     activeId = decks[0]?.id ?? '';
     ready = true;
+    if (new URLSearchParams(window.location.search).has('suggest')) {
+      const proposed = parseSmartDeckLink(window.location.search, cards);
+      if (proposed) pendingCoachDeck = proposed;
+      else invalidCoachLink = true;
+    }
   });
 
   function message(error: unknown) {
@@ -170,6 +178,19 @@
     activeId = deck.id;
     inspectedCardId = null;
     save();
+  }
+  function acceptCoachDeck() {
+    if (!pendingCoachDeck) return;
+    const proposed = pendingCoachDeck;
+    // Add a new record rather than replacing previous decks.
+    createStarterDeck({ name: proposed.name, cardIds: proposed.cardIds });
+    pendingCoachDeck = null;
+    history.replaceState(null, '', '/decks/');
+  }
+  function dismissCoachDeck() {
+    pendingCoachDeck = null;
+    invalidCoachLink = false;
+    history.replaceState(null, '', '/decks/');
   }
   function createStarterDeck(starter: { name: string; cardIds: number[] }) {
     if (starter.cardIds.length !== 40 || !starter.cardIds.every((id) => allowedIds.has(id))) {
@@ -376,6 +397,32 @@
   </div>
   {#if storageWarning}<p class="storage-warning" role="status">{storageWarning}</p>{/if}
   {#if notice}<p class="notice" role="status">{notice}</p>{/if}
+  {#if pendingCoachDeck}
+    <section
+      class="mb-4 rounded-lg border border-border bg-selected p-4"
+      aria-label="Review proposed Smart Deck"
+    >
+      <h2 class="text-base font-semibold">Smart Deck Coach proposal</h2>
+      <p class="mt-1 text-sm">
+        {pendingCoachDeck.name} · {pendingCoachDeck.cardIds.length} main cards
+      </p>
+      <p class="mt-2 text-xs text-muted-foreground">
+        This proposal came from Smart Deck Coach. It has been validated against canonical card IDs,
+        the three-copy limit and the opponent's reported Deck Cost. No changes have been saved yet.
+        Deck Leader rank and your actual number of unlocked copies still require verification in
+        PCSX2.
+      </p>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <Button onclick={acceptCoachDeck}>Add as a new deck</Button>
+        <Button variant="outline" onclick={dismissCoachDeck}>Dismiss</Button>
+      </div>
+    </section>
+  {:else if invalidCoachLink}
+    <section class="mb-4 rounded-lg border border-border bg-surface p-4" role="alert">
+      <p class="text-sm">Invalid or unverified Smart Deck link. No deck was added or changed.</p>
+      <Button variant="outline" onclick={dismissCoachDeck}>Dismiss</Button>
+    </section>
+  {/if}
 
   {#if active}
     <div class="deck-main">
