@@ -13,19 +13,19 @@ project—not a PS2 emulator, cheat tool, or automatic battle simulator.
 
 You need [Bun](https://bun.sh/) **1.4.2** (the version pinned by this repository).
 
-\`\`\`sh
+```sh
 git clone https://github.com/wihlarkop/rose-codex.git
 cd rose-codex
 bun ci
 bun run dev
-\`\`\`
+```
 
 Open the local URL shown by Astro in your terminal. You can explore the library
 and planning tools without launching PCSX2.
 
 > The canonical game data and card images are committed to the repository.
 > The first full production build additionally checks reproducibility against
-> pinned external data sources; see [Data and provenance](#data-and-provenance).
+> pinned external data sources; see [data sources and provenance](docs/data-sources.md).
 
 ## Explore the app
 
@@ -33,12 +33,12 @@ The six main navigation sections organize the tools around what you want to do:
 
 | Section | What it does |
 | --- | --- |
-| [Home](/) | Search for a card or jump back into a saved local deck. |
-| [Cards](/cards/) | Browse **854 numbered DotR cards** with original-game artwork, filters, quick lookup, and in-place card details. |
-| [Fusion](/fusion/) | Work with a manual Hand and Summoning Area, discover direct/chain results, or find recipes for a specific card. |
-| [Decks](/decks/) | Build and save decks, generate and review suggestions, practice draws, and manage your Collection/Reserve. |
-| [Duel](/duel/) | Record visible battle information, review **conditional** next-move considerations, and track actual results in Battle History. |
-| [Reference](/reference/) | Look up opponents, Deck Leaders, reincarnation information, and read-only PCSX2 save tools. |
+| **Home** (`/`) | Search for a card or jump back into a saved local deck. |
+| **Cards** (`/cards/`) | Browse **854 numbered DotR cards** with original-game artwork, filters, quick lookup, and in-place card details. |
+| **Fusion** (`/fusion/`) | Work with a manual Hand and Summoning Area, discover direct/chain results, or find recipes for a specific card. |
+| **Decks** (`/decks/`) | Build and save decks, generate and review suggestions, practice draws, and manage your Collection/Reserve. |
+| **Duel** (`/duel/`) | Record visible battle information, review **conditional** next-move considerations, and track actual results in Battle History. |
+| **Reference** (`/reference/`) | Look up opponents, Deck Leaders, reincarnation information, and read-only PCSX2 save tools. |
 
 ### Find a card quickly
 
@@ -79,20 +79,20 @@ model confidence, or reliable battle-state detection.
 
 ## Reference and existing links
 
-Open [Reference](/reference/) for the four reference areas:
+Open **Reference** (`/reference/`) for the four reference areas:
 
-- [Opponents](/opponents/) — reported encounters and selected deck cards from a
+- **Opponents** (`/opponents/`) — reported encounters and selected deck cards from a
   community guide, with handoffs to Deck Leader, Deck Coach, and Duel tools.
-- [Deck Leaders](/leaders/) — reported type abilities, rank concepts, and
+- **Deck Leaders** (`/leaders/`) — reported type abilities, rank concepts, and
   clearly labeled gaps in verification.
-- [Reincarnation](/reincarnation/) — card lookup, manual five-duel progress, and
+- **Reincarnation** (`/reincarnation/`) — card lookup, manual five-duel progress, and
   limited community-research reward estimates.
-- [Save Tools](/saves/) — inspect or compare copies of supported PCSX2 \`.ps2\`
+- **Save Tools** (`/saves/`) — inspect or compare copies of supported PCSX2 `.ps2`
   File Memory Cards **locally and read-only**. This does not decode owned cards,
   decks, Deck Leader ranks, or story progress.
 
-Older standalone URLs, including \`/recipes/\`, \`/coach/\`, \`/simulate/\`,
-\`/collection/\`, and \`/lab/\`, remain available for existing links.
+Older standalone URLs, including `/recipes/`, `/coach/`, `/simulate/`,
+`/collection/`, and `/lab/`, remain available for existing links.
 
 ## Data, privacy, and limitations
 
@@ -130,35 +130,35 @@ hydrated as Svelte islands. Canonical DotR IDs—not display names—identify ca
 
 | Path | Purpose |
 | --- | --- |
-| \`src/pages/\` and \`src/layouts/\` | Routes, static pages, and shared navigation |
-| \`src/components/\` and \`src/features/\` | Reusable UI and bounded feature workspaces |
-| \`src/lib/dotr/\` | Deterministic game logic, lookups, and validation |
-| \`data/canonical/\` | Committed, reproducible data consumed by the app |
-| \`scripts/data/\` and \`scripts/images/\` | Research-data and image pipelines |
-| \`tests/\` | Bun tests following existing repository conventions |
+| `src/pages/` and `src/layouts/` | Routes, static pages, and shared navigation |
+| `src/components/` and `src/features/` | Reusable UI and bounded feature workspaces |
+| `src/lib/dotr/` | Deterministic game logic, lookups, and validation |
+| `data/canonical/` | Committed, reproducible data consumed by the app |
+| `scripts/data/` and `scripts/images/` | Research-data and image pipelines |
+| `tests/` | Bun tests following existing repository conventions |
 
 ### Checks
 
-\`\`\`sh
+```sh
 bun run lint           # Oxlint
 bun run format:check   # Oxfmt (scoped to the existing baseline)
 bun run data:validate  # Validate canonical records
 bun test               # Unit tests
 bun run check          # Astro, Svelte, and TypeScript checks
 bun run build          # Reproduce data, verify, then build static output
-\`\`\`
+```
 
-\`bun run build\` produces \`dist/\`. On a clean machine, the build's
+`bun run build` produces `dist/`. On a clean machine, the build's
 reproducibility step may need to fetch pinned source captures. Normal local
 development and tests work with committed canonical files. To regenerate or
 verify the source-backed data explicitly:
 
-\`\`\`sh
+```sh
 bun run data:fetch
 bun run data:build
 bun run data:validate
 bun run data:check
-\`\`\`
+```
 
 Do not edit generated canonical JSON directly. Review source decisions and
 manifests instead. For formatter scope and project conventions, see
