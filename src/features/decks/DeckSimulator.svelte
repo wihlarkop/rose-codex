@@ -18,10 +18,12 @@
     cards,
     canonicalCards,
     fusionData,
+    embedded = false,
   }: {
     cards: BrowserCard[];
     canonicalCards: Card[];
     fusionData: FusionData;
+    embedded?: boolean;
   } = $props();
 
   function createIslandData() {
@@ -121,12 +123,12 @@
 <section aria-label="Deck simulator">
   <header class="page-header">
     <div>
-      <h1 class="page-title">Deck Simulator</h1>
+      <h1 class="page-title">{embedded ? 'Practice draw' : 'Deck Simulator'}</h1>
       <p class="page-description">
         Shuffle a saved 40-card deck, practice five-card draws, and explore possible fusion plays.
       </p>
     </div>
-    <a class="text-link text-sm" href="/decks/">Manage decks →</a>
+    {#if !embedded}<a class="text-link text-sm" href="/decks/">Manage decks →</a>{/if}
   </header>
 
   {#if storageWarning}<p class="warning-note" role="alert">{storageWarning}</p>{/if}

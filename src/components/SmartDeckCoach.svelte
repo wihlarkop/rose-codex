@@ -10,8 +10,9 @@
   import { optimizeSuggestedDeck, type DeckOptimization } from '../lib/dotr/deck-optimizer';
   import { buildStrategyPlaybook } from '../lib/dotr/deck-strategy';
 
-  let { cards, images, fusions }: {
+  let { cards, images, fusions, onpropose }: {
     cards: Card[]; images: BrowserCard[]; fusions: FusionData;
+    onpropose?: (proposal: SmartDeck) => void;
   } = $props();
   const byId = $derived(new Map(cards.map(card => [card.id, card])));
   const imageById = $derived(new Map(images.map(card => [card.id, card])));
@@ -191,10 +192,18 @@
               onclick={improveDeck} disabled={optimization !== null}>
               {optimization === null ? 'Optimize this deck (v2)' : 'Optimized'}
             </button>
-          <a class="rounded-md bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground"
-            href={smartDeckLink(suggestion)}>
-            Review in Deck Builder →
-          </a>
+          {#if onpropose}
+            <button type="button"
+              class="rounded-md bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground"
+              onclick={() => suggestion && onpropose?.(suggestion)}>
+              Review in Build →
+            </button>
+          {:else}
+            <a class="rounded-md bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground"
+              href={smartDeckLink(suggestion)}>
+              Review in Deck Builder →
+            </a>
+          {/if}
           </div>
         </div>
         {#if optimization}

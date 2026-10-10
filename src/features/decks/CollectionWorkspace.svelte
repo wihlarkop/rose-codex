@@ -12,7 +12,7 @@
     type CollectionEnvelope,
   } from './collection';
 
-  let { cards }: { cards: BrowserCard[] } = $props();
+  let { cards, embedded = false }: { cards: BrowserCard[]; embedded?: boolean } = $props();
   const cardById = $derived(new Map(cards.map((card) => [card.id, card])));
   const allowedIds = $derived(new Set(cardById.keys()));
   let decks = $state<DeckRecord[]>([]);
@@ -204,12 +204,12 @@
 <section aria-label="Card collection">
   <header class="page-header">
     <div>
-      <h1 class="page-title">My Collection</h1>
+      <h1 class="page-title">{embedded ? 'Collection & Reserve' : 'My Collection'}</h1>
       <p class="page-description">
         Track cards you own, choose 40 for a duel, and keep the rest in reserve.
       </p>
     </div>
-    <a href="/decks/" class="text-link text-sm">Edit deck details →</a>
+    {#if !embedded}<a href="/decks/" class="text-link text-sm">Edit deck details →</a>{/if}
   </header>
   {#if !ready}
     <p>Loading your saved decks and collection…</p>
