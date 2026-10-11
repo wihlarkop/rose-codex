@@ -2,8 +2,8 @@
 
 **A companion for *Yu-Gi-Oh! The Duelists of the Roses* (PlayStation 2).**
 
-Find the card on your screen, explore fusion recipes, build a deck, and plan your
-next duel without leaving your browser. Rose Codex is designed to be comfortable
+Find cards by name, ID, and stats, explore fusion recipes, build a deck, and plan
+your next duel without leaving your browser. Rose Codex is designed to be comfortable
 beside [PCSX2](https://pcsx2.net/) on a desktop or a smaller split-screen window.
 
 **No account or game connection required.** It is a static, unofficial fan
@@ -23,7 +23,8 @@ bun run dev
 Open the local URL shown by Astro in your terminal. You can explore the library
 and planning tools without launching PCSX2.
 
-> The canonical game data and card images are committed to the repository.
+> The canonical game data is committed to the repository. Legacy image assets are
+> still present in Git while the redistribution cleanup is planned.
 > The first full production build additionally checks reproducibility against
 > pinned external data sources; see [data sources and provenance](docs/data-sources.md).
 
@@ -34,7 +35,7 @@ The six main navigation sections organize the tools around what you want to do:
 | Section | What it does |
 | --- | --- |
 | **Home** (`/`) | Search for a card or jump back into a saved local deck. |
-| **Cards** (`/cards/`) | Browse **854 numbered DotR cards** with original-game artwork, filters, quick lookup, and in-place card details. |
+| **Cards** (`/cards/`) | Browse **854 numbered DotR cards** with always-visible metadata, filters, and quick lookup. No card flip required. |
 | **Fusion** (`/fusion/`) | Work with a manual Hand and Summoning Area, discover direct/chain results, or find recipes for a specific card. |
 | **Decks** (`/decks/`) | Build and save decks, generate and review suggestions, practice draws, and manage your Collection/Reserve. |
 | **Duel** (`/duel/`) | Record visible battle information, review **conditional** next-move considerations, and track actual results in Battle History. |
@@ -47,7 +48,7 @@ DotR ID; pick a matching suggestion with the arrow keys and Enter, or choose
 **View all results** to open the filtered Card Library.
 
 The Card Library also has an adaptive toolbar for searching and filtering as you
-scroll. A card can be flipped in place to inspect its available metadata.
+scroll. Card name, ID, category, stats, and available notes are shown directly.
 
 ### Plan a fusion or deck
 
@@ -74,10 +75,9 @@ do not consume cards or modify your saved deck.
 - **Battle History:** record completed real duels, outcomes, turns, and notes;
   review descriptive results or export a JSON backup.
 
-The optional **Screenshot Assistant** can compare a manually cropped screenshot
-against local DotR artwork and suggest possible matches. It is experimental:
-you must confirm a candidate yourself. It is **not** automatic screen reading,
-model confidence, or reliable battle-state detection.
+**Screenshot Assistant is disabled in the text-first edition.** Without a
+licensed reference-art collection, visual matching cannot provide meaningful
+candidates. Use card name/ID lookup instead.
 
 ## Reference and existing links
 
@@ -114,11 +114,12 @@ sources. Incomplete effects, hidden cards, movement legality, unknown rewards,
 unverified leader abilities, and real win probabilities are **not** inferred.
 Battle History reflects only the results you manually record.
 
-**Where does the artwork come from?** The repository contains **853 local WebP
-card images** mapped to the 854-card catalog; missing or uncertain imagery is
-shown honestly rather than substituted with unrelated artwork. Many source
-records are not independently verified. See [card images](docs/card-images.md)
-and [data sources](docs/data-sources.md) for coverage and provenance.
+**Artwork and redistribution:** The text-first UI does **not display or load**
+card artwork and there is no optional artwork-import mode. However, **853
+legacy WebP files are still in the repository and Git history** during this
+migration. The public repository is **not yet artwork-free for distribution**.
+See [the migration and acceptance plan](docs/text-first-migration.md),
+[card images](docs/card-images.md), and [data sources](docs/data-sources.md).
 
 There is **no backend, login, database, analytics, hosted AI inference, or PCSX2
 read/write integration** in the application. The website may load its committed
