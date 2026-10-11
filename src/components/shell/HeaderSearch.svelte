@@ -3,13 +3,12 @@
   import Search from '@lucide/svelte/icons/search';
   import X from '@lucide/svelte/icons/x';
   import cards from '../../../data/canonical/cards.json';
-  import images from '../../../data/canonical/images.json';
   import { browserCards, filterCards } from '../../lib/dotr/browser';
-  import type { Card, ImageRecord } from '../../lib/dotr/model';
+  import type { Card } from '../../lib/dotr/model';
   import CardPickerOption from '../cards/CardPickerOption.svelte';
   import { cardSearchAllPath, cardSearchCardPath } from './card-search-navigation';
 
-  const library = browserCards(cards as Card[], images as ImageRecord[]);
+  const library = browserCards(cards as Card[]);
   let dialog = $state<HTMLDialogElement | null>(null);
   let input = $state<HTMLInputElement | null>(null);
   let query = $state('');
