@@ -707,12 +707,7 @@
                 {/if}
                 {#if inspectedCardId === group.card.id}
                   <div class="inspection">
-                    <p>
-                      Card metadata · #{String(group.card.id).padStart(
-                        3,
-                        '0',
-                      )}
-                    </p>
+                    <p>Card metadata · #{String(group.card.id).padStart(3, '0')}</p>
                     <CardInfoTile card={group.card} id={`deck-inspect-${group.card.id}`} />
                   </div>
                 {/if}
