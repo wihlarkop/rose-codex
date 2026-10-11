@@ -11,14 +11,13 @@ export interface CardFilters {
   attribute: string;
 }
 
-export function browserCards(cards: Card[], images: ImageRecord[]): BrowserCard[] {
-  const byId = new Map(images.map(image => [image.cardId, image]));
+export function browserCards(cards: Card[], _images: ImageRecord[]): BrowserCard[] {
+  // Preserve the current caller signature while migrating the image pipeline.
+  // The text-first application must not expose source artwork URLs to the browser.
   return cards.map(({ id, name, kind, monsterType, attribute, level, atk, def, deckCost, trapRange, magicClass, password, effect }) => {
-    const image = byId.get(id);
     return {
       id, name, kind, monsterType, attribute, level, atk, def, deckCost, trapRange, magicClass, password, effectText: effect.text,
-      image: image && ['verified', 'probable'].includes(image.status)
-        ? { url: `/cards/${image.file}`, width: image.width!, height: image.height! } : null,
+      image: null,
     };
   });
 }
