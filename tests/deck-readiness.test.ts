@@ -8,7 +8,7 @@ const sample = (id: number, deckCost: number | null, kind: BrowserCard['kind'] =
   monsterType: kind === 'monster' ? 'Warrior' : null,
   attribute: kind === 'monster' ? 'EARTH' : null,
   atk: kind === 'monster' ? 1000 : null, def: kind === 'monster' ? 1000 : null,
-  trapRange: null, magicClass: null, password: null, effectText: null, image: null,
+  trapRange: null, magicClass: null, password: null, effectText: null
 });
 
 test('strict campaign budget and leader confirmation do not create false legal claims', () => {

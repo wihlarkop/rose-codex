@@ -9,7 +9,7 @@ import { createFusionDiscovery, type FusionOccurrence } from '../src/lib/dotr/fu
 import { evaluateTacticalDuel } from '../src/lib/dotr/tactical-duel';
 
 const data = await loadCanonical();
-const library = browserCards(data.cards, data.images);
+const library = browserCards(data.cards);
 const byId = new Map(library.map(card => [card.id, card]));
 const blueEyes = byId.get(0)!;
 const partial: BattleSnapshot = {

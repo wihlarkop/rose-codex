@@ -11,7 +11,7 @@ import {
 import { loadCanonical } from '../scripts/data/canonical';
 
 const canonical = await loadCanonical();
-const cards = browserCards(canonical.cards, canonical.images);
+const cards = browserCards(canonical.cards);
 const byId = new Map(cards.map((card) => [card.id, card]));
 const discover = createFusionDiscovery(canonical.cards, canonical.fusions);
 

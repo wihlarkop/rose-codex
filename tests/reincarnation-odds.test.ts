@@ -8,7 +8,7 @@ import {
 } from '../src/lib/dotr/reincarnation-odds';
 
 const canonical = await loadCanonical();
-const cards = browserCards(canonical.cards, canonical.images);
+const cards = browserCards(canonical.cards);
 
 test('reward exclusion set is well formed and every permitted output resolves', () => {
   expect(REINCARNATION_EXCLUDED_REWARD_IDS).toHaveLength(167);
