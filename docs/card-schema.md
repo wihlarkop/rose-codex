@@ -76,6 +76,6 @@ Serpentine Princess (458) is `manual-review`: the source notes uncertainty about
 Validation rejects unknown/missing fields, card count/range gaps, duplicate IDs or
 names, enum errors, invalid numeric/null semantics, malformed passwords, unresolved
 references, empty/overlapping fusion predicates, missing starter groups/decks,
-non-40-card lists, and image manifests with wrong IDs/filenames. Available image
-records need provenance and existing local files. No reincarnation references
+non-40-card lists. No game-image records are part of the current dataset.
+No reincarnation references
 are imported; its proposed model and unresolved mechanics remain research only.

@@ -1,3 +1,8 @@
+> **Historical UX-v2 acceptance record.** Current text-first design
+> replaces all image/flip/screenshot behaviors described below.
+> See [DESIGN.md](../DESIGN.md) and [text-first acceptance](text-first-migration.md).
+> This archived document does not authorize reintroducing those features.
+
 # Rose Codex · UX v2 approved direction
 
 Status: **approved design direction**. Implementation ships in incremental, locally accepted PRs. This document distinguishes decisions from features already implemented.

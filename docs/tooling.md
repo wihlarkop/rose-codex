@@ -21,8 +21,7 @@ disabled only for those framework files. `astro check`, `svelte-check` and `tsc`
 remain authoritative for templates and types, through the unchanged `check` script.
 
 Generated outputs, canonical/raw data, public assets and copied UI primitives are
-excluded. The image gallery parser's one unnecessary regex escape was removed
-without changing its accepted characters.
+excluded. Former artwork acquisition scripts have been removed from the current tree.
 
 ## Format coverage
 
@@ -33,7 +32,7 @@ single quotes and LF match repository conventions; import, package-field and
 Tailwind sorting are disabled.
 
 To avoid a large formatting-only rewrite, the existing component, domain, style,
-data/image script and test directories are excluded explicitly in `.oxfmtrc.json`.
+data script and test directories are excluded explicitly in `.oxfmtrc.json`.
 Historical Markdown documents are also excluded. Those exclusions apply only to
 formatting; first-party source and tests still receive lint and type checks.
 Remove a specific exclusion when its owner intentionally adopts formatting.
@@ -44,7 +43,7 @@ bundled formatter. A temporary Svelte 5 runes probe was formatted and checked
 through Bun on Windows. Existing components retain their current formatting;
 new Svelte components outside the excluded paths receive formatting checks.
 
-Canonical JSON, raw captures/manifests, all public imagery, Bun's lockfile,
+Canonical JSON, raw research captures/manifests, Bun's lockfile,
 dependencies, build output and local worktrees are excluded from formatting.
 
 ## Verification
