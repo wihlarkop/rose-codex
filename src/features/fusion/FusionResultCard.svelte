@@ -1,5 +1,4 @@
 <script lang="ts">
-  import CardFlipTile from '../../components/cards/CardFlipTile.svelte';
   import FusionRecipeView from './FusionRecipeView.svelte';
   import type { BrowserCard } from '../../lib/dotr/browser';
   import type { FusionRecipe, FusionResult } from '../../lib/dotr/fusion-discovery';
@@ -34,11 +33,7 @@
   class="min-w-0 border-b border-border py-5 first:pt-0"
   aria-label={card.name + (special ? ' special combination' : ' fusion result')}
 >
-  <div class="grid min-w-0 gap-4 sm:grid-cols-[11rem_minmax(0,1fr)]">
-    <div class="w-44 max-w-full">
-      <CardFlipTile {card} id={(special ? 'special-result-' : 'fusion-result-') + card.id} />
-    </div>
-    <div class="min-w-0">
+  <div class="min-w-0">
       {#if recommended && !special}
         <p class="mb-1 mt-0 text-xs font-semibold text-primary">Recommended fusion</p>
       {/if}
@@ -100,6 +95,5 @@
           {/if}
         </details>
       {/if}
-    </div>
   </div>
 </article>
