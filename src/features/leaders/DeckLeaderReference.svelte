@@ -101,9 +101,9 @@
                 aria-label={'View Deck Leader reference for ' + card.name}
                 onclick={() => choose(card.id)}
               >
-                <span class="option-art"
-                  ><CardIdentity name={card.name} cardId={card.id} /></span
-                >
+                <span class="option-art">
+                  <CardIdentity name={card.name} cardId={card.id} />
+                </span>
                 <span class="option-description">
                   <strong>{card.name}</strong>
                   <small>#{String(card.id).padStart(3, '0')} · {card.monsterType}</small>

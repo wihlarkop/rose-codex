@@ -159,9 +159,9 @@
                 aria-label={'View recipes for ' + card.name}
                 onclick={() => selectResult(card.id)}
               >
-                <span class="artwork"
-                  ><CardIdentity name={card.name} cardId={card.id} /></span
-                >
+                <span class="artwork">
+                  <CardIdentity name={card.name} cardId={card.id} />
+                </span>
                 <span class="choice-name"
                   >{card.name}<small>#{String(card.id).padStart(3, '0')}</small></span
                 >
