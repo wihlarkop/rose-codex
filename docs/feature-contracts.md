@@ -6,24 +6,22 @@ contract is [Fusion Workspace](fusion-workspace.md). Deck contracts remain curre
 
 The authorized parallel wave adds `/fusion/` and `/decks/` to the existing static
 Astro app. Each route hosts one Svelte 5 island; all editing stays on that route.
-Keep the current warm neutral palette, compact controls and in-grid card flip.
+Use the current Charcoal & Rose text-first layout and compact controls.
 The existing Card Library is outside this change.
 
 ## Shared interfaces
 
 - Canonical `CardId` is the integer `Card.id` from `src/lib/dotr/model.ts`.
-  Names and image URLs are never identity. Runtime data imports only committed
+  Names and presentation labels are never identity. Runtime data imports only committed
   `data/canonical/`; never fetch data from external services in the browser.
-- `browserCards(cards, images)` supplies `BrowserCard[]` for presentation.
+- `browserCards(cards)` supplies `BrowserCard[]` for presentation.
   Feature islands accept `cards: BrowserCard[]`. Build an ID map once; unknown
   IDs must produce a visible error or a rejected import, never fabricated metadata.
 - `CardPicker` accepts `cards`, `onselect(cardId)`, optional `label` and
   `selectedCardId`. Reuse it without changing its shared implementation.
-- Reuse `CardArtwork` for screenshots and missing imagery and `CardFlipTile`
-  for image/metadata interaction. Its optional `onflip(cardId, next)` and
-  `flipped` are local presentation state. Instance controls stay outside its
-  interactive surface. Pass its optional `id` with a feature prefix plus the
-  occurrence's instance ID to keep repeated cards' DOM identities unique.
+- Reuse `CardIdentity` for compact card IDs/names and `CardInfoTile` for
+  directly visible metadata. Do not use image placeholders, flip controls,
+  or visual recognition; keep occurrence controls outside the identity display.
 - Workspace occurrences have unique `instanceId: string` and `cardId: CardId`.
   Use `crypto.randomUUID()` when adding an occurrence. Removing/moving one
   occurrence must not affect another copy of the same canonical card.
@@ -72,5 +70,5 @@ Do not infer CPU deck records or silently change starter deck semantics.
 
 Acceptance includes duplicate-instance isolation, picker keyboard behavior,
 zone moves/removal/order and chain failures; multiple-deck lifecycle, reload,
-JSON round trip, invalid imports and storage failure; honest missing imagery;
+JSON round trip, invalid imports and storage failure; clear text identities;
 and navigation to both workspaces without altering the library.

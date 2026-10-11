@@ -1,26 +1,31 @@
+> **Current direction (October 2026):** Rose Codex is text-first. No game artwork,
+> card flipping, local artwork import, or visual screenshot assistant. The remaining
+> sections document feature boundaries and historical implementation milestones.
+> [Design](DESIGN.md) and [migration plan](docs/text-first-migration.md) override
+> any older image-focused wording in this record.
+
 # Rose Codex
 
 ## Platform and purpose
 
 A static companion for desktop/laptop players of Yu-Gi-Oh! The Duelists of the
 Roses who want to recognize cards visually without memorizing names. The library
-supports local name/ID search, kind/type/attribute filters, authentic game imagery,
+supports local name/ID search, kind/type/attribute filters, direct card metadata,
 in-grid card metadata and keyboard-friendly visual quick lookup. Fusion planning
-and browser-local deck construction reuse the same canonical cards and images.
+and browser-local deck construction reuse the same canonical card facts.
 
 ## Constraints
 
 Astro, strict TypeScript, Svelte islands, Bun, Tailwind with selective local
 shadcn-svelte primitives, and canonical static data. DotR ID is identity. No
 backend, database, SSR, authentication, PWA, service worker, analytics, global
-state library or third-party browser data fetch. Images must be DotR-specific;
-prefer an honest missing image to incorrect art. Rights uncertainty remains
-explicit. Cloudflare deployment, the custom domain and R2 remain deferred.
+state library or third-party browser data fetch. No game artwork is distributed in the current checkout. Historical
+redistribution and source rights remain subject to separate review. Cloudflare deployment, the custom domain and R2 remain deferred.
 
 ## Presentation
 
 Warm-neutral, compact, subtle and desktop-oriented. Default tiles preserve the game
-screen and flip in place to show metadata. Card imagery and readable names
+metadata directly without flip. Card imagery and readable names
 dominate the visual hierarchy; all workspace interactions stay on their route.
 
 ## PCSX2 Save Inspector v1
@@ -56,30 +61,6 @@ DC before showing an explicit **Add as a new deck** step, without changing
 existing records until accepted. Existing deck JSON/storage schema remains
 unchanged. No backend, AI model, third-party data lookup or PCSX2 access.
 See `docs/smart-deck-coach.md`.
-
-## M5-09 · Screenshot Candidate Matcher (experimental)
-
-A collapsible Screenshot Assistant inside the existing /duel/
-route accepts an explicitly selected local screenshot, bounded
-to 15 MiB and 4096×4096 dimensions. The player chooses a
-single crop by pointer drag or editable 0–100 percentage fields.
-A fully local Canvas feature descriptor is compared against
-same-origin canonical DotR artwork URLs, optionally filtered by
-known card name or ID. At most five simultaneous reference
-fetches; scanning is cancelable, and individual decoded
-bitmaps are closed immediately after feature extraction.
-Results are bounded to the top 12 candidates and presented
-as relative visual similarity **not model confidence**.
-
-The player must explicitly Confirm a candidate into their
-manual Hand, Field or known visible enemy Monster, where the
-existing constraints and deterministic advisor are reused.
-No automatic card insertion, board inference, OCR, trained
-model, PCSX2 access, permanent screenshot storage or remote
-provider API. Unsupported/cropped/face-down/3D scenes can
-produce wrong ranks; screenshot-to-game-frame accuracy cannot
-be claimed until measured against real screenshots. See
-`docs/m5-screenshot-assistant.md`.
 
 ## M5-05/M5-06 · Manually reported Battle State and tactical decisions
 
@@ -298,6 +279,7 @@ The guide uses the original PS2 manual for controls (Chest → select a card →
 ## Evidence and open questions
 
 Canonical data covers 854 numbered records, IDs 000..853. Metadata is mostly
-single-source; effects remain untranscribed. 853 local DotR images exist, with
+single-source; effects remain untranscribed. The image assets were removed from the current source tree; older Git
+history and external copies may still contain them.
 #676 withheld for identity review; most image mappings remain probable rather
 than individually verified. Screenshot redistribution rights remain unresolved.

@@ -1,72 +1,48 @@
-# Rose Codex · Text-first migration and acceptance
+# Text-first migration · source cleanup and QA
 
-**Decision:** Remove game artwork from the *product experience* and from the
-future public distributable source. No card flip; no optional user-local artwork,
-remote hotlink, per-user artwork import, or automatic card image download.
+**Approved decision:** Keep Rose Codex text-first. No artwork, local artwork
+import, third-party image hotlinks, screenshots as reference material,
+card flip, or visual/AI screenshot assistance.
 
-**Status:** first PR is a **UI/feature prototype**, not a rights-cleared release.
-It intentionally does not rewrite Git history or delete the 853 existing
-`public/cards/*.webp` files. Those files and the old revisions remain publicly
-downloadable until a separate distribution-remediation decision is executed.
+## Scope implemented in PR #31
 
-## Accepted interaction design to verify
+- Show card facts directly in Card Library; present compact card ID/name in
+  search, Fusion, Decks, Duel, and Reference using CardIdentity.
+- Replace homepage image showcase with interactive factual card references.
+- Remove visual matcher, screenshot UI and tests, legacy flip component,
+  853 bundled WebPs, manifests, discovery/acquisition/conversion scripts,
+  and related validations.
+- Keep the 854-card factual catalog, Fusion rules, Deck Workshop, saved deck
+  selection, Duel Companion manual editing, and read-only PCSX2 save inspection.
+- Remove runtime image imports, URLs, and asset loading. Preserve independent
+  canonical card identity and existing storage formats.
 
-- Card Library: always-visible name, DotR ID, kind, monster type, attribute,
-  level where recorded, ATK/DEF, Deck Cost, password and optional effect
-  disclosure. **No flip** or image-unavailable placeholders.
-- Homepage: information-led featured card references from the canonical
-  catalog, retaining Charcoal & Rose, search, and task shortcuts.
-- Global and local card pickers: compact ID plates and names, not game art.
-- Fusion, Deck Workshop, Duel, Reference and opponent flows: retain data,
-  numbers, provenance labels, safe writes, keyboard behavior, and existing
-  handoffs. An Inspect action can expand facts; it does not flip an image.
-- Screenshot Assistant: not offered as a working tool. Its visual-matching
-  behavior depends on the unlicensed reference-image corpus.
-- Responsive: check full desktop, ~550px PCSX2 split-screen, narrow mobile,
-  System/Light/Dark modes, keyboard, focus, reduced motion.
+## Distribution caveat
 
-The browser card projection intentionally emits `image: null` so no artwork
-paths are used by the running UI. The temporary `CardArtwork` compatibility
-component displays card **identity text only**.
+Deleting image files from the **current Git tree** does **not** purge older
+commits/branches, forks, caches, prior downloadable archives, or hosted copies.
+The public repo was previously published with third-party screenshots.
+Before declaring legacy redistribution remediated, separately decide on
+backups, history rewrite or a clean new repository, and downstream effects.
+Neither operation guarantees deletion of independently held copies.
 
-## Mandatory work before releasing/distributing an artwork-free source
+Third-party code/data licensing also remains an independent review item.
+See [source attribution](data-sources.md).
 
-1. **Remove bundled assets:** all 853 committed WebP files, any other protected
-   images/icons/screenshots found in the project, and broken direct URLs.
-2. **Detach artwork pipeline:** stop importing `data/canonical/images.json`
-   into runtime pages, stop regenerating or validating third-party image
-   binaries in the default build and CI; update scripts/manifests/tests/docs
-   appropriately without changing canonical game identity/fusion facts.
-   Preserve attribution/evidence docs only as appropriately scoped references.
-3. **Review third-party rights:** a no-artwork UI does not itself clear licensing
-   questions around any copied prose/code/data. Retain the shadcn-derived MIT
-   notice and assess other dependencies separately.
-4. **History/hosting remediation:** decide between a carefully reviewed Git
-   history rewrite and a new clean public repository; take backups and plan
-   clone/fork/tag/PR effects first. Current public history, forks, caches,
-   downloads and prior builds cannot be assumed erased merely by a new commit.
-   Verify old tags/releases and hosted builds independently.
-5. **Check a fresh clone and final build:** the distributable checkout, Git
-   archives, output `dist/`, and generated data must contain no bundled DotR
-   image bytes and must not fetch them over the network.
-6. **Release gate:** CI success and user QA are prerequisites to merging the
-   text-first UI PR. Image-removal plus distribution review are prerequisites
-   before claiming a public release has no copyrighted bundled artwork.
+## QA checklist
 
-## Manual smoke matrix for this UI prototype
-
-| Area | Expectation |
+| Area | Expected behavior |
 | --- | --- |
-| Home | No game images; featured references show real IDs and stats, remain clickable |
-| Cards | No flip or blanks; 854 results; type and stats legible on narrow width |
-| Quick lookup | Keyboard search navigates and focuses the matching metadata tile |
-| Fusion | Workbench, results, recipes and saved-deck selection retain labels and actions |
-| Decks | Build, Inspect, Practice and Inventory use text identity and preserve saved state |
-| Duel | Saved deck choice, Hand/Field and Battle History behave as before; Screenshot Assistant absent |
-| Reference | Opponents, Deck Leaders and Reincarnation readable with ID text badges |
-| Themes & input | Light/Dark/System; 550px + mobile; visible focus; no sideways overflow |
+| Home | Fact-based featured card shortcuts, name/ID search; no game images |
+| Cards | 854 searchable cards, legible direct metadata and no flip |
+| Search | Ctrl/Cmd+K, quick lookup, keyboard and focus unchanged |
+| Fusion | Names, IDs, saved-deck material browsing, recipes, Undo |
+| Decks | Builder, details, Practice and Collection without visual placeholders |
+| Duel | Manual Hand/Field, saved-deck picker and Battle History; no screenshot matcher |
+| Reference | Opponents, leaders, reincarnation, save tools remain usable |
+| Data/build | Canonical data reproducible; no image downloads, imports or assets |
+| UI | Charcoal & Rose, System/Light/Dark, 550px and mobile responsive |
+| Persistence | No stale-write, import or storage-contract regressions |
 
-Do not tag or merge this branch purely because the product no longer visibly
-renders artwork: rights and distribution cleanup remain unfinished.
-
-See [the feature roadmap](roadmap.md) and [source rights review](card-images.md).
+Only merge after CI and local user QA. A separate history/hosting decision is
+required before claiming previous distribution of third-party art is resolved.
