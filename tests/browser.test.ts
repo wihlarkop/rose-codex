@@ -1,3 +1,4 @@
+import { existsSync, readdirSync } from 'node:fs';
 import { describe, expect, test } from 'bun:test';
 import cards from '../data/canonical/cards.json';
 import { browserCards, filterCards } from '../src/lib/dotr/browser';
@@ -33,5 +34,12 @@ describe('text-first library search and filters', () => {
     expect(filterCards(library, all)).toHaveLength(854);
   });
 
+
+  test('does not expose artwork fields or bundle card images in public assets', () => {
+    expect(library.every((card) => !Object.hasOwn(card, 'image'))).toBe(true);
+    const publicPath = new URL('../public/', import.meta.url);
+    const files = existsSync(publicPath) ? readdirSync(publicPath, { recursive: true }) : [];
+    expect(files.filter((name) => /\.(webp|png|jpe?g|gif|avif)$/i.test(name))).toEqual([]);
+  });
 
 });

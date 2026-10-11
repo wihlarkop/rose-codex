@@ -296,7 +296,7 @@
         <ul class="card-rows">
           {#each addMatches as card (card.id)}
             <li class="card-row">
-              <div class="artwork">
+              <div class="identity">
                 <CardIdentity name={card.name} cardId={card.id} />
               </div>
               <span class="card-name"
@@ -334,7 +334,7 @@
         <ul class="card-rows">
           {#each rows as row (row.id)}
             <li class="card-row surface">
-              <div class="artwork">
+              <div class="identity">
                 {#if row.card}
                   <CardIdentity name={row.card.name} cardId={row.id} />
                 {/if}
@@ -482,11 +482,11 @@
     padding: 0.55rem 0.7rem;
     min-width: 0;
   }
-  .artwork {
+  .identity {
     width: 3rem;
     flex: 0 0 3rem;
   }
-  .artwork :global(.card-identity) {
+  .identity :global(.card-identity) {
     width: 3rem;
     height: 2.4rem;
     border-radius: 4px;

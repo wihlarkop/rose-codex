@@ -141,7 +141,7 @@
           </div>
         {:else}
           <div class="mt-4 rounded-md border border-dashed border-border p-5 text-center text-sm text-muted-foreground">
-            Select a card to inspect its Deck Cost and artwork. No cards are consumed here.
+            Select a card to inspect its Deck Cost and recorded metadata. No cards are consumed here.
           </div>
         {/if}
       </section>

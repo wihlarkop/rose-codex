@@ -159,7 +159,7 @@
                 aria-label={'View recipes for ' + card.name}
                 onclick={() => selectResult(card.id)}
               >
-                <span class="artwork">
+                <span class="identity">
                   <CardIdentity name={card.name} cardId={card.id} />
                 </span>
                 <span class="choice-name"
@@ -268,7 +268,7 @@
                       {#each [left, right] as card, index}
                         {#if index === 1}<span class="plus" aria-hidden="true">+</span>{/if}
                         <div class="ingredient">
-                          <span class="artwork">
+                          <span class="identity">
                             <CardIdentity name={card.name} cardId={card.id} />
                           </span>
                           <div class="ingredient-text">
@@ -448,14 +448,14 @@
     background: var(--selected);
     border-color: var(--primary);
   }
-  .artwork {
+  .identity {
     display: block;
     width: 3rem;
     flex: 0 0 3rem;
     border-radius: 4px;
     overflow: hidden;
   }
-  .artwork :global(.card-identity) {
+  .identity :global(.card-identity) {
     width: 100%;
   }
   .choice-name,

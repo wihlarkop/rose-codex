@@ -103,7 +103,7 @@
           onclick={() => (selectedLeaderId = choice.leaderId)}
         >
           {#if choice.leader}
-            <div class="leader-artwork">
+            <div class="leader-identity">
               <CardIdentity name={choice.leader.name} cardId={choice.leaderId} />
             </div>
             <span class="leader-description">
@@ -157,7 +157,7 @@
             {#each previewRows as row (row.id)}
               <li>
                 {#if row.card}
-                  <div class="preview-artwork">
+                  <div class="preview-identity">
                     <CardIdentity name={row.card.name} cardId={row.id} />
                   </div>
                   <span class="preview-card-name">{row.card.name}</span>
@@ -251,11 +251,11 @@
     border-color: var(--primary);
     background: var(--selected);
   }
-  .leader-artwork {
+  .leader-identity {
     width: 4rem;
     flex-shrink: 0;
   }
-  .leader-artwork :global(.card-identity) {
+  .leader-identity :global(.card-identity) {
     width: 4rem;
     height: 3.2rem;
     border-radius: 4px;
@@ -331,11 +331,11 @@
   .preview-scroll li:last-child {
     border-bottom: none;
   }
-  .preview-artwork {
+  .preview-identity {
     width: 2.8rem;
     flex-shrink: 0;
   }
-  .preview-artwork :global(.card-identity) {
+  .preview-identity :global(.card-identity) {
     width: 2.8rem;
     height: 2.2rem;
     border-radius: 4px;
