@@ -7,7 +7,7 @@ import type { Card, ImageRecord } from '../src/lib/dotr/model';
 const library = browserCards(cards as Card[], images as ImageRecord[]);
 const all = { query: '', kind: '', monsterType: '', attribute: '' };
 
-describe('visual library search and filters', () => {
+describe('text-first library search and filters', () => {
   test('projects canonical inspect metadata without fusion payload', () => {
     expect(library).toHaveLength(854);
     expect(library[0]).not.toHaveProperty('powerUpCardIds');
@@ -33,14 +33,13 @@ describe('visual library search and filters', () => {
     expect(filterCards(library, { ...all, kind: 'trap', attribute: 'LIGHT' })).toHaveLength(0);
     expect(filterCards(library, all)).toHaveLength(854);
   });
-  test('never exposes an external URL or uncertain image as available', () => {
+  test('never exposes game artwork in the public card projection', () => {
+    expect(library.every((card) => card.image === null)).toBe(true);
     const source = structuredClone(images) as ImageRecord[];
     source[21]!.status = 'manual-review';
-    expect(browserCards(cards as Card[], source)[21]!.image).toBeNull();
+    expect(browserCards(cards as Card[], source).every((card) => card.image === null)).toBe(true);
+    expect(library[65]!.id).toBe(65);
+    expect(library[676]!.id).toBe(676);
   });
-  test('uses the authentic screenshot presentation for every available image', () => {
-    expect(library[65]!.image).toMatchObject({ url: expect.any(String), width: 273, height: 302 });
-    expect(library[65]!.image).not.toHaveProperty('compactScreen');
-    expect(library[676]!.image).toBeNull();
-  });
+
 });
