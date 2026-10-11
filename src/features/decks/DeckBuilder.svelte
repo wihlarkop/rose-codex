@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
   import CardArtwork from '../../components/cards/CardArtwork.svelte';
-  import CardFlipTile from '../../components/cards/CardFlipTile.svelte';
+  import CardInfoTile from '../../components/cards/CardInfoTile.svelte';
   import StarterDeckExplorer from './StarterDeckExplorer.svelte';
   import DeckReadinessAdvisor from '../../components/DeckReadinessAdvisor.svelte';
   import { parseSmartDeckLink, type PendingCoachDeck } from '../../lib/dotr/smart-deck-link';
@@ -708,12 +708,12 @@
                 {#if inspectedCardId === group.card.id}
                   <div class="inspection">
                     <p>
-                      Select the card image to see its metadata. · #{String(group.card.id).padStart(
+                      Card metadata · #{String(group.card.id).padStart(
                         3,
                         '0',
                       )}
                     </p>
-                    <CardFlipTile card={group.card} id={`deck-inspect-${group.card.id}`} />
+                    <CardInfoTile card={group.card} id={`deck-inspect-${group.card.id}`} />
                   </div>
                 {/if}
               </article>
