@@ -2,7 +2,6 @@
   import { onMount } from 'svelte';
   import CardArtwork from './cards/CardArtwork.svelte';
   import BattleDecisionPanel from './BattleDecisionPanel.svelte';
-  import ScreenshotAssistant from './ScreenshotAssistant.svelte';
   import CardPicker from './cards/CardPicker.svelte';
   import SavedDuelDeckCards from './SavedDuelDeckCards.svelte';
   import type { BrowserCard } from '../lib/dotr/browser';
@@ -97,7 +96,7 @@
   <details class="duel-limits">
     <summary>Manual planner · Read-only, conditional guidance</summary>
     <p>This companion cannot confirm reachability, hidden traps, effects, Deck Leader abilities or a legal attack.
-       A positive ATK comparison does not prove a victory. Enter only information you can observe in PCSX2.</p>
+       A positive ATK comparison does not prove a victory. Enter only information you can observe in PCSX2. Screenshot matching is unavailable in the text-first edition; use the card pickers to enter names or IDs.</p>
   </details>
 
   <div class="duel-panels">
@@ -337,18 +336,7 @@
       </details>
     </div>
   </div>
-  <ScreenshotAssistant {cards} onconfirm={(id, destination) => {
-    if (!byId.has(id)) return false;
-    if (destination === 'enemy') {
-      if (byId.get(id)?.kind !== 'monster') return false;
-      selectEnemy(id);
-      return true;
-    }
-    if (destination === 'hand' && hand.length >= 5) return false;
-    if (destination === 'summoning' && field.length >= 8) return false;
-    add(id, destination === 'hand' ? 'hand' : 'summoning');
-    return true;
-  }} />
+
 </section>
 
 <style>
