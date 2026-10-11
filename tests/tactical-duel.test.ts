@@ -5,7 +5,7 @@ import { createFusionDiscovery, type FusionOccurrence } from '../src/lib/dotr/fu
 import { evaluateTacticalDuel } from '../src/lib/dotr/tactical-duel';
 
 const data = await loadCanonical();
-const cards = browserCards(data.cards, data.images);
+const cards = browserCards(data.cards);
 const byId = new Map(cards.map(card => [card.id, card]));
 const discover = createFusionDiscovery(data.cards, data.fusions);
 const selected: FusionOccurrence[] = [

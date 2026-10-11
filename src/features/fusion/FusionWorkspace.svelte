@@ -6,7 +6,7 @@
   import CircleHelp from '@lucide/svelte/icons/circle-help';
   import Sparkles from '@lucide/svelte/icons/sparkles';
   import CardPicker from '../../components/cards/CardPicker.svelte';
-  import CardArtwork from '../../components/cards/CardArtwork.svelte';
+  import CardIdentity from '../../components/cards/CardIdentity.svelte';
   import FusionResultCard from './FusionResultCard.svelte';
   import FusionEncyclopedia from './FusionEncyclopedia.svelte';
   import { createRecipeHand } from './recipe-handoff';
@@ -424,12 +424,7 @@
                     >
                       <div class="flex min-w-0 items-start gap-3">
                         <div class="w-12 shrink-0 overflow-hidden rounded-sm">
-                          <CardArtwork
-                            image={card.image}
-                            name={card.name}
-                            cardId={card.id}
-                            decorative
-                          />
+                          <CardIdentity name={card.name} cardId={card.id} />
                         </div>
                         <div class="min-w-0 flex-1">
                           <p class="m-0 break-words text-sm font-semibold">{card.name}</p>
@@ -537,12 +532,7 @@
                   {@const entered = occurrences.filter((card) => card.cardId === entry.id).length}
                   <li class="flex min-w-0 flex-wrap items-center gap-2 border-b border-border py-2">
                     <div class="w-12 shrink-0 overflow-hidden rounded-sm">
-                      <CardArtwork
-                        image={entry.card.image}
-                        name={entry.card.name}
-                        cardId={entry.id}
-                        decorative
-                      />
+                      <CardIdentity name={entry.card.name} cardId={entry.id} />
                     </div>
                     <div class="min-w-0 flex-1 text-xs">
                       <strong class="block break-words">{entry.card.name}</strong>

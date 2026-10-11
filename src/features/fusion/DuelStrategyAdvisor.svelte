@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CardArtwork from '../../components/cards/CardArtwork.svelte';
+  import CardIdentity from '../../components/cards/CardIdentity.svelte';
   import CardPicker from '../../components/cards/CardPicker.svelte';
   import {
     DUEL_TERRAINS,
@@ -75,12 +75,7 @@
       {#if opponent}
         <div class="opponent-card mt-2">
           <div class="w-12 shrink-0 overflow-hidden rounded-sm">
-            <CardArtwork
-              image={opponent.image}
-              name={opponent.name}
-              cardId={opponent.id}
-              decorative
-            />
+            <CardIdentity name={opponent.name} cardId={opponent.id} />
           </div>
           <div class="min-w-0">
             <strong>{opponent.name}</strong>
@@ -136,7 +131,7 @@
         {@const card = byId.get(play.cardId)!}
         <li class="play-row">
           <div class="w-12 shrink-0 overflow-hidden rounded-sm">
-            <CardArtwork image={card.image} name={card.name} cardId={card.id} decorative />
+            <CardIdentity name={card.name} cardId={card.id} />
           </div>
           <div class="min-w-0 flex-1">
             <div class="flex flex-wrap items-baseline gap-2">

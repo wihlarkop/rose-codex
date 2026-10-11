@@ -1,10 +1,10 @@
 <script lang="ts">
-  import CardArtwork from './cards/CardArtwork.svelte';
+  import CardIdentity from './cards/CardIdentity.svelte';
   import type { BrowserCard } from '../lib/dotr/browser';
   import type { StrategyPlaybook } from '../lib/dotr/deck-strategy';
 
-  let { playbook, images }: { playbook: StrategyPlaybook; images: BrowserCard[] } = $props();
-  const cardById = $derived(new Map(images.map(card => [card.id, card])));
+  let { playbook, library }: { playbook: StrategyPlaybook; library: BrowserCard[] } = $props();
+  const cardById = $derived(new Map(library.map(card => [card.id, card])));
   const name = (id: number): string =>
     cardById.get(id)?.name ?? '#' + id.toString().padStart(3, '0');
 </script>
@@ -50,7 +50,7 @@
             <li class="flex min-w-0 gap-2 rounded-md border border-border bg-elevated p-2">
               {#if enemy}
                 <div class="w-11 shrink-0 overflow-hidden rounded-sm">
-                  <CardArtwork image={enemy.image} name={enemy.name} cardId={enemy.id} decorative />
+                  <CardIdentity name={enemy.name} cardId={enemy.id} />
                 </div>
               {/if}
               <div class="min-w-0 text-xs leading-relaxed">

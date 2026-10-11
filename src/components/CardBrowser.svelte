@@ -5,7 +5,7 @@
   import XIcon from '@lucide/svelte/icons/x';
   import { Button } from './ui/button';
   import { Input } from './ui/input';
-  import CardFlipTile from './cards/CardFlipTile.svelte';
+  import CardInfoTile from './cards/CardInfoTile.svelte';
   import CardQuickLookup from './cards/CardQuickLookup.svelte';
   import { ATTRIBUTES, MONSTER_TYPES } from '../lib/dotr/model';
   import { filterCards, type BrowserCard } from '../lib/dotr/browser';
@@ -16,7 +16,6 @@
   let kind = $state('');
   let monsterType = $state('');
   let attribute = $state('');
-  let flippedIds = $state(new Set<number>());
   let quickLookupCardId = $state<number | null>(null);
   let compact = $state(false);
   let filtersOpen = $state(false);
@@ -86,16 +85,10 @@
 
   function clear() { query = ''; kind = ''; monsterType = ''; attribute = ''; }
   function changeKind() { if (kind && kind !== 'monster') { monsterType = ''; attribute = ''; } }
-  function setFlipped(cardId: number, next: boolean) {
-    const updated = new Set(flippedIds);
-    if (next) updated.add(cardId); else updated.delete(cardId);
-    flippedIds = updated;
-  }
   async function locateCard(cardId: number) {
     query = String(cardId).padStart(3, '0');
     kind = ''; monsterType = ''; attribute = '';
     quickLookupCardId = cardId;
-    flippedIds = new Set([cardId]);
     await tick();
     const target = document.getElementById('library-card-' + String(cardId).padStart(3, '0'));
     target?.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
@@ -107,7 +100,7 @@
   <header class="page-header">
     <div>
       <h1 class="page-title">Card library</h1>
-      <p class="page-description">Find the card in front of you. All 854 cards from The Duelists of the Roses.</p>
+      <p class="page-description">Look up names, IDs, types, and stats for all 854 Duelists of the Roses cards. Metadata is visible without flipping.</p>
     </div>
     <CardQuickLookup {cards} selectedCardId={quickLookupCardId} onselect={locateCard} />
   </header>
@@ -190,8 +183,7 @@
   {:else}
     <ul class="card-grid">
       {#each results as card (card.id)}
-        <li><CardFlipTile {card} ownedCopies={ownedCopies === null ? null : (ownedCopies[String(card.id)] ?? 0)}
-          flipped={flippedIds.has(card.id)} onflip={setFlipped} /></li>
+        <li><CardInfoTile {card} ownedCopies={ownedCopies === null ? null : (ownedCopies[String(card.id)] ?? 0)} /></li>
       {/each}
     </ul>
   {/if}
@@ -235,7 +227,7 @@
     gap: var(--space-3); margin-block: var(--space-4); color: var(--muted-foreground); font-size: .875rem; }
   .collection-context { margin: 0; font-size: .75rem; }
   .collection-context a { color: var(--primary); text-decoration: underline; }
-  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
     gap: var(--space-4); padding: 0; margin: 0; list-style: none; }
   .empty-results { text-align: center; padding: 4rem var(--space-4); background: var(--surface); border-radius: var(--radius); }
   @container (max-width: 1100px) {

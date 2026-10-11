@@ -31,8 +31,6 @@ evidence, not blanket accuracy or permission to reuse their implementation.
 | [ladd28 research report](https://www.reddit.com/r/yugioh/comments/wkjwqu/i_made_some_gameshark_codes_to_make_duelists_of/) | Primary community reverse-engineering claim about eligibility. No cheat codes/implementation/table copied; not a validation of distribution constants. |
 | [KeyBlade999 DotR walkthrough (2012)](https://gamefaqs.gamespot.com/ps2/589455-yu-gi-oh-the-duelists-of-the-roses/faqs/63791) | Single community walkthrough used for 20 Red/White story encounters: factual names, locations, Deck Leaders, total enemy Deck Costs, board terrain notes, and selected example deck cards. Research may contain typos or inaccuracies and has not been compared against a game binary. We did not import complete lists, prose strategies, reward tables, or any implementation code. Source attribution and caution appear in-app. |
 | [CloudStryfe guide](https://gamefaqs.gamespot.com/ps2/589455-yu-gi-oh-the-duelists-of-the-roses/faqs/22437), [Neoseeker card-guide index](https://www.neoseeker.com/yugioh-duelistrose/faqs/131290-yu-gi-oh-dotr-card-a.html) | Established author guide / secondary host. Older fusion heuristics illustrate why thresholds should not override extracted outcomes. Neoseeker inspected via search metadata only. No guide prose/data imported or reuse license relied upon. |
-| [YGOPRODeck API guide](https://ygoprodeck.com/api-guide/) | First-party provider documentation for generic artwork fallback. Its identifiers are not DotR IDs; no API dataset/images imported. Rehosting advice is not an artwork license. |
-| [Blue-Eyes image sample](https://ms.yugipedia.com/7/71/BlueEyesWhiteDragon-DOR-EN-VG.png), [file-detail page](https://yugipedia.com/wiki/File:BlueEyesWhiteDragon-DOR-EN-VG.png) | One temporary screenshot inspected; file-detail rights metadata blocked. No image committed. Quality/completeness/rights unresolved; see card-images.md. |
 
 ## Technical sources inspected
 
@@ -57,59 +55,25 @@ evidence, not blanket accuracy or permission to reuse their implementation.
 
 ## Capture, reuse and confidence policy
 
-### M1 image sources
+### Current text-only reuse boundary
 
-The [public gallery parse API](https://yugipedia.com/api.php?action=parse&page=Gallery_of_Yu-Gi-Oh%21_The_Duelists_of_the_Roses_cards&prop=wikitext%7Cimages&format=json)
-and MediaWiki `query/imageinfo` API were inspected directly. These are wiki
-research/file metadata, not first-party game or rights-holder sources. Gallery
-revision 5222290 supplies 854 explicit ID/name/file associations; imageinfo
-supplies 853 original URLs, source dimensions and exposed license/usage fields.
-The normalized per-ID capture, exact queries and limitations are recorded in
-image-discovery.json, image-discovery-report.md and card-images.md. Historical
-`parse/oldid` returned HTTP 403; current-page discovery succeeded and checks its
-revision. No access challenge was solved or bypassed.
+The shipped source contains canonical card, fusion and starter facts derived
+from pinned research inputs. External authored program code, effect prose,
+game screenshots and the former image pipeline are not included.
+The repository used to contain third-party screenshots: deleting files from
+current commits does **not** remove historical or redistributed copies.
+No claim of blanket rights to those older assets is made.
 
-M1 downloads these public original URLs through separate development tooling,
-retains ignored originals, and commits optimized accepted DotR screenshots.
-Image 065's gallery file has no metadata. Its
-[DotR card page](https://yugipedia.com/wiki/Necrolancer_the_Timelord_(DOR))
-explicitly provides number 065 and a DOR-NA-VG image; public imageinfo resolves
-[the reviewed original](https://ms.yugipedia.com//2/23/NecrolancertheTimelord-DOR-NA-VG.png).
-The override records that association and the visual review binds name/NUMBER to
-its SHA-256. 676's portrait source is withheld for review.
-Individual source URLs/digests and optimized-byte digests are preserved in
-image-assets.json/canonical images.json. Visually checked identities are bound
-to original-byte hashes in image-reviews.json. Most image content remains
-explicitly probable, not individually verified. No modern-artwork fallback,
-game binary, decorative Konami assets or wiki prose is imported.
+`data/manifests/sources.json` records pinned source revisions and SHA-256
+hashes for two research input files, used to reproduce factual JSON.
+Raw research sources are ignored by Git and not executed as JavaScript.
+Generated facts and first-party algorithms are distinct from copyrighted
+source implementations; their provenance and confidence are documented here.
 
-Exposed image license/usage metadata did not establish a redistribution grant.
-Optimizing/rehosting does not create one; game imagery is not declared CC-licensed.
-See card-images.md for the repository decision and remaining rights review.
-Technical conversion references are official
-[Sharp installation](https://sharp.pixelplumbing.com/install/),
-[WebP/metadata options](https://sharp.pixelplumbing.com/api-output/) and
-[Bun Node-API support](https://bun.sh/docs/runtime/node-api). Sharp 0.35.5 is pinned
-as a direct dev dependency rather than relying on Astro's optional transitive one.
-
-`data/manifests/sources.json` records revision, URLs by path, licensing status and
-SHA-256 bytes for the two acquisition inputs. Raw source stays ignored. Generated
-JSON contains selected factual game fields and derived factual ID relationships;
-it does not redistribute community implementation or wholesale descriptions.
-Pure TypeScript algorithms and normalization/compression code are first-party.
-
-This distinction is a reuse decision, not a finding that every third-party
-collection has a permissive license. No blanket license is asserted for game
-data, artwork, or unlicensed reference code. Implementation code is not copied;
-M1's public game-screenshot acquisition and unresolved-rights repository decision
-are explicitly documented above and in card-images.md. All omitted material is
-listed above; no unexplained scraped dataset enters the browser runtime.
-
-Source agreement may reflect shared research. Region differences, 671's missing
-stats, incomplete fusion tags, untranscribed effects, starter-list warning,
-reincarnation discrepancies and random-transformation pools remain explicit.
-Validation proves structure/reference integrity and reproduction; it does not
-prove every fact against the original PS2 game.
+Source agreement may reflect shared research. Region differences, card 671's
+missing stats, untranscribed effects, ambiguous starters, and mechanics
+disagreements remain explicit. Validation proves structural consistency,
+not every fact against the game itself.
 
 ## PS2 memory card research (2026-10-10)
 

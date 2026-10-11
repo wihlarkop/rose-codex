@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import CardArtwork from '../../components/cards/CardArtwork.svelte';
+  import CardIdentity from '../../components/cards/CardIdentity.svelte';
   import { filterCards, type BrowserCard } from '../../lib/dotr/browser';
   import { DECK_STORAGE_KEY, validateDeckEnvelope, type DeckRecord } from './model';
   import {
@@ -296,8 +296,8 @@
         <ul class="card-rows">
           {#each addMatches as card (card.id)}
             <li class="card-row">
-              <div class="artwork">
-                <CardArtwork image={card.image} name={card.name} cardId={card.id} decorative />
+              <div class="identity">
+                <CardIdentity name={card.name} cardId={card.id} />
               </div>
               <span class="card-name"
                 >{card.name} <small>#{String(card.id).padStart(3, '0')}</small></span
@@ -334,14 +334,9 @@
         <ul class="card-rows">
           {#each rows as row (row.id)}
             <li class="card-row surface">
-              <div class="artwork">
+              <div class="identity">
                 {#if row.card}
-                  <CardArtwork
-                    image={row.card.image}
-                    name={row.card.name}
-                    cardId={row.id}
-                    decorative
-                  />
+                  <CardIdentity name={row.card.name} cardId={row.id} />
                 {/if}
               </div>
               <span class="card-name"
@@ -487,11 +482,11 @@
     padding: 0.55rem 0.7rem;
     min-width: 0;
   }
-  .artwork {
+  .identity {
     width: 3rem;
     flex: 0 0 3rem;
   }
-  .artwork :global(.card-artwork) {
+  .identity :global(.card-identity) {
     width: 3rem;
     height: 2.4rem;
     border-radius: 4px;

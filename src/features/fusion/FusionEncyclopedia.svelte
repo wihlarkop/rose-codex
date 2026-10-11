@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import CardArtwork from '../../components/cards/CardArtwork.svelte';
+  import CardIdentity from '../../components/cards/CardIdentity.svelte';
   import { filterCards, type BrowserCard } from '../../lib/dotr/browser';
   import { buildFusionEncyclopedia, missingOwnedCopies } from '../../lib/dotr/fusion-encyclopedia';
   import type { FusionData } from '../../lib/dotr/model';
@@ -159,14 +159,9 @@
                 aria-label={'View recipes for ' + card.name}
                 onclick={() => selectResult(card.id)}
               >
-                <span class="artwork"
-                  ><CardArtwork
-                    image={card.image}
-                    name={card.name}
-                    cardId={card.id}
-                    decorative
-                  /></span
-                >
+                <span class="identity">
+                  <CardIdentity name={card.name} cardId={card.id} />
+                </span>
                 <span class="choice-name"
                   >{card.name}<small>#{String(card.id).padStart(3, '0')}</small></span
                 >
@@ -202,13 +197,8 @@
     <div class="results-area">
       {#if selected}
         <section class="surface result-summary" aria-label="Selected result card">
-          <div class="selected-artwork">
-            <CardArtwork
-              image={selected.image}
-              name={selected.name}
-              cardId={selected.id}
-              decorative
-            />
+          <div class="selected-card">
+            <CardIdentity name={selected.name} cardId={selected.id} />
           </div>
           <div class="selected-info">
             <span class="eyebrow">Selected fusion result</span>
@@ -278,13 +268,8 @@
                       {#each [left, right] as card, index}
                         {#if index === 1}<span class="plus" aria-hidden="true">+</span>{/if}
                         <div class="ingredient">
-                          <span class="artwork">
-                            <CardArtwork
-                              image={card.image}
-                              name={card.name}
-                              cardId={card.id}
-                              decorative
-                            />
+                          <span class="identity">
+                            <CardIdentity name={card.name} cardId={card.id} />
                           </span>
                           <div class="ingredient-text">
                             <strong>{card.name}</strong>
@@ -463,14 +448,14 @@
     background: var(--selected);
     border-color: var(--primary);
   }
-  .artwork {
+  .identity {
     display: block;
     width: 3rem;
     flex: 0 0 3rem;
     border-radius: 4px;
     overflow: hidden;
   }
-  .artwork :global(.card-artwork) {
+  .identity :global(.card-identity) {
     width: 100%;
   }
   .choice-name,
@@ -529,7 +514,7 @@
     min-width: 0;
     padding: 1rem;
   }
-  .selected-artwork {
+  .selected-card {
     flex: 0 0 8rem;
     width: 8rem;
     overflow: hidden;
@@ -693,7 +678,7 @@
     .result-summary {
       align-items: flex-start;
     }
-    .selected-artwork {
+    .selected-card {
       width: 5.5rem;
       flex-basis: 5.5rem;
     }

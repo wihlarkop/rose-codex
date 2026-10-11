@@ -2,7 +2,7 @@
   import type { BrowserCard } from '../../lib/dotr/browser';
   import { suggestFusionPlays } from '../../lib/dotr/fusion-advisor';
   import type { FusionDiscovery, FusionRecipe } from '../../lib/dotr/fusion-discovery';
-  import CardArtwork from '../../components/cards/CardArtwork.svelte';
+  import CardIdentity from '../../components/cards/CardIdentity.svelte';
   import FusionRecipeView from './FusionRecipeView.svelte';
 
   let {
@@ -40,7 +40,7 @@
         <li class="min-w-0 rounded-md border border-border p-3">
           <div class="mb-2 flex min-w-0 items-start gap-3">
             <div class="w-16 shrink-0 overflow-hidden rounded-sm">
-              <CardArtwork image={card.image} name={card.name} cardId={card.id} decorative />
+              <CardIdentity name={card.name} cardId={card.id} />
             </div>
             <div class="min-w-0 flex-1">
               <p class="m-0 text-xs font-semibold text-primary">

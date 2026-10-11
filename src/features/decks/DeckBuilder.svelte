@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
-  import CardArtwork from '../../components/cards/CardArtwork.svelte';
-  import CardFlipTile from '../../components/cards/CardFlipTile.svelte';
+  import CardIdentity from '../../components/cards/CardIdentity.svelte';
+  import CardInfoTile from '../../components/cards/CardInfoTile.svelte';
   import StarterDeckExplorer from './StarterDeckExplorer.svelte';
   import DeckReadinessAdvisor from '../../components/DeckReadinessAdvisor.svelte';
   import { parseSmartDeckLink, type PendingCoachDeck } from '../../lib/dotr/smart-deck-link';
@@ -616,8 +616,8 @@
           {#each visibleMatches as card, index (card.id)}
             <li class="search-result" class:active={index === selectedSearchIndex}>
               <div class="search-match">
-                <div class="search-artwork">
-                  <CardArtwork image={card.image} name={card.name} cardId={card.id} decorative />
+                <div class="search-identity">
+                  <CardIdentity name={card.name} cardId={card.id} />
                 </div>
                 <div class="search-text">
                   <strong>{card.name}</strong>
@@ -649,12 +649,7 @@
           <div class="card-list">
             {#each cardGroups as group (group.card.id)}
               <article class="card-row">
-                <CardArtwork
-                  image={group.card.image}
-                  name={group.card.name}
-                  cardId={group.card.id}
-                  decorative
-                />
+                <CardIdentity name={group.card.name} cardId={group.card.id} />
                 <div class="card-info">
                   <strong>{group.card.name}</strong><span
                     >#{String(group.card.id).padStart(3, '0')}</span
@@ -707,13 +702,8 @@
                 {/if}
                 {#if inspectedCardId === group.card.id}
                   <div class="inspection">
-                    <p>
-                      Select the card image to see its metadata. · #{String(group.card.id).padStart(
-                        3,
-                        '0',
-                      )}
-                    </p>
-                    <CardFlipTile card={group.card} id={`deck-inspect-${group.card.id}`} />
+                    <p>Card metadata · #{String(group.card.id).padStart(3, '0')}</p>
+                    <CardInfoTile card={group.card} id={`deck-inspect-${group.card.id}`} />
                   </div>
                 {/if}
               </article>
@@ -1055,11 +1045,11 @@
     gap: 0.6rem;
     min-width: 10rem;
   }
-  .search-artwork {
+  .search-identity {
     width: 3rem;
     flex-shrink: 0;
   }
-  .search-artwork :global(.card-artwork) {
+  .search-identity :global(.card-identity) {
     width: 3rem;
     height: 2.4rem;
     border-radius: 4px;
@@ -1115,7 +1105,7 @@
     border-radius: var(--radius);
     background: var(--surface);
   }
-  .card-row > :global(.card-artwork) {
+  .card-row > :global(.card-identity) {
     width: 3.5rem;
     height: 2.8rem;
     border-radius: 4px;
@@ -1304,7 +1294,7 @@
       grid-template-columns: 2.8rem minmax(0, 1fr) auto;
       gap: 0.45rem;
     }
-    .card-row > :global(.card-artwork) {
+    .card-row > :global(.card-identity) {
       width: 2.8rem;
       height: 2.3rem;
     }

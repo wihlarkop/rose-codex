@@ -11,14 +11,14 @@ local visual acceptance, then merge.
 
 ## Completed baseline · candidate v1.0.0
 
-- **Card Library:** 854 canonical IDs, 853 local WebP assets, quick lookup,
-  card flip, search/filters and adaptive toolbar.
+- **Card Library:** 854 canonical IDs, text-first metadata, quick lookup,
+  search/filters and adaptive toolbar.
 - **Fusion:** direct/chain discovery, recipe search, conditional suggestions,
   manual Hand/Field instances and explicit handoffs.
 - **Deck Workshop:** saved deck editing, generator/optimizer proposals,
   name-based starter preview, practice draws and Collection/Reserve.
 - **Duel Companion:** manual battle state, evidence-labeled decisions,
-  Battle History and experimental local screenshot matching.
+  Battle History and manual card ID/name lookup.
 - **Reference:** 20 reported opponent profiles, Deck Leader guide,
   reincarnation tracker/research model and read-only PCSX2 save comparison.
 - **UX v2:** six top-level navigation areas, keyboard-friendly search,
@@ -26,32 +26,20 @@ local visual acceptance, then merge.
   workspace navigation and regression QA.
 
 **Meaning of v1:** a usable, bounded, *unofficial* browser companion;
-**not** a statement that every game mechanic is verified, every image is
-licensed for redistribution, the app reads live PCSX2 data, or that the
+**not** a statement that every game mechanic is verified, historical third-party image rights are resolved, the app reads live PCSX2 data, or that the
 repository is released under an open-source license.
 
-## Release and source-rights gate · high priority
+## Distribution and source-rights gate
 
-The application is functional, but its public redistribution posture remains
-unresolved. Before a wider public distribution or promotion:
+The text-first implementation removes bundled game artwork from the current
+checkout, along with image matching/acquisition code. Older Git history and
+external archives may still contain material from before the change.
+Assess history remediation separately; deletion is not retroactive erasure.
+Third-party code/data reuse and the UI component MIT notice require their
+own appropriate attribution and licensing decisions.
 
-1. Review the source/usage rights of each category of material, especially
-   the committed Konami/DotR game screenshots sourced through Yugipedia.
-   The wiki's CC BY-SA footer does **not** grant blanket rights to game art.
-2. Preserve per-card image URLs, source digests and review status in
-   `data/manifests/image-assets.json`, `image-reviews.json`, and
-   [the image dataset audit](card-images.md).
-3. Keep factual community research distinct from reuse of authored code,
-   guide text, datasets and other potentially protected material.
-   See [source/reuse decisions](data-sources.md).
-4. Retain the local shadcn-derived UI MIT notice at
-   `src/components/ui/LICENSE.md`; audit dependencies' own terms separately.
-5. Decide whether/when to publish a project-level source-code LICENSE.
-   **None is declared currently; do not present the entire app/assets as MIT.**
-6. Before creating a `v1.0.0` Git tag, verify the final main SHA and green
-   CI. Align package metadata/version if a formal application release is
-   planned. A Git tag is a code milestone, not a rights clearance or a
-   guarantee of publicly licensed assets.
+Before any new version tag or public release, verify the final commit SHA,
+CI and user QA. Do not claim legal clearance based on a green build.
 
 ## Next feature research
 
@@ -71,16 +59,13 @@ decks**.
 - Acceptance: user can distinguish a full evidenced deck from a sample;
   no invented inventory, rewards, drops or win probabilities.
 
-### P1 · Card/image provenance and catalog quality
+### P1 · Card data accuracy and provenance
 
-- Revisit withheld ID **676** only when original DotR number/artwork is
-  verified; do not substitute a generic TCG card or guessed asset.
-- Continue targeted, hash-bound source review for the 842 still-probable
-  image identities and single-source metadata.
-- Prioritize material inaccuracies discovered through actual gameplay;
-  retain regional differences and missing card effects as unknown.
-- Run deterministic acquisition/reproduction checks for any new inputs;
-  track source permissions separately from technical reproducibility.
+- Prioritize incorrect facts revealed by real DotR gameplay and preserve
+  uncertainty for card #676 and other incompletely verified records.
+- Audit factual sources, regional variations and missing effect text;
+  do not reintroduce unsupported or unlicensed game images.
+- Keep deterministic dataset reproduction and targeted evidence tests.
 
 ### P2 · Deck Leader as a real deck property
 
@@ -132,7 +117,7 @@ or an observation from PCSX2.
 ## Working order
 
 **Recommended first effort:** Character/CPU Deck Library evidence audit,
-while treating image rights and provenance as a parallel release concern.
+while separately reviewing third-party source rights and historical distribution.
 The result of the research should decide the implementation scope.
 Avoid adding another top-level menu: integrate into the already accepted
 six-section navigation.

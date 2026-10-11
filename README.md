@@ -2,8 +2,8 @@
 
 **A companion for *Yu-Gi-Oh! The Duelists of the Roses* (PlayStation 2).**
 
-Find the card on your screen, explore fusion recipes, build a deck, and plan your
-next duel without leaving your browser. Rose Codex is designed to be comfortable
+Find cards by name, ID, and stats, explore fusion recipes, build a deck, and plan
+your next duel without leaving your browser. Rose Codex is designed to be comfortable
 beside [PCSX2](https://pcsx2.net/) on a desktop or a smaller split-screen window.
 
 **No account or game connection required.** It is a static, unofficial fan
@@ -23,9 +23,8 @@ bun run dev
 Open the local URL shown by Astro in your terminal. You can explore the library
 and planning tools without launching PCSX2.
 
-> The canonical game data and card images are committed to the repository.
-> The first full production build additionally checks reproducibility against
-> pinned external data sources; see [data sources and provenance](docs/data-sources.md).
+> The canonical factual game dataset is committed. Production builds verify it
+> against pinned external research sources; see [provenance](docs/data-sources.md).
 
 ## Explore the app
 
@@ -34,7 +33,7 @@ The six main navigation sections organize the tools around what you want to do:
 | Section | What it does |
 | --- | --- |
 | **Home** (`/`) | Search for a card or jump back into a saved local deck. |
-| **Cards** (`/cards/`) | Browse **854 numbered DotR cards** with original-game artwork, filters, quick lookup, and in-place card details. |
+| **Cards** (`/cards/`) | Browse **854 numbered DotR cards** with always-visible metadata, filters, and quick lookup. No card flip required. |
 | **Fusion** (`/fusion/`) | Work with a manual Hand and Summoning Area, discover direct/chain results, or find recipes for a specific card. |
 | **Decks** (`/decks/`) | Build and save decks, generate and review suggestions, practice draws, and manage your Collection/Reserve. |
 | **Duel** (`/duel/`) | Record visible battle information, review **conditional** next-move considerations, and track actual results in Battle History. |
@@ -47,7 +46,7 @@ DotR ID; pick a matching suggestion with the arrow keys and Enter, or choose
 **View all results** to open the filtered Card Library.
 
 The Card Library also has an adaptive toolbar for searching and filtering as you
-scroll. A card can be flipped in place to inspect its available metadata.
+scroll. Card name, ID, category, stats, and available notes are shown directly.
 
 ### Plan a fusion or deck
 
@@ -74,11 +73,6 @@ do not consume cards or modify your saved deck.
 - **Battle History:** record completed real duels, outcomes, turns, and notes;
   review descriptive results or export a JSON backup.
 
-The optional **Screenshot Assistant** can compare a manually cropped screenshot
-against local DotR artwork and suggest possible matches. It is experimental:
-you must confirm a candidate yourself. It is **not** automatic screen reading,
-model confidence, or reliable battle-state detection.
-
 ## Reference and existing links
 
 Open **Reference** (`/reference/`) for the four reference areas:
@@ -104,9 +98,9 @@ storage. Portable JSON export is available for the supported saved workflows.
 Use backups before clearing browser data or switching browsers/devices; there is
 no account-based sync.
 
-**What stays temporary?** Fusion planning inputs and screenshot/crop data are not
-uploaded to a server. Uploaded memory-card images are read in browser memory
-only, never written back to the original file or imported into your inventory.
+**What stays temporary?** Fusion planning inputs are not uploaded to a server.
+User-supplied PCSX2 memory-card files are read in browser memory only, never
+written back to the original file or imported into your inventory.
 
 **What can the tools actually conclude?** Fusion results and deck/tactical
 recommendations use bounded deterministic logic and the documented game/community
@@ -114,20 +108,21 @@ sources. Incomplete effects, hidden cards, movement legality, unknown rewards,
 unverified leader abilities, and real win probabilities are **not** inferred.
 Battle History reflects only the results you manually record.
 
-**Where does the artwork come from?** The repository contains **853 local WebP
-card images** mapped to the 854-card catalog; missing or uncertain imagery is
-shown honestly rather than substituted with unrelated artwork. Many source
-records are not independently verified. See [card images](docs/card-images.md)
-and [data sources](docs/data-sources.md) for coverage and provenance.
+**Artwork and redistribution:** This source-tree version bundles no DotR
+artwork, has no local artwork-import mode and no screenshot recognition feature.
+Older public Git commits and downloaded archives contained third-party game
+screenshots and are **not** purged by deleting current files. See the
+[migration/remediation plan](docs/text-first-migration.md) and
+[data provenance](docs/data-sources.md).
 
 There is **no backend, login, database, analytics, hosted AI inference, or PCSX2
 read/write integration** in the application. The website may load its committed
 static assets; it is not claimed to be an offline PWA.
 
-## Sources, artwork, and licenses
+## Data sources and licenses
 
 Rose Codex combines original application code with community-sourced game
-facts, third-party game screenshots, and separately licensed UI components.
+facts and separately licensed UI components.
 **Provenance, factual verification, and permission to redistribute are
 different questions.**
 
@@ -135,22 +130,20 @@ different questions.**
 | --- | --- |
 | **Card/starter/fusion facts** | Selected numeric and categorical facts were researched from [Eenkin's DotR Fusion Simulator](https://github.com/Eenkin/dotr-fusion-simulator/tree/91613ec9851a7a75744c1f2c7e4b342514ba315f), supplemented by [GenericMadScientist's research](https://github.com/GenericMadScientist/DotR-Documentation) and other cited sources. The inspected Eenkin revision declares **no license**. This repository documents its factual extraction/reimplementation decisions; it does not claim permission to copy the upstream program or prose. |
 | **Opponent/reference facts** | Reported opponents and sample cards are attributed to [KeyBlade999's DotR walkthrough](https://gamefaqs.gamespot.com/ps2/589455-yu-gi-oh-the-duelists-of-the-roses/faqs/63791) and other cited community work. Reports are not independently verified complete CPU decks. |
-| **Card images** | **853 locally optimized WebP images** were derived from DotR game screenshots located using the [Yugipedia numbered gallery](https://yugipedia.com/wiki/Gallery_of_Yu-Gi-Oh!_The_Duelists_of_the_Roses_cards). Per-card source URLs, hashes, and review status are recorded in [the image manifest](data/manifests/image-assets.json) and [image review records](data/manifests/image-reviews.json). **The right to redistribute these game screenshots has not been established.** Yugipedia's wiki CC BY-SA terms do **not** automatically license Konami game imagery. |
 | **UI components** | Locally incorporated shadcn-svelte-derived primitives retain their separate [MIT license notice](src/components/ui/LICENSE.md). Dependencies are governed by their respective upstream licenses. |
 
 Detailed attribution, source revisions, reproducibility notes, and uncertainties
-are in [data-source/reuse decisions](docs/data-sources.md) and the
-[image rights and acquisition audit](docs/card-images.md). A public URL or
-successful download must not be interpreted as permission to reuse media.
+are in [data-source/reuse decisions](docs/data-sources.md). The fact that older
+artwork was accessible online never established permission to redistribute it.
 
 **There is currently no project-wide `LICENSE` file.** Do not assume the
-entire source tree, community research, or bundled artwork is MIT-licensed
+entire source tree or community research is MIT-licensed
 or freely redistributable. The third-party UI notice does not license
 the rest of this repository. Rose Codex is unofficial and not endorsed
 by Konami or the upstream research authors.
 
 The [post-UX-v2 roadmap](docs/roadmap.md) tracks further evidence work,
-image-rights review, and proposed feature priorities.
+source-rights review, and proposed feature priorities.
 
 ## For developers
 
@@ -164,7 +157,7 @@ hydrated as Svelte islands. Canonical DotR IDs—not display names—identify ca
 | `src/components/` and `src/features/` | Reusable UI and bounded feature workspaces |
 | `src/lib/dotr/` | Deterministic game logic, lookups, and validation |
 | `data/canonical/` | Committed, reproducible data consumed by the app |
-| `scripts/data/` and `scripts/images/` | Research-data and image pipelines |
+| `scripts/data/` | Research-data reproduction and validation |
 | `tests/` | Bun tests following existing repository conventions |
 
 ### Checks
@@ -205,6 +198,6 @@ deployment requires the Cloudflare credentials described in
 ---
 
 *Rose Codex is an independent, unofficial fan companion and is not affiliated
-with or endorsed by Konami or the makers of PCSX2. Game names and artwork belong
-to their respective rights holders. Image reuse/redistribution rights have not
-been fully established; see the linked provenance documentation.*
+with or endorsed by Konami or the makers of PCSX2. Game names and legacy third-party media remain the rights holders' property.
+Historical image redistribution and independent data licensing concerns are
+not resolved merely by this source-tree cleanup; see provenance documentation.*

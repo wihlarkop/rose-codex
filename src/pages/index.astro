@@ -3,6 +3,7 @@ import Shell from '../layouts/Shell.astro';
 import HomeContinue from '../components/home/HomeContinue.svelte';
 import cards from '../../data/canonical/cards.json';
 const allowedCardIds = cards.map(card => card.id);
+const featured = [0, 7, 60].map(id => cards.find(card => card.id === id)).filter(card => card !== undefined);
 const shortcuts = [
   { title: 'Card Library', summary: 'Explore all 854 DotR cards', href: '/cards/', mark: '01', action: 'Explore Cards' },
   { title: 'Fusion Workbench', summary: 'Discover combinations', href: '/fusion/', mark: '02', action: 'Find Fusions' },
@@ -17,7 +18,7 @@ const shortcuts = [
         <p class="eyebrow">YU-GI-OH! THE DUELISTS OF THE ROSES</p>
         <h1 id="hero-heading">Master every duel.</h1>
         <p class="hero-subtitle">Your cards. Your strategy. Your companion.</p>
-        <p class="hero-description">Recognize cards, discover fusions, build your deck and plan your next move—all in one place, alongside PCSX2.</p>
+        <p class="hero-description">Find card names and stats, discover fusions, build your deck and plan your next move—all in one place, alongside PCSX2.</p>
         <form action="/cards/" method="get" role="search" class="hero-search">
           <label for="home-search" class="sr-only">Search cards by name or ID</label>
           <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
@@ -25,20 +26,20 @@ const shortcuts = [
           <button type="submit">Find card <span aria-hidden="true">→</span></button>
         </form>
       </div>
-      <div class="art-stage" aria-label="Authentic game artwork for Red-Eyes Black Dragon, Dark Magician, and Blue-Eyes White Dragon">
-        <div class="art-orbit" aria-hidden="true"></div>
-        <a href="/cards/?q=007" class="hero-art hero-art-left" aria-label="Find Red-Eyes B. Dragon">
-          <img src="/cards/007.webp" alt="Red-Eyes B. Dragon from Duelists of the Roses" width="576" height="465" decoding="async" loading="lazy"/>
-          <span>Red-Eyes B. Dragon</span>
-        </a>
-        <a href="/cards/?q=060" class="hero-art hero-art-right" aria-label="Find Dark Magician">
-          <img src="/cards/060.webp" alt="Dark Magician from Duelists of the Roses" width="577" height="463" decoding="async" loading="lazy"/>
-          <span>Dark Magician</span>
-        </a>
-        <a href="/cards/?q=000" class="hero-art hero-art-front" aria-label="Find Blue-Eyes White Dragon">
-          <img src="/cards/000.webp" alt="Blue-Eyes White Dragon from Duelists of the Roses" width="579" height="462" decoding="async" loading="eager" fetchpriority="high"/>
-          <span>Blue-Eyes White Dragon</span>
-        </a>
+      <div class="hero-reference" aria-label="Featured cards from the text-first catalog">
+        <p class="hero-reference-heading">CARD REFERENCES · QUICK LOOKUP</p>
+        {featured.map(card => (
+          <a href={'/cards/?q=' + String(card.id).padStart(3, '0')} class="reference-card">
+            <span class="reference-id">DOTR #{String(card.id).padStart(3, '0')}</span>
+            <strong>{card.name}</strong>
+            <span class="reference-type">{card.monsterType ?? 'Monster'}{card.attribute ? ' · ' + card.attribute : ''}</span>
+            <span class="reference-stats">
+              <span>ATK <b>{card.atk ?? '—'}</b></span>
+              <span>DEF <b>{card.def ?? '—'}</b></span>
+              <span>DC <b>{card.deckCost ?? '—'}</b></span>
+            </span>
+          </a>
+        ))}
       </div>
     </section>
 
@@ -76,15 +77,17 @@ const shortcuts = [
   .hero-search input { min-width:0; flex:1; border:0; outline:0; background:transparent; color:var(--foreground); font-size:.88rem; }
   .hero-search input:focus { outline:none; }
   .hero-search button { flex-shrink:0; background:var(--primary); border:0; border-radius:6px; min-height:39px; padding:.3rem .75rem; color:var(--primary-foreground); font-weight:650; font-size:.78rem; }
-  .art-stage { position:relative; isolation:isolate; width:100%; min-height:300px; display:grid; place-items:center; }
-  .art-orbit { position:absolute; width:270px; height:270px; border:1px solid var(--border); border-radius:50%; opacity:.65; box-shadow:0 0 0 40px color-mix(in srgb,var(--primary) 5%,transparent); }
-  .hero-art { position:absolute; display:flex; flex-direction:column; gap:.35rem; text-decoration:none; width:clamp(150px,19vw,215px); padding:.45rem; background:var(--elevated); border:1px solid var(--border); border-radius:9px; box-shadow:0 15px 30px #0003; transition:translate .16s ease,box-shadow .16s ease; }
-  .hero-art:hover { translate:0 -6px; box-shadow:0 20px 32px #0005; }
-  .hero-art img { display:block; width:100%; height:auto; aspect-ratio:5/4; object-fit:contain; border-radius:4px; background:var(--artwork-background); }
-  .hero-art span { color:var(--foreground); font-size:.65rem; font-weight:750; padding:0 .2rem .15rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .hero-art-left { z-index:1; transform:translate(-48%,-4%) rotate(-13deg); }
-  .hero-art-right { z-index:2; transform:translate(48%,-4%) rotate(13deg); }
-  .hero-art-front { z-index:3; transform:translate(0,15%) rotate(-1deg); border-color:var(--primary); }
+  .hero-reference { position:relative; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.65rem; align-content:center; min-width:0; }
+  .hero-reference-heading { grid-column:1/-1; margin:0 0 .15rem; color:var(--muted-foreground); letter-spacing:.12em; font-size:.65rem; font-weight:800; }
+  .reference-card { display:flex; min-width:0; flex-direction:column; gap:.45rem; padding:1rem; text-decoration:none; border:1px solid var(--border); border-radius:10px; background:var(--elevated); color:var(--foreground); transition:border-color .16s ease,background .16s ease; }
+  .reference-card:first-of-type { grid-column:1/-1; background:var(--selected); border-color:var(--primary); }
+  .reference-card:hover,.reference-card:focus-visible { border-color:var(--primary); background:var(--hover); }
+  .reference-card:focus-visible { outline:2px solid var(--ring); outline-offset:2px; }
+  .reference-id { color:var(--primary); font-size:.66rem; font-weight:800; letter-spacing:.08em; }
+  .reference-card strong { font-size:clamp(.85rem,1.25vw,1rem); line-height:1.3; overflow-wrap:anywhere; }
+  .reference-type { color:var(--muted-foreground); font-size:.73rem; }
+  .reference-stats { display:flex; flex-wrap:wrap; gap:.7rem; padding-top:.35rem; border-top:1px solid var(--border); font-size:.68rem; color:var(--muted-foreground); }
+  .reference-stats b { color:var(--foreground); font-variant-numeric:tabular-nums; }
   .section-heading { display:flex; justify-content:space-between; align-items:end; margin-bottom:1rem; }
   .section-heading h2 { margin:0; font-size:1.12rem; letter-spacing:-.02em; }
   .section-heading p { margin:.2rem 0 0; color:var(--muted-foreground); font-size:.8rem; }
@@ -98,9 +101,6 @@ const shortcuts = [
   @media (max-width:1000px) { .shortcut-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .hero { padding:1.5rem; } }
   @media (max-width:760px) {
     .hero { grid-template-columns:1fr; min-height:0; }
-    .art-stage { min-height:185px; }
-    .hero-art { width:145px; }
-    .art-orbit { width:175px; height:175px; }
     .hero-copy h1 { max-width:none; }
   }
   @media (max-width:400px) {
@@ -108,8 +108,8 @@ const shortcuts = [
     .hero-search { gap:.4rem; }
     .hero-search button { font-size:0; width:38px; }
     .hero-search button span { font-size:1rem; }
-    .hero-art { width:117px; }
-    .art-stage { min-height:160px; }
+    .hero-reference { grid-template-columns:1fr; }
+    .reference-card:first-of-type { grid-column:auto; }
   }
-  @media (prefers-reduced-motion:reduce) { .hero-art,.shortcut { transition:none; } }
+  @media (prefers-reduced-motion:reduce) { .reference-card,.shortcut { transition:none; } }
 </style>

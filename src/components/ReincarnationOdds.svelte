@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CardArtwork from './cards/CardArtwork.svelte';
+  import CardIdentity from './cards/CardIdentity.svelte';
   import CardPicker from './cards/CardPicker.svelte';
   import type { BrowserCard } from '../lib/dotr/browser';
   import {
@@ -112,7 +112,7 @@
         {#if targetCard}
           <div class="mt-3 flex items-center gap-3 rounded-md bg-elevated p-2">
             <div class="w-16 shrink-0 overflow-hidden rounded-sm">
-              <CardArtwork image={targetCard.image} name={targetCard.name} cardId={targetCard.id} decorative />
+              <CardIdentity name={targetCard.name} cardId={targetCard.id} />
             </div>
             <div class="min-w-0">
               <strong class="block text-sm">{targetCard.name}</strong>
@@ -152,7 +152,7 @@
                   {index + 1}
                 </span>
                 <div class="w-14 shrink-0 overflow-hidden rounded-sm">
-                  <CardArtwork image={card.image} name={card.name} cardId={card.id} decorative />
+                  <CardIdentity name={card.name} cardId={card.id} />
                 </div>
                 <div class="min-w-0 flex-1">
                   <strong class="block text-xs">{card.name}</strong>

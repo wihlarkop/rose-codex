@@ -136,7 +136,7 @@
     {#if generatorOpen}
       <SmartDeckCoach
         cards={canonicalCards}
-        images={cards}
+        library={cards}
         fusions={fusionData}
         onpropose={reviewProposal}
       />

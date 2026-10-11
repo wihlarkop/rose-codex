@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CardFlipTile from '../../components/cards/CardFlipTile.svelte';
+  import CardInfoTile from '../../components/cards/CardInfoTile.svelte';
   import FusionRecipeView from './FusionRecipeView.svelte';
   import type { BrowserCard } from '../../lib/dotr/browser';
   import type { FusionRecipe, FusionResult } from '../../lib/dotr/fusion-discovery';
@@ -36,7 +36,7 @@
 >
   <div class="grid min-w-0 gap-4 sm:grid-cols-[11rem_minmax(0,1fr)]">
     <div class="w-44 max-w-full">
-      <CardFlipTile {card} id={(special ? 'special-result-' : 'fusion-result-') + card.id} />
+      <CardInfoTile {card} id={(special ? 'special-result-' : 'fusion-result-') + card.id} />
     </div>
     <div class="min-w-0">
       {#if recommended && !special}

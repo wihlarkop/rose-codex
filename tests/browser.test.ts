@@ -1,13 +1,13 @@
+import { existsSync, readdirSync } from 'node:fs';
 import { describe, expect, test } from 'bun:test';
 import cards from '../data/canonical/cards.json';
-import images from '../data/canonical/images.json';
 import { browserCards, filterCards } from '../src/lib/dotr/browser';
-import type { Card, ImageRecord } from '../src/lib/dotr/model';
+import type { Card } from '../src/lib/dotr/model';
 
-const library = browserCards(cards as Card[], images as ImageRecord[]);
+const library = browserCards(cards as Card[]);
 const all = { query: '', kind: '', monsterType: '', attribute: '' };
 
-describe('visual library search and filters', () => {
+describe('text-first library search and filters', () => {
   test('projects canonical inspect metadata without fusion payload', () => {
     expect(library).toHaveLength(854);
     expect(library[0]).not.toHaveProperty('powerUpCardIds');
@@ -33,14 +33,13 @@ describe('visual library search and filters', () => {
     expect(filterCards(library, { ...all, kind: 'trap', attribute: 'LIGHT' })).toHaveLength(0);
     expect(filterCards(library, all)).toHaveLength(854);
   });
-  test('never exposes an external URL or uncertain image as available', () => {
-    const source = structuredClone(images) as ImageRecord[];
-    source[21]!.status = 'manual-review';
-    expect(browserCards(cards as Card[], source)[21]!.image).toBeNull();
+
+
+  test('does not expose artwork fields or bundle card images in public assets', () => {
+    expect(library.every((card) => !Object.hasOwn(card, 'image'))).toBe(true);
+    const publicPath = new URL('../public/', import.meta.url);
+    const files = existsSync(publicPath) ? readdirSync(publicPath, { recursive: true }) : [];
+    expect(files.filter((name) => /\.(webp|png|jpe?g|gif|avif)$/i.test(String(name)))).toEqual([]);
   });
-  test('uses the authentic screenshot presentation for every available image', () => {
-    expect(library[65]!.image).toMatchObject({ url: expect.any(String), width: 273, height: 302 });
-    expect(library[65]!.image).not.toHaveProperty('compactScreen');
-    expect(library[676]!.image).toBeNull();
-  });
+
 });
