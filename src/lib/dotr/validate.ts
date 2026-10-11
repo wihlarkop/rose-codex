@@ -1,6 +1,5 @@
 import { ATTRIBUTES, FUSION_TAGS, MONSTER_TYPES, type CanonicalData, type FusionRule } from './model';
 import { expandFusionRules, pairKey } from './fusion';
-import { validateImages } from './images';
 
 function assert(condition: unknown,message: string): asserts condition {
   if (!condition) throw new Error(`Invalid canonical data: ${message}`);
@@ -31,7 +30,7 @@ function uniqueSortedIds(value: unknown,label: string): number[] {
 }
 
 export function validateDataset(value: unknown): asserts value is CanonicalData {
-  const data = object(value,['cards','fusions','starters','images'],'dataset');
+  const data = object(value,['cards','fusions','starters'],'dataset');
   const cards = array(data['cards'],'cards');
   assert(cards.length === 854,'expected exactly 854 library records (000..853)');
   const names = new Set<string>();
@@ -148,5 +147,4 @@ export function validateDataset(value: unknown): asserts value is CanonicalData 
     ids.forEach(id=>reference(id,'starter deck card'));
   });
 
-  validateImages(data['images']);
 }

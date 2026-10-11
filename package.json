@@ -19,9 +19,6 @@
     "data:build": "bun scripts/data/build.ts",
     "data:validate": "bun scripts/data/validate.ts",
     "data:check": "bun scripts/data/build.ts --check",
-    "images:discover": "bun scripts/images/discover.ts",
-    "images:acquire": "bun scripts/images/acquire.ts",
-    "images:validate": "bun scripts/images/validate.ts",
     "wrangler": "WRANGLER_SEND_METRICS=false bun ./node_modules/wrangler/bin/wrangler.js",
     "deploy": "bun run build && bun run wrangler deploy"
   },
@@ -40,7 +37,6 @@
     "clsx": "2.1.1",
     "oxfmt": "0.72.0",
     "oxlint": "1.87.0",
-    "sharp": "0.35.5",
     "svelte-check": "4.7.6",
     "tailwind-merge": "3.7.0",
     "tailwind-variants": "3.3.0",

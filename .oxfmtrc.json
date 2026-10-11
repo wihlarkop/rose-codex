@@ -21,7 +21,6 @@
     "src/lib/dotr/**",
     "src/styles/**",
     "scripts/data/**",
-    "scripts/images/**",
     "tests/**",
     "docs/**",
     "!docs/tooling.md",

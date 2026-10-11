@@ -1,8 +1,7 @@
-import type { Card, ImageRecord } from './model';
+import type { Card } from './model';
 
 export type BrowserCard = Pick<Card, 'id' | 'name' | 'kind' | 'monsterType' | 'attribute' | 'level' | 'atk' | 'def' | 'deckCost' | 'trapRange' | 'magicClass' | 'password'> & {
   effectText: string | null;
-  image: { url: string; width: number; height: number } | null;
 };
 export interface CardFilters {
   query: string;
@@ -11,13 +10,10 @@ export interface CardFilters {
   attribute: string;
 }
 
-export function browserCards(cards: Card[], _images: ImageRecord[]): BrowserCard[] {
-  // Preserve the current caller signature while migrating the image pipeline.
-  // The text-first application must not expose source artwork URLs to the browser.
+export function browserCards(cards: Card[]): BrowserCard[] {
   return cards.map(({ id, name, kind, monsterType, attribute, level, atk, def, deckCost, trapRange, magicClass, password, effect }) => {
     return {
       id, name, kind, monsterType, attribute, level, atk, def, deckCost, trapRange, magicClass, password, effectText: effect.text,
-      image: null,
     };
   });
 }

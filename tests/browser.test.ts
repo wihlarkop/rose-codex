@@ -1,10 +1,9 @@
 import { describe, expect, test } from 'bun:test';
 import cards from '../data/canonical/cards.json';
-import images from '../data/canonical/images.json';
 import { browserCards, filterCards } from '../src/lib/dotr/browser';
-import type { Card, ImageRecord } from '../src/lib/dotr/model';
+import type { Card } from '../src/lib/dotr/model';
 
-const library = browserCards(cards as Card[], images as ImageRecord[]);
+const library = browserCards(cards as Card[]);
 const all = { query: '', kind: '', monsterType: '', attribute: '' };
 
 describe('text-first library search and filters', () => {
@@ -33,13 +32,6 @@ describe('text-first library search and filters', () => {
     expect(filterCards(library, { ...all, kind: 'trap', attribute: 'LIGHT' })).toHaveLength(0);
     expect(filterCards(library, all)).toHaveLength(854);
   });
-  test('never exposes game artwork in the public card projection', () => {
-    expect(library.every((card) => card.image === null)).toBe(true);
-    const source = structuredClone(images) as ImageRecord[];
-    source[21]!.status = 'manual-review';
-    expect(browserCards(cards as Card[], source).every((card) => card.image === null)).toBe(true);
-    expect(library[65]!.id).toBe(65);
-    expect(library[676]!.id).toBe(676);
-  });
+
 
 });

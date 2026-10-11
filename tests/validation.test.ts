@@ -35,9 +35,6 @@ describe('canonical validation', () => {
     ['duplicate choice',d=>d.starters.groups[0].leaderCardIds[1]=d.starters.groups[0].leaderCardIds[0]],
     ['unresolved deck card',d=>d.starters.decks[0].cardIds[0]=854],
     ['invalid deck length',d=>d.starters.decks[0].cardIds.pop()],
-    ['missing image record',d=>d.images.pop()],
-    ['slug asset name',d=>d.images[21].file='baby-dragon.webp'],
-    ['verified image without source',d=>{d.images[21].status='verified';d.images[21].source=null;}],
   ];
   test.each(corruptions)('rejects %s', (_label, mutate) => {
     const data = structuredClone(baseline);
