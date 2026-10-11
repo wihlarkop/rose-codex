@@ -6,7 +6,7 @@
   import CircleHelp from '@lucide/svelte/icons/circle-help';
   import Sparkles from '@lucide/svelte/icons/sparkles';
   import CardPicker from '../../components/cards/CardPicker.svelte';
-  import CardArtwork from '../../components/cards/CardArtwork.svelte';
+  import CardIdentity from '../../components/cards/CardIdentity.svelte';
   import FusionResultCard from './FusionResultCard.svelte';
   import FusionEncyclopedia from './FusionEncyclopedia.svelte';
   import { createRecipeHand } from './recipe-handoff';
@@ -424,11 +424,9 @@
                     >
                       <div class="flex min-w-0 items-start gap-3">
                         <div class="w-12 shrink-0 overflow-hidden rounded-sm">
-                          <CardArtwork
-                            image={card.image}
+                          <CardIdentity
                             name={card.name}
                             cardId={card.id}
-                            decorative
                           />
                         </div>
                         <div class="min-w-0 flex-1">
@@ -537,11 +535,9 @@
                   {@const entered = occurrences.filter((card) => card.cardId === entry.id).length}
                   <li class="flex min-w-0 flex-wrap items-center gap-2 border-b border-border py-2">
                     <div class="w-12 shrink-0 overflow-hidden rounded-sm">
-                      <CardArtwork
-                        image={entry.card.image}
+                      <CardIdentity
                         name={entry.card.name}
                         cardId={entry.id}
-                        decorative
                       />
                     </div>
                     <div class="min-w-0 flex-1 text-xs">

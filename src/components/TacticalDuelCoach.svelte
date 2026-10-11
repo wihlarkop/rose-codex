@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import CardArtwork from './cards/CardArtwork.svelte';
+  import CardIdentity from './cards/CardIdentity.svelte';
   import BattleDecisionPanel from './BattleDecisionPanel.svelte';
   import CardPicker from './cards/CardPicker.svelte';
   import SavedDuelDeckCards from './SavedDuelDeckCards.svelte';
@@ -132,7 +132,7 @@
                   {@const card = byId.get(item.cardId)!}
                   <li class="flex min-w-0 items-center gap-2 rounded-md bg-elevated p-2">
                     <div class="w-10 shrink-0 overflow-hidden rounded-sm">
-                      <CardArtwork image={card.image} name={card.name} cardId={card.id} decorative />
+                      <CardIdentity name={card.name} cardId={card.id} />
                     </div>
                     <div class="min-w-0 flex-1 text-xs">
                       <strong class="block">{card.name}</strong>
@@ -161,7 +161,7 @@
                   {@const card = byId.get(item.cardId)!}
                   <li class="flex min-w-0 items-center gap-2 rounded-md bg-elevated p-2">
                     <div class="w-10 shrink-0 overflow-hidden rounded-sm">
-                      <CardArtwork image={card.image} name={card.name} cardId={card.id} decorative />
+                      <CardIdentity name={card.name} cardId={card.id} />
                     </div>
                     <div class="min-w-0 flex-1 text-xs">
                       <strong class="block">{card.name}</strong>
@@ -276,7 +276,7 @@
             <li class="rounded-md border border-border bg-elevated p-3">
               <div class="flex min-w-0 gap-3">
                 <div class="w-14 shrink-0 overflow-hidden rounded-sm">
-                  <CardArtwork image={card.image} name={card.name} cardId={card.id} decorative />
+                  <CardIdentity name={card.name} cardId={card.id} />
                 </div>
                 <div class="min-w-0 flex-1">
                   <div class="flex flex-wrap items-baseline gap-2">

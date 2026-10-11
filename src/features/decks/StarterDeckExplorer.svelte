@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CardArtwork from '../../components/cards/CardArtwork.svelte';
+  import CardIdentity from '../../components/cards/CardIdentity.svelte';
   import { starterDecksForName } from '../../lib/dotr/naming';
   import type { BrowserCard } from '../../lib/dotr/browser';
   import starterData from '../../../data/canonical/starters.json';
@@ -104,11 +104,9 @@
         >
           {#if choice.leader}
             <div class="leader-artwork">
-              <CardArtwork
-                image={choice.leader.image}
+              <CardIdentity
                 name={choice.leader.name}
                 cardId={choice.leaderId}
-                decorative
               />
             </div>
             <span class="leader-description">
@@ -163,11 +161,9 @@
               <li>
                 {#if row.card}
                   <div class="preview-artwork">
-                    <CardArtwork
-                      image={row.card.image}
+                    <CardIdentity
                       name={row.card.name}
                       cardId={row.id}
-                      decorative
                     />
                   </div>
                   <span class="preview-card-name">{row.card.name}</span>
@@ -265,7 +261,7 @@
     width: 4rem;
     flex-shrink: 0;
   }
-  .leader-artwork :global(.card-artwork) {
+  .leader-artwork :global(.card-identity) {
     width: 4rem;
     height: 3.2rem;
     border-radius: 4px;
@@ -345,7 +341,7 @@
     width: 2.8rem;
     flex-shrink: 0;
   }
-  .preview-artwork :global(.card-artwork) {
+  .preview-artwork :global(.card-identity) {
     width: 2.8rem;
     height: 2.2rem;
     border-radius: 4px;

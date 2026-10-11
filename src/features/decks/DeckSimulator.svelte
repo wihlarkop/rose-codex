@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, untrack } from 'svelte';
-  import CardArtwork from '../../components/cards/CardArtwork.svelte';
+  import CardIdentity from '../../components/cards/CardIdentity.svelte';
   import FusionAdvisor from '../fusion/FusionAdvisor.svelte';
   import { DECK_STORAGE_KEY, validateDeckEnvelope, type DeckRecord } from '../decks/model';
   import {
@@ -234,7 +234,7 @@
             {@const card = cardById.get(entry.cardId)!}
             <li class="hand-card">
               <div class="hand-artwork">
-                <CardArtwork image={card.image} name={card.name} cardId={card.id} decorative />
+                <CardIdentity name={card.name} cardId={card.id} />
               </div>
               <div class="min-w-0">
                 <p class="m-0 text-xs font-semibold">{index + 1}. {card.name}</p>
@@ -333,7 +333,7 @@
     width: min(100%, 8rem);
     align-self: center;
   }
-  .hand-artwork :global(.card-artwork) {
+  .hand-artwork :global(.card-identity) {
     width: 100%;
     border-radius: 4px;
   }

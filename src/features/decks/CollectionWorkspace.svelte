@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import CardArtwork from '../../components/cards/CardArtwork.svelte';
+  import CardIdentity from '../../components/cards/CardIdentity.svelte';
   import { filterCards, type BrowserCard } from '../../lib/dotr/browser';
   import { DECK_STORAGE_KEY, validateDeckEnvelope, type DeckRecord } from './model';
   import {
@@ -297,7 +297,7 @@
           {#each addMatches as card (card.id)}
             <li class="card-row">
               <div class="artwork">
-                <CardArtwork image={card.image} name={card.name} cardId={card.id} decorative />
+                <CardIdentity name={card.name} cardId={card.id} />
               </div>
               <span class="card-name"
                 >{card.name} <small>#{String(card.id).padStart(3, '0')}</small></span
@@ -336,11 +336,9 @@
             <li class="card-row surface">
               <div class="artwork">
                 {#if row.card}
-                  <CardArtwork
-                    image={row.card.image}
+                  <CardIdentity
                     name={row.card.name}
                     cardId={row.id}
-                    decorative
                   />
                 {/if}
               </div>
@@ -491,7 +489,7 @@
     width: 3rem;
     flex: 0 0 3rem;
   }
-  .artwork :global(.card-artwork) {
+  .artwork :global(.card-identity) {
     width: 3rem;
     height: 2.4rem;
     border-radius: 4px;

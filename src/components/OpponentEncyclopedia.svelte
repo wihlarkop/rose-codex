@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import CardArtwork from './cards/CardArtwork.svelte';
+  import CardIdentity from './cards/CardIdentity.svelte';
   import type { BrowserCard } from '../lib/dotr/browser';
   import {
     findOpponents,
@@ -97,7 +97,7 @@
               >
                 {#if leader}
                   <span class="w-14 shrink-0 overflow-hidden rounded-sm bg-elevated">
-                    <CardArtwork image={leader.image} name={leader.name} cardId={leader.id} decorative />
+                    <CardIdentity name={leader.name} cardId={leader.id} />
                   </span>
                 {/if}
                 <span class="min-w-0 flex-1">
@@ -135,13 +135,12 @@
           <div class="mt-3 grid gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.45fr)]">
             {#if selectedLeader}
               <div class="overflow-hidden rounded-md bg-elevated">
-                <CardArtwork
-                  image={selectedLeader.image}
+                <CardIdentity
                   name={selectedLeader.name}
                   cardId={selectedLeader.id}
                 />
                 <div class="px-3 py-2 text-xs text-muted-foreground">
-                  Reported Deck Leader card artwork · #{String(selectedLeader.id).padStart(3, '0')}
+                  Reported Deck Leader card · #{String(selectedLeader.id).padStart(3, '0')}
                 </div>
               </div>
             {/if}
@@ -202,7 +201,7 @@
               {@const card = byId.get(id)}
               {#if card}
                 <div class="min-w-0 overflow-hidden rounded-md border border-border bg-elevated">
-                  <CardArtwork image={card.image} name={card.name} cardId={card.id} />
+                  <CardIdentity name={card.name} cardId={card.id} />
                   <div class="p-2">
                     <p class="text-sm font-semibold leading-tight">{card.name}</p>
                     <p class="mt-1 text-xs text-muted-foreground">

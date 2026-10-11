@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import CardArtwork from './cards/CardArtwork.svelte';
+  import CardIdentity from './cards/CardIdentity.svelte';
   import DeckStrategyPlaybook from './DeckStrategyPlaybook.svelte';
   import type { BrowserCard } from '../lib/dotr/browser';
   import type { Card, FusionData } from '../lib/dotr/model';
@@ -10,12 +10,12 @@
   import { optimizeSuggestedDeck, type DeckOptimization } from '../lib/dotr/deck-optimizer';
   import { buildStrategyPlaybook } from '../lib/dotr/deck-strategy';
 
-  let { cards, images, fusions, onpropose }: {
-    cards: Card[]; images: BrowserCard[]; fusions: FusionData;
+  let { cards, library, fusions, onpropose }: {
+    cards: Card[]; library: BrowserCard[]; fusions: FusionData;
     onpropose?: (proposal: SmartDeck) => void;
   } = $props();
   const byId = $derived(new Map(cards.map(card => [card.id, card])));
-  const imageById = $derived(new Map(images.map(card => [card.id, card])));
+  const browserCardById = $derived(new Map(library.map(card => [card.id, card])));
   let rosePath = $state<RosePath | 'all'>('all');
   let opponentId = $state('weevil');
   let style = $state<DeckStyle>('balanced');
@@ -27,10 +27,10 @@
     rosePath === 'all' || entry.path === rosePath));
   const opponent = $derived(opponentById(opponentId));
   const threats = $derived(opponent
-    ? opponent.notableCardIds.map(id => imageById.get(id)).filter((item): item is BrowserCard => !!item)
+    ? opponent.notableCardIds.map(id => browserCardById.get(id)).filter((item): item is BrowserCard => !!item)
     : []);
   const rows = $derived(suggestion?.groups.map(row => ({
-    ...row, card: imageById.get(row.cardId),
+    ...row, card: browserCardById.get(row.cardId),
     metric: opponent && byId.get(row.cardId)?.kind === 'monster'
       ? assessCardMatchup(byId.get(row.cardId)!, opponent, byId, style) : null,
   })) ?? []);
@@ -163,7 +163,7 @@
             {#each threats as card (card.id)}
               <li class="flex items-center gap-2 rounded-md bg-elevated p-2">
                 <div class="w-12 shrink-0 overflow-hidden rounded-sm">
-                  <CardArtwork image={card.image} name={card.name} cardId={card.id} decorative />
+                  <CardIdentity name={card.name} cardId={card.id} />
                 </div>
                 <div class="min-w-0 text-xs">
                   <strong class="block">{card.name}</strong>
@@ -242,7 +242,7 @@
             {#if row.card}
               <li class="flex min-w-0 gap-2 rounded-md border border-border bg-elevated p-2">
                 <div class="w-14 shrink-0 overflow-hidden rounded-sm">
-                  <CardArtwork image={row.card.image} name={row.card.name} cardId={row.cardId} decorative />
+                  <CardIdentity name={row.card.name} cardId={row.cardId} />
                 </div>
                 <div class="min-w-0">
                   <strong class="block text-sm">{row.card.name} ×{row.copies}</strong>
@@ -261,7 +261,7 @@
               {#if row.card}
                 <li class="flex gap-2 rounded-md border border-border bg-elevated p-2">
                   <div class="w-14 shrink-0 overflow-hidden rounded-sm">
-                    <CardArtwork image={row.card.image} name={row.card.name} cardId={row.cardId} decorative />
+                    <CardIdentity name={row.card.name} cardId={row.cardId} />
                   </div>
                   <div class="min-w-0">
                     <strong class="block text-sm">{row.card.name} ×{row.copies}</strong>
@@ -274,7 +274,7 @@
           </ul>
         {/if}
         {#if playbook}
-          <DeckStrategyPlaybook {playbook} {images} />
+          <DeckStrategyPlaybook {playbook} {library} />
         {/if}
         <div class="mt-4 rounded-md border border-border p-3">
           <h3 class="text-xs font-semibold">How to interpret this build</h3>

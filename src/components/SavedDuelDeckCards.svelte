@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import CardArtwork from './cards/CardArtwork.svelte';
+  import CardIdentity from './cards/CardIdentity.svelte';
   import { filterCards, type BrowserCard } from '../lib/dotr/browser';
   import type { FusionOccurrence, FusionZone } from '../lib/dotr/fusion-discovery';
   import { DECK_STORAGE_KEY, validateDeckEnvelope, type DeckRecord } from '../features/decks/model';
@@ -132,11 +132,9 @@
         {@const canAdd = canAddSavedDeckCopy(entry.id, copyCounts, occurrences)}
         <li class="flex min-w-0 flex-wrap items-center gap-2 rounded-md border border-border bg-surface p-2">
           <div class="w-10 shrink-0 overflow-hidden rounded-sm">
-            <CardArtwork
-              image={entry.card.image}
+            <CardIdentity
               name={entry.card.name}
               cardId={entry.card.id}
-              decorative
             />
           </div>
           <div class="min-w-0 flex-1 text-xs">

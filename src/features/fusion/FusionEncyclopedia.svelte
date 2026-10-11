@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import CardArtwork from '../../components/cards/CardArtwork.svelte';
+  import CardIdentity from '../../components/cards/CardIdentity.svelte';
   import { filterCards, type BrowserCard } from '../../lib/dotr/browser';
   import { buildFusionEncyclopedia, missingOwnedCopies } from '../../lib/dotr/fusion-encyclopedia';
   import type { FusionData } from '../../lib/dotr/model';
@@ -160,11 +160,9 @@
                 onclick={() => selectResult(card.id)}
               >
                 <span class="artwork"
-                  ><CardArtwork
-                    image={card.image}
+                  ><CardIdentity
                     name={card.name}
                     cardId={card.id}
-                    decorative
                   /></span
                 >
                 <span class="choice-name"
@@ -202,12 +200,10 @@
     <div class="results-area">
       {#if selected}
         <section class="surface result-summary" aria-label="Selected result card">
-          <div class="selected-artwork">
-            <CardArtwork
-              image={selected.image}
+          <div class="selected-card">
+            <CardIdentity
               name={selected.name}
               cardId={selected.id}
-              decorative
             />
           </div>
           <div class="selected-info">
@@ -279,11 +275,9 @@
                         {#if index === 1}<span class="plus" aria-hidden="true">+</span>{/if}
                         <div class="ingredient">
                           <span class="artwork">
-                            <CardArtwork
-                              image={card.image}
+                            <CardIdentity
                               name={card.name}
                               cardId={card.id}
-                              decorative
                             />
                           </span>
                           <div class="ingredient-text">
@@ -470,7 +464,7 @@
     border-radius: 4px;
     overflow: hidden;
   }
-  .artwork :global(.card-artwork) {
+  .artwork :global(.card-identity) {
     width: 100%;
   }
   .choice-name,
@@ -529,7 +523,7 @@
     min-width: 0;
     padding: 1rem;
   }
-  .selected-artwork {
+  .selected-card {
     flex: 0 0 8rem;
     width: 8rem;
     overflow: hidden;
@@ -693,7 +687,7 @@
     .result-summary {
       align-items: flex-start;
     }
-    .selected-artwork {
+    .selected-card {
       width: 5.5rem;
       flex-basis: 5.5rem;
     }

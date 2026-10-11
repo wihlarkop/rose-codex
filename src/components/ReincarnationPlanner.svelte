@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import CardArtwork from './cards/CardArtwork.svelte';
+  import CardIdentity from './cards/CardIdentity.svelte';
   import CardPicker from './cards/CardPicker.svelte';
   import ReincarnationOdds from './ReincarnationOdds.svelte';
   import type { BrowserCard } from '../lib/dotr/browser';
@@ -110,7 +110,7 @@
         {#if selected}
           <div class="mt-4 flex flex-col gap-4 rounded-md bg-elevated p-3 sm:flex-row">
             <div class="w-full shrink-0 overflow-hidden rounded-md sm:w-44">
-              <CardArtwork image={selected.image} name={selected.name} cardId={selected.id} />
+              <CardIdentity name={selected.name} cardId={selected.id} />
             </div>
             <div class="min-w-0 flex-1">
               <span class="text-xs font-semibold uppercase tracking-wide text-primary">Candidate · Preview only</span>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import CardArtwork from '../../components/cards/CardArtwork.svelte';
+  import CardIdentity from '../../components/cards/CardIdentity.svelte';
   import { filterCards, type BrowserCard } from '../../lib/dotr/browser';
   import {
     DECK_LEADER_RANKS,
@@ -102,11 +102,9 @@
                 onclick={() => choose(card.id)}
               >
                 <span class="option-art"
-                  ><CardArtwork
-                    image={card.image}
+                  ><CardIdentity
                     name={card.name}
                     cardId={card.id}
-                    decorative
                   /></span
                 >
                 <span class="option-description">
@@ -149,8 +147,8 @@
     <div class="reference-content">
       {#if selected}
         <section class="surface selected-card" aria-label="Selected monster reference">
-          <div class="selected-artwork">
-            <CardArtwork image={selected.image} name={selected.name} cardId={selected.id} />
+          <div class="selected-card">
+            <CardIdentity name={selected.name} cardId={selected.id} />
           </div>
           <div class="selected-description">
             <span class="eyebrow">Deck Leader candidate · Reference only</span>
@@ -405,7 +403,7 @@
     gap: 1rem;
     padding: 1rem;
   }
-  .selected-artwork {
+  .selected-card {
     width: 9rem;
     flex: 0 0 9rem;
     border-radius: var(--radius);
@@ -560,7 +558,7 @@
     .concept-list {
       grid-template-columns: minmax(0, 1fr);
     }
-    .selected-artwork {
+    .selected-card {
       width: 6.5rem;
       flex-basis: 6.5rem;
     }

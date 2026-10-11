@@ -1,15 +1,5 @@
 <script lang="ts">
-  import type { BrowserCard } from '../../lib/dotr/browser';
-
-  // The legacy props are retained for callers during the text-first migration.
-  // This component never loads game artwork from the network or local assets.
-  let { name, cardId }: {
-    image: BrowserCard['image'];
-    name: string;
-    cardId: number;
-    eager?: boolean;
-    decorative?: boolean;
-  } = $props();
+  let { name, cardId }: { name: string; cardId: number } = $props();
   const number = $derived(String(cardId).padStart(3, '0'));
 </script>
 
