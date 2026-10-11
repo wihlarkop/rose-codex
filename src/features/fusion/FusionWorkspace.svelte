@@ -424,10 +424,7 @@
                     >
                       <div class="flex min-w-0 items-start gap-3">
                         <div class="w-12 shrink-0 overflow-hidden rounded-sm">
-                          <CardIdentity
-                            name={card.name}
-                            cardId={card.id}
-                          />
+                          <CardIdentity name={card.name} cardId={card.id} />
                         </div>
                         <div class="min-w-0 flex-1">
                           <p class="m-0 break-words text-sm font-semibold">{card.name}</p>
@@ -535,10 +532,7 @@
                   {@const entered = occurrences.filter((card) => card.cardId === entry.id).length}
                   <li class="flex min-w-0 flex-wrap items-center gap-2 border-b border-border py-2">
                     <div class="w-12 shrink-0 overflow-hidden rounded-sm">
-                      <CardIdentity
-                        name={entry.card.name}
-                        cardId={entry.id}
-                      />
+                      <CardIdentity name={entry.card.name} cardId={entry.id} />
                     </div>
                     <div class="min-w-0 flex-1 text-xs">
                       <strong class="block break-words">{entry.card.name}</strong>

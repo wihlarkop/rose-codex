@@ -102,10 +102,7 @@
                 onclick={() => choose(card.id)}
               >
                 <span class="option-art"
-                  ><CardIdentity
-                    name={card.name}
-                    cardId={card.id}
-                  /></span
+                  ><CardIdentity name={card.name} cardId={card.id} /></span
                 >
                 <span class="option-description">
                   <strong>{card.name}</strong>

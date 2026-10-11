@@ -649,10 +649,7 @@
           <div class="card-list">
             {#each cardGroups as group (group.card.id)}
               <article class="card-row">
-                <CardIdentity
-                  name={group.card.name}
-                  cardId={group.card.id}
-                />
+                <CardIdentity name={group.card.name} cardId={group.card.id} />
                 <div class="card-info">
                   <strong>{group.card.name}</strong><span
                     >#{String(group.card.id).padStart(3, '0')}</span

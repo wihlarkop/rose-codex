@@ -104,10 +104,7 @@
         >
           {#if choice.leader}
             <div class="leader-artwork">
-              <CardIdentity
-                name={choice.leader.name}
-                cardId={choice.leaderId}
-              />
+              <CardIdentity name={choice.leader.name} cardId={choice.leaderId} />
             </div>
             <span class="leader-description">
               <strong>{choice.leader.name}</strong>
@@ -161,10 +158,7 @@
               <li>
                 {#if row.card}
                   <div class="preview-artwork">
-                    <CardIdentity
-                      name={row.card.name}
-                      cardId={row.id}
-                    />
+                    <CardIdentity name={row.card.name} cardId={row.id} />
                   </div>
                   <span class="preview-card-name">{row.card.name}</span>
                 {:else}

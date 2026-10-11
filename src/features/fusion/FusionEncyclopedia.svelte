@@ -160,10 +160,7 @@
                 onclick={() => selectResult(card.id)}
               >
                 <span class="artwork"
-                  ><CardIdentity
-                    name={card.name}
-                    cardId={card.id}
-                  /></span
+                  ><CardIdentity name={card.name} cardId={card.id} /></span
                 >
                 <span class="choice-name"
                   >{card.name}<small>#{String(card.id).padStart(3, '0')}</small></span
@@ -201,10 +198,7 @@
       {#if selected}
         <section class="surface result-summary" aria-label="Selected result card">
           <div class="selected-card">
-            <CardIdentity
-              name={selected.name}
-              cardId={selected.id}
-            />
+            <CardIdentity name={selected.name} cardId={selected.id} />
           </div>
           <div class="selected-info">
             <span class="eyebrow">Selected fusion result</span>
@@ -275,10 +269,7 @@
                         {#if index === 1}<span class="plus" aria-hidden="true">+</span>{/if}
                         <div class="ingredient">
                           <span class="artwork">
-                            <CardIdentity
-                              name={card.name}
-                              cardId={card.id}
-                            />
+                            <CardIdentity name={card.name} cardId={card.id} />
                           </span>
                           <div class="ingredient-text">
                             <strong>{card.name}</strong>

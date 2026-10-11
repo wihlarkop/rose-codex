@@ -336,10 +336,7 @@
             <li class="card-row surface">
               <div class="artwork">
                 {#if row.card}
-                  <CardIdentity
-                    name={row.card.name}
-                    cardId={row.id}
-                  />
+                  <CardIdentity name={row.card.name} cardId={row.id} />
                 {/if}
               </div>
               <span class="card-name"
