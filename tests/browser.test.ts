@@ -39,7 +39,7 @@ describe('text-first library search and filters', () => {
     expect(library.every((card) => !Object.hasOwn(card, 'image'))).toBe(true);
     const publicPath = new URL('../public/', import.meta.url);
     const files = existsSync(publicPath) ? readdirSync(publicPath, { recursive: true }) : [];
-    expect(files.filter((name) => /\.(webp|png|jpe?g|gif|avif)$/i.test(name))).toEqual([]);
+    expect(files.filter((name) => /\.(webp|png|jpe?g|gif|avif)$/i.test(String(name)))).toEqual([]);
   });
 
 });
